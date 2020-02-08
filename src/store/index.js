@@ -1,0 +1,144 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import axios from 'axios';
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+    state: {
+	curgameid: 123456,
+	isLogin: true,
+	userid: 112134,
+	isTwitter: false,
+	isFacebook: false,
+	isGoogle: true,
+	isYahoo: false,	
+	userinfo: {
+	    displayanme:'おさまさ',
+	    friends: [{userid:1534,
+		       displayname:'おちゃまちゃ',
+		       partner_win:3,
+		       partner_lose:3,
+		       vs_win:3,
+		       vs_lose:3
+		      },
+		      {userid:1334,
+		       displayname:'おちゃまちゃ',
+		       partner_win:3,
+		       partner_lose:3,
+		       vs_win:3,
+		       vs_lose:3
+		      }],
+	    memos: [
+		{
+		    gameid:1,
+		    no:2,
+		    memo: '寒い処理だった'
+		},
+		{
+		    gameid:1,
+		    no:4,
+		    memo: 'ロブが良かった'
+		}],
+	    record: [
+		{
+		    gameid:1,
+		    myno:2,
+		    totalwin : 3,
+		    totallose : 2,
+		    totaldraw : 1,
+		},
+		{
+		    gameid:2,
+		    myno:3,
+		    totalwin : 3,
+		    totallose : 2,
+		    totaldraw : 1,
+		}],
+	},
+	game:
+	    {
+		gameid: 12345,
+		loginusers: [{userid:1234,displayanme:'ほもらんま'},
+			     {userid:1354,displayanme:'ほもらん'}
+			    ],
+		gameusers: [{no:1, userid:0,displayanme: '名無し'},
+			    {no:2, userid:0,displayanme: 'おさだ'},
+			    {no:3, userid:1234},
+			    {no:4, userid:1354},
+			    {no:5, userid:0,displayanme: '名無し'}],
+		ownuserid: '1234', 
+		shiairec: [],
+		doubles: true,
+		peoples: 5,
+		mensu: 1,
+		players: [],
+	    }
+    },
+    getters: {
+	getShiairec: (state) => {
+	    return state.game.shiairec;
+	},
+	getShiairecNum: (state) => {
+	    return state.game.length;
+	},
+	getDoubles:  (state) => {
+	    return state.game.doubles;
+	},
+	getPeoples:  (state) => {
+	    return state.game.peoples;
+	}
+	
+    },
+    mutations: {
+	updateRec(state, payload) {
+	    console.log(payload);
+	    console.log(state.game.shiairec);
+	},
+	setShiaiRec(state,payload) {
+	    payload.shiairec.forEach( v => {
+		state.game.shiairec.push(v);
+	    });
+	},
+	setDoubles(state,payload) {
+	    state.game.doubles = payload.doubles;
+	},
+	setPeoples(state,payload) {
+	    state.game.peoples = payload.peoples;
+	}
+    },
+    actions: {
+	updateShiaiRec(context,payload) {
+	    context.commit('updateRec',payload);
+	},
+	async setShiaiRecAction(context) {
+	    const payload = {
+		shiairec : []
+	    }
+	    await axios.get('/' + context.getters['getPeoples'] +'.csv')
+		.then((res) => {
+		    let i=0;
+		    let n=0;
+		    const num = context.getters['getShiairecNum'];
+		    let p1,p2,p3,p4
+		    res.data.split('\r\n').forEach(vv => {
+			vv.split(',').forEach(v => {
+			    if((i % 4) == 0) {
+				p1=v;
+			    } else if((i % 4) == 1) {
+				p2=v;
+			    } else if((i % 4) == 2) {
+				p3=v;
+			    } else {
+				p4=v;				
+				payload.shiairec.push({"id":num+(++n), "p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
+			    }
+			    i++;
+			});
+		    });
+		})
+		.catch(error => console.log(error))
+	    context.commit('setShiaiRec', payload);
+	}
+    }
+})
