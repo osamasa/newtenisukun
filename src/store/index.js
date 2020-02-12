@@ -8,27 +8,13 @@ export default new Vuex.Store({
     state: {
 	curgameid: 123456,
 	isLogin: true,
-	userid: 112134,
 	isTwitter: false,
 	isFacebook: false,
 	isGoogle: true,
 	isYahoo: false,	
 	userinfo: {
+	    userid:1234,
 	    displayanme:'おさまさ',
-	    friends: [{userid:1534,
-		       displayname:'おちゃまちゃ',
-		       partner_win:3,
-		       partner_lose:3,
-		       vs_win:3,
-		       vs_lose:3
-		      },
-		      {userid:1334,
-		       displayname:'おちゃまちゃ',
-		       partner_win:3,
-		       partner_lose:3,
-		       vs_win:3,
-		       vs_lose:3
-		      }],
 	    memos: [
 		{
 		    gameid:1,
@@ -59,9 +45,8 @@ export default new Vuex.Store({
 	game:
 	    {
 		gameid: 12345,
-		loginusers: [{userid:1234,displayanme:'ほもらんま'},
-			     {userid:1354,displayanme:'ほもらん'}
-			    ],
+		loginusers: {1234:true,
+			     1354:true},
 		gameusers: [{no:1, userid:0,displayanme: '名無し'},
 			    {no:2, userid:0,displayanme: 'おさだ'},
 			    {no:3, userid:1234},
@@ -119,7 +104,7 @@ export default new Vuex.Store({
 		.then((res) => {
 		    let i=0;
 		    let n=0;
-		    const num = context.getters['getShiairecNum'];
+		    const num = context.getters['getShiairecNum'] || 0;
 		    let p1,p2,p3,p4
 		    res.data.split('\r\n').forEach(vv => {
 			vv.split(',').forEach(v => {
