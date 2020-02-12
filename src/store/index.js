@@ -72,10 +72,15 @@ export default new Vuex.Store({
 	},
 	getPeoples:  (state) => {
 	    return state.game.peoples;
-	}
-	
+	},
+	getCurgameid: (state) => {
+	    return state.curgameid;
+	},
     },
     mutations: {
+	setCurgamid(state, payload) {
+	    state.curgameid = payload.curgameid;
+	},
 	updateRec(state, payload) {
 	    console.log(payload);
 	    console.log(state.game.shiairec);
@@ -93,6 +98,9 @@ export default new Vuex.Store({
 	}
     },
     actions: {
+	setCurgamidAction(context,payload) {
+	    context.commit('setCurgamid',payload);
+	},
 	updateShiaiRec(context,payload) {
 	    context.commit('updateRec',payload);
 	},

@@ -110,6 +110,7 @@ export default {
 	    nowrec: {}
 	}},
     created: function() {
+    	this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
 	this.$store.dispatch('setShiaiRecAction');
     },
     computed:{
