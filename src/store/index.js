@@ -45,6 +45,7 @@ export default new Vuex.Store({
 	game:
 	    {
 		gameid: 12345,
+		gamedate: '2020-02-25',
 		loginusers: {1234:true,
 			     1354:true},
 		gameusers: [{no:1, userid:0,displayanme: '名無し'},
@@ -54,10 +55,7 @@ export default new Vuex.Store({
 			    {no:5, userid:0,displayanme: '名無し'}],
 		ownuserid: '1234', 
 		shiairec: [],
-		doubles: true,
-		peoples: 5,
-		mensu: 1,
-		players: [],
+		peoples: 5
 	    }
     },
     getters: {
@@ -67,15 +65,15 @@ export default new Vuex.Store({
 	getShiairecNum: (state) => {
 	    return state.game.length;
 	},
-	getDoubles:  (state) => {
-	    return state.game.doubles;
-	},
 	getPeoples:  (state) => {
 	    return state.game.peoples;
 	},
 	getCurgameid: (state) => {
 	    return state.curgameid;
 	},
+	getGamedate: (state) => {
+	    return state.gamedate;
+	}
     },
     mutations: {
 	setCurgamid(state, payload) {
@@ -90,17 +88,23 @@ export default new Vuex.Store({
 		state.game.shiairec.push(v);
 	    });
 	},
-	setDoubles(state,payload) {
-	    state.game.doubles = payload.doubles;
-	},
 	setPeoples(state,payload) {
 	    state.game.peoples = payload.peoples;
+	},
+	setGamedate(state,payload) {
+	    state.game.gamedate = payload.gamedate;
 	}
     },
     actions: {
 	setCurgamidAction(context,payload) {
 	    context.commit('setCurgamid',payload);
 	},
+	setPeoplesAction(context,payload) {
+	    context.commit('setPeoples',payload);
+	},
+	setGamedateAction(context,payload) {
+	    context.commit('setGamedate',payload);
+	},	    
 	updateShiaiRec(context,payload) {
 	    context.commit('updateRec',payload);
 	},

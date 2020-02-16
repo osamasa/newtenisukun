@@ -16,15 +16,32 @@
 	  label="人数">
 	</v-select>
 
-<Datetime
-          v-model="gamedate"
-          :minute-interval="30"
-          :format="'YYYY-MM-DD HH:mm'"
-          :disabled-hours="['00', '01', '02', '03', '04', '05', '06', '07', '08', '17', '18', '19', '20', '21', '22', '23']"
-          :overlay="true"
-          :min-date="start"
-          :max-date="end"
-        ></Datetime>
+    <v-menu
+      v-model="fromDateMenu"
+      :close-on-content-click="false"
+      :nudge-right="40"
+      transition="scale-transition"
+      offset-y
+      full-width
+      max-width="290px"
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on }">
+        <v-text-field
+          label="日付"
+          readonly
+          :value="gamedate"
+          v-on="on"
+        ></v-text-field>
+      </template>
+      <v-date-picker
+        locale="en-in"
+        v-model="gamedate"
+        no-title
+        @input="fromDateMenu = false"
+      ></v-date-picker>
+    </v-menu>
+
 	<v-btn color="primary" @click="creategame">開始</v-btn>
       </v-form>
     </v-container>
@@ -32,8 +49,8 @@
 </template>
 <script>
 import Datetime from 'vue-ctk-date-time-picker';
-import md5 from 'md5'
-import moment from 'moment'
+import '@/node_modules/vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+import md5 from 'md5'    
 export default {  
     data: () => ({
 	curgameid: '',
@@ -48,22 +65,6 @@ export default {
         fromDateMenu: false,
         gamedate: null,
     }),
-    components: {
-	Datetime
-    },
-computed: {
-    start() {
-      // min-date に明日の9時を指定
-      const start = moment().add(1, 'days').hour(8)
-      return start.format('YYYY-MM-DDTHH:mm:ss')
-    },
-    end() {
-      // max-date に min-date から3ヶ月後を指定
-      const start = moment(this.start)
-      const end = start.add(3, 'months').endOf('day')
-      return end.format('YYYY-MM-DDTHH:mm:ss')
-    }
-},    
     methods: {
 	creategame: function (event) {
 	    this.curgameid = md5(this.name + this.gamedate + this.peoples);

@@ -109,10 +109,6 @@ export default {
 	    localCount: 5,
 	    nowrec: {}
 	}},
-    created: function() {
-    	this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
-	this.$store.dispatch('setShiaiRecAction');
-    },
     computed:{
 	getResult: function() {
 	    return this.$store.getters.getShiairec;
