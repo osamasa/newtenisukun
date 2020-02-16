@@ -11,7 +11,7 @@ export default new Vuex.Store({
 	isTwitter: false,
 	isFacebook: false,
 	isGoogle: true,
-	isYahoo: false,	
+	isYahoo: false,
 	userinfo: {
 	    userid:1234,
 	    displayanme:'おさまさ',

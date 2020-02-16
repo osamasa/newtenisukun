@@ -24,8 +24,8 @@ export default {
       signIn: function () {
 	  firebase.auth().signInWithEmailAndPassword(this.username, this.password).then(
               user => {
-		  alert('Success!')
-		  this.$router.push('/game')
+		  
+		  this.$router.push('/game/' + this.$route.params.curgameid);
               },
               err => {
 		  alert(err.message)
