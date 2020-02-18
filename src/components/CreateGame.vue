@@ -15,16 +15,12 @@
           :chips="true"
 	  label="人数">
 	</v-select>
-
-<Datetime
-          v-model="gamedate"
-          :minute-interval="30"
-          :format="'YYYY-MM-DD HH:mm'"
-          :disabled-hours="['00', '01', '02', '03', '04', '05', '06', '07', '08', '17', '18', '19', '20', '21', '22', '23']"
-          :overlay="true"
-          :min-date="start"
-          :max-date="end"
-        ></Datetime>
+	<Datetime v-model="gamedate"
+		  :no-value-to-custom-elem="(true|false)"
+		  :minute-interval="30"
+		  :format="'YYYY-MM-DD HH:mm'"
+		  :overlay="true"
+		  /></Datetime>
 	<v-btn color="primary" @click="creategame">開始</v-btn>
       </v-form>
     </v-container>
@@ -32,8 +28,9 @@
 </template>
 <script>
 import Datetime from 'vue-ctk-date-time-picker';
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import md5 from 'md5'
-import moment from 'moment'
+
 export default {  
     data: () => ({
 	curgameid: '',
@@ -51,23 +48,10 @@ export default {
     components: {
 	Datetime
     },
-computed: {
-    start() {
-      // min-date に明日の9時を指定
-      const start = moment().add(1, 'days').hour(8)
-      return start.format('YYYY-MM-DDTHH:mm:ss')
-    },
-    end() {
-      // max-date に min-date から3ヶ月後を指定
-      const start = moment(this.start)
-      const end = start.add(3, 'months').endOf('day')
-      return end.format('YYYY-MM-DDTHH:mm:ss')
-    }
-},    
     methods: {
 	creategame: function (event) {
 	    this.curgameid = md5(this.name + this.gamedate + this.peoples);
-	    alert(this.curgameid);
+	    alert(this.gamedate);
 	    
 	    this.$store.dispatch('setCurgamidAction',{'curgameid': this.curgameid});
 	    this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
