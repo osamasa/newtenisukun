@@ -32,7 +32,8 @@ let router = new Router({
 	{
 	    path: '/signin',
 	    name: 'Signin',
-	    component: Signin
+	    component: Signin,
+	    meta: { requiresAuthChangeURL: true  }
 	}
     ]
 })
@@ -55,7 +56,14 @@ router.beforeEach((to, from, next) => {
 	    }
 	    return
 	})
-    } 
+    } else if (to.matched.some(record => record.meta.requiresAuthChangeURL)) {
+	firebase.auth().onAuthStateChanged(user => {
+	    if (user) {
+		store.dispatch('doLoad');
+		next(store.getters.getNextPath);
+	    }
+	})
+    }
     next()    
 })
 

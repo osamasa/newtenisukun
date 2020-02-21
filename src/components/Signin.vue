@@ -19,9 +19,6 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.notLogin = false;
-		store.dispatch('doLoad');
-		console.log(store.getters.getNextPath);
-		this.$router.push(store.getters.getNextPath);
 	    } else {
 		this.notLogin = true;
 	    }
