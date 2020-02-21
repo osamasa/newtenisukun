@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
+import firebase from 'firebase'
 
 Vue.use(Vuex)
 
@@ -13,9 +14,8 @@ export default new Vuex.Store({
 	isGoogle: true,
 	isYahoo: false,
 	nextPath: '',
+	user: null,
 	userinfo: {
-	    userid:1234,
-	    displayanme:'おさまさ',
 	    memos: [
 		{
 		    gameid:1,
@@ -45,16 +45,10 @@ export default new Vuex.Store({
 	},
 	game:
 	    {
-		gameid: 12345,
-		gamedate: '2020-02-25',
-		loginusers: {1234:true,
-			     1354:true},
-		gameusers: [{no:1, userid:0,displayanme: '名無し'},
-			    {no:2, userid:0,displayanme: 'おさだ'},
-			    {no:3, userid:1234},
-			    {no:4, userid:1354},
-			    {no:5, userid:0,displayanme: '名無し'}],
-		ownuserid: '1234', 
+		gamedate: '2020-02-25 16:00',
+		loginusers: {},
+		gameusers: [],
+		ownuserid: {}, 
 		shiairec: [],
 		peoples: 5
 	    }
@@ -76,10 +70,30 @@ export default new Vuex.Store({
 	    return state.curgameid;
 	},
 	getGamedate: (state) => {
-	    return state.gamedate;
+	    return state.game.gamedate;
+	},
+	getUser: (state) => {
+	    return state.user;
 	}
     },
     mutations: {
+	setUser: (state,payload) => {
+	    state.user = payload;
+	},
+	initGameDatabase: (state) => {
+	    state.game.loginusers[ state.user.uid ]=true;
+	    state.game.ownuserid[ state.user.uid ]=true;
+	    for(let i=0;i<state.game.peoples;i++) {
+		state.game.gameusers.push({no:i,userid:''});
+	    }
+	    firebase.database().ref('/games/' + state.curgameid).set(state.game);
+	},
+	loadGameDatabase: (state,payload) => {
+	    firebase.database().ref('/games/' + payload.curgameid).once('value').then(function(snapshot) {
+		console.log(snapshot.val());
+		state.game = snapshot.val();
+	    })
+	},
 	save: (state) => {
 	    localStorage.setItem('nextPath',state.nextPath);
 	},
@@ -115,11 +129,17 @@ export default new Vuex.Store({
 	}
     },
     actions: {
-	doSave(context) {
-	    context.commit('save')
+	loadGameDatabaseAction: (context,payload) => {
+	    context.commit('loadGameDatabase',payload);
 	},
-	doLoad(context) {
-	    context.commit('load')
+	setUserAction: (context,payload) => {
+	    context.commit('setUser',payload);
+	},
+	doSave: (context) => {
+	    context.commit('save');
+	},
+	doLoad: (context) => {
+	    context.commit('load');
 	},	
 	setParamsAction: (context, payload) => {
 	    context.commit('setParams',payload);
@@ -165,6 +185,9 @@ export default new Vuex.Store({
 		})
 		.catch(error => console.log(error))
 	    context.commit('setShiaiRec', payload);
+	    if(payload.isRenewal) {
+		context.commit('initGameDatabase');
+	    }
 	}
     }
 })

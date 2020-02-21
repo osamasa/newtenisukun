@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-if="isLogin">
     <v-container>
       <v-card v-for="(n,index) in getResult" :key="index">
 	第{{ n['id'] }}試合
@@ -98,17 +98,33 @@
       </v-dialog>      
       
     </v-container>
-  </v-app>  
+  </v-app>
+  <div v-else>
+しばらくおまちください
+  </div>  
 </template>
 
 <script>
+import firebase from 'firebase';
 export default {
     data: () => {
 	return {
+            isLogin: false,
 	    dialog: false,
 	    localCount: 5,
 	    nowrec: {}
 	}},
+    created() {
+    	firebase.auth().onAuthStateChanged((user) => {
+	    if (user) {
+    		this.isLogin = true;
+		this.$store.dispatch('setUserAction',user);
+		this.$store.dispatch('loadGameDatabaseAction',{ curgameid: this.$route.params.curgameid });
+	    } else {
+		this.isLogin = false;
+	    }
+	})	     	
+    },
     computed:{
 	getResult: function() {
 	    return this.$store.getters.getShiairec;
