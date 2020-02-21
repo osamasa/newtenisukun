@@ -129,7 +129,7 @@ export default {
 	    this.dialog = false;
 	},		
 	addRecord: function() {
-	    this.$store.dispatch('setShiaiRecAction');
+	    this.$store.dispatch('setShiaiRecAction',{isRenewal:false});
 	}
     }
 };

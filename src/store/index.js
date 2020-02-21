@@ -12,6 +12,7 @@ export default new Vuex.Store({
 	isFacebook: false,
 	isGoogle: true,
 	isYahoo: false,
+	nextPath: '',
 	userinfo: {
 	    userid:1234,
 	    displayanme:'おさまさ',
@@ -59,11 +60,14 @@ export default new Vuex.Store({
 	    }
     },
     getters: {
+	getNextPath: (state) => {
+	    return state.nextPath;
+	},
 	getShiairec: (state) => {
 	    return state.game.shiairec;
 	},
 	getShiairecNum: (state) => {
-	    return state.game.length;
+	    return state.game.shiairec.length;
 	},
 	getPeoples:  (state) => {
 	    return state.game.peoples;
@@ -76,6 +80,18 @@ export default new Vuex.Store({
 	}
     },
     mutations: {
+	save: (state) => {
+	    localStorage.setItem('nextPath',state.nextPath);
+	},
+	load: (state) => {
+	    if (localStorage.getItem('nextPath')) {
+		state.nextPath=localStorage.getItem('nextPath');
+		localStorage.clear;
+	    }
+	},
+	setNextPath: (state, payload) => {
+	    state.nextPath = payload.fullPath;
+	},
 	setCurgamid(state, payload) {
 	    state.curgameid = payload.curgameid;
 	},
@@ -84,6 +100,9 @@ export default new Vuex.Store({
 	    console.log(state.game.shiairec);
 	},
 	setShiaiRec(state,payload) {
+	    if( payload.isRenewal ) {
+		state.game.shiairec=[];
+	    }
 	    payload.shiairec.forEach( v => {
 		state.game.shiairec.push(v);
 	    });
@@ -96,6 +115,18 @@ export default new Vuex.Store({
 	}
     },
     actions: {
+	doSave(context) {
+	    context.commit('save')
+	},
+	doLoad(context) {
+	    context.commit('load')
+	},	
+	setParamsAction: (context, payload) => {
+	    context.commit('setParams',payload);
+	},
+	setNextPathAction: (context, payload) => {
+	    context.commit('setNextPath',payload);	    
+	},
 	setCurgamidAction(context,payload) {
 	    context.commit('setCurgamid',payload);
 	},
@@ -108,10 +139,8 @@ export default new Vuex.Store({
 	updateShiaiRec(context,payload) {
 	    context.commit('updateRec',payload);
 	},
-	async setShiaiRecAction(context) {
-	    const payload = {
-		shiairec : []
-	    }
+	async setShiaiRecAction(context,payload) {
+	    payload.shiairec=[];
 	    await axios.get('/' + context.getters['getPeoples'] +'.csv')
 		.then((res) => {
 		    let i=0;
