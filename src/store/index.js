@@ -16,6 +16,8 @@ export default new Vuex.Store({
 	nextPath: '',
 	user:{},
 	userinfo: {
+	    displayName: "ほげほげ太郎",
+	    photoURL: "https://lh3.googleusercontent.com/a-/AAuE7mBnOXQMXtpHhReTB-pjTiZI-rsMzJXUJsQozUUiKA",
 	    games: {},
 	    record: [],
 	},
@@ -62,6 +64,8 @@ export default new Vuex.Store({
     mutations: {
 	setUser: (state,payload) => {
 	    state.user = payload;
+	    state.userinfo.displayName=payload.displayName;
+	    state.userinfo.photoURL=payload.photoURL;
 	},
 	setUserinfo: (state,payload) => {
 	    state.userinfo = payload;
@@ -76,8 +80,11 @@ export default new Vuex.Store({
 	},
 	loadGameDatabase: (state) => {
 	    const updates= {};
-	    updates['/games/' + state.curgameid + '/users/' + state.user.uid] = true;	    
-	    updates[ '/userinfo/'+ state.user.uid +'/games/' + state.curgameid ] = true;
+	    updates['/games/' + state.curgameid + '/users/' + state.user.uid] = true;
+	    updates[ '/userinfo/' + state.user.uid + '/displayName/'] = state.userinfo.displayName;
+	    updates[ '/userinfo/' + state.user.uid + '/photoURL/'] = state.userinfo.photoURL;
+	    updates[ '/userinfo/' + state.user.uid +'/games/' + state.curgameid ] = true;
+
 	    firebase.database().ref().update(updates);
 	    
 	    firebase.database().ref('/games/' + state.curgameid).on('value', function(snapshot) {
@@ -137,7 +144,7 @@ export default new Vuex.Store({
 	createGameidAction: (context) => {
 	    context.commit('createGameid');
 	},
-	loadGameDatabaseAction: (context,payload) => {
+	async loadGameDatabaseAction (context,payload) {
 	    context.commit('loadGameDatabase');
 	},
 	setUserAction: (context,payload) => {

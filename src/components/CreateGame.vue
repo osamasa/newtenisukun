@@ -54,7 +54,6 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.isLogin = true;
-		console.log(user);
 		this.$store.dispatch('setUserAction',user);
 	    } else {
 		this.isLogin = false;

@@ -18,6 +18,7 @@ export default {
     created() {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
+	        console.log(user);
 		this.notLogin = false;
 	    } else {
 		this.notLogin = true;
