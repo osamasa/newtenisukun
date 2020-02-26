@@ -71,6 +71,7 @@ export default {
 	    this.$store.dispatch('setCurgamidAction',{'curgameid': this.curgameid});
 	    this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 	    this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});
+    	    this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
 	    this.$store.dispatch('setShiaiRecAction',{isRenewal:true});
 
 	    this.$router.push('/game/' + this.curgameid);

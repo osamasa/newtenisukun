@@ -92,7 +92,7 @@
 	  </v-card-text>
 	  <v-card-actions>
 	    <v-spacer></v-spacer>
-	    <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+	    <v-btn color="blue darken-1" text @click="setResult">Close</v-btn>
 	  </v-card-actions>
 	</v-card>
       </v-dialog>      
@@ -119,7 +119,8 @@ export default {
 	    if (user) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('loadGameDatabaseAction',{ curgameid: this.$route.params.curgameid });
+		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid })
+		this.$store.dispatch('loadGameDatabaseAction');
 	    } else {
 		this.isLogin = false;
 	    }
@@ -141,7 +142,7 @@ export default {
     },
     methods: {
         setResult: function() {
-//	    this.$store.dispatch('updateShiaiRec');
+	    this.$store.dispatch('updateShiaiRecAction',this.nowrec);
 	    this.dialog = false;
 	},		
 	addRecord: function() {
