@@ -99,6 +99,10 @@ export default new Vuex.Store({
 	setNextPath: (state, payload) => {
 	    state.nextPath = payload.fullPath;
 	},
+	createGameid(state) {
+	    const newKey = firebase.database().ref().child('games').push().key;
+	    state.curgameid = newKey;
+	},
 	setCurgamid(state, payload) {
 	    state.curgameid = payload.curgameid;
 	},
@@ -130,6 +134,9 @@ export default new Vuex.Store({
 	},	
     },
     actions: {
+	createGameidAction: (context) => {
+	    context.commit('createGameid');
+	},
 	loadGameDatabaseAction: (context,payload) => {
 	    context.commit('loadGameDatabase');
 	},

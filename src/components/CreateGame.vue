@@ -32,7 +32,6 @@
 <script>
 import Datetime from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
-import md5 from 'md5';
 import firebase from 'firebase';
 
 export default {
@@ -67,16 +66,14 @@ export default {
     },
     methods: {
 	creategame: function (event) {
-	    this.curgameid = md5(this.name + this.gamedate + this.peoples);
-	    this.$store.dispatch('setCurgamidAction',{'curgameid': this.curgameid});
+	    this.$store.dispatch('createGameidAction');
+	    this.curgameid = this.$store.getters.getCurgameid;	    
 	    this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 	    this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});
     	    this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
 	    this.$store.dispatch('setShiaiRecAction',{isRenewal:true});
-
 	    this.$router.push('/game/' + this.curgameid);
 	}
     }
 }
-
 </script>
