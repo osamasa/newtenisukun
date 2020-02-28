@@ -25,22 +25,33 @@ export default new Vuex.Store({
 	    {
 		gamedate: '2020-02-25 16:00',
 		gameplace: 'ほげほげ',
-		users: {},
-		gameusers: [],
-		ownuserid: {}, 
-		shiairec: [],
+		ownuserid: {},
 		peoples: 5
-	    }
+	    },
+	gameusers: {
+	    ownuserid: {},
+	    records: []
+	},
+	shiairec: {
+	    ownuserid: {},
+	    records: []
+	},
+	loginusers: {
+	    users: {},
+	}
     },
     getters: {
 	getNextPath: (state) => {
 	    return state.nextPath;
 	},
 	getShiairec: (state) => {
-	    return state.game.shiairec;
+	    return state.shiairec.records;
 	},
 	getShiairecNum: (state) => {
-	    return state.game.shiairec.length;
+	    return state.shiairec.records.length;
+	},
+	getGameUsers: (state) => {
+	    return state.gameusers.records;
 	},
 	getPeoples:  (state) => {
 	    return state.game.peoples;
@@ -59,9 +70,22 @@ export default new Vuex.Store({
 	},
 	getUserinfo: (state) => {
 	    return state.userinfo;
+	},
+	getLoginUsers: (state) => {
+	    return state.loginusers.users;
 	}
     },
     mutations: {
+	loginUserDatabase: (state) => {
+	    const updates= {};
+	    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/displayName/'] = state.userinfo.displayName,
+	    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/photoURL/'] = state.userinfo.photoURL;
+	    updates[ '/userinfo/' + state.user.uid + '/displayName/'] = state.userinfo.displayName;
+	    updates[ '/userinfo/' + state.user.uid + '/photoURL/'] = state.userinfo.photoURL;
+	    updates[ '/userinfo/' + state.user.uid +'/games/' + state.curgameid ] = true;
+	    firebase.database().ref().update(updates);
+
+	},
 	setUser: (state,payload) => {
 	    state.user = payload;
 	    state.userinfo.displayName=payload.displayName;
@@ -70,28 +94,57 @@ export default new Vuex.Store({
 	setUserinfo: (state,payload) => {
 	    state.userinfo = payload;
 	},
-	initGameDatabase: (state) => {
-	    state.game.users[ state.user.uid ]=true;
-	    state.game.ownuserid[ state.user.uid ]=true;
-	    for(let i=0;i<state.game.peoples;i++) {
-		state.game.gameusers.push({no:i,userid:''});
-	    }
-	    firebase.database().ref('/games/' + state.curgameid).set(state.game);
+	setGameUsers: (state,payload) => {
+	    state.gameusers.records = payload.gameusers;
+	    state.gameusers.ownuserid[ state.user.uid ] = true;
+	    firebase.database().ref('/gameusers/' + state.curgameid ).set(state.gameusers);
 	},
-	loadGameDatabase: (state) => {
+	
+	initGameDatabase: (state) => {
 	    const updates= {};
-	    updates['/games/' + state.curgameid + '/users/' + state.user.uid] = true;
-	    updates[ '/userinfo/' + state.user.uid + '/displayName/'] = state.userinfo.displayName;
-	    updates[ '/userinfo/' + state.user.uid + '/photoURL/'] = state.userinfo.photoURL;
-	    updates[ '/userinfo/' + state.user.uid +'/games/' + state.curgameid ] = true;
-
-	    firebase.database().ref().update(updates);
+	    state.game.ownuserid[ state.user.uid ]=true;
+	    state.gameusers.ownuserid[ state.user.uid ]=true;
 	    
-	    firebase.database().ref('/games/' + state.curgameid).on('value', function(snapshot) {
-		state.game = snapshot.val();
+	    for(let i=0;i<state.game.peoples;i++) {
+		state.gameusers.records.push({
+		    no:(i+1),
+		    userid:'',
+		    displayName:'名無し',
+		    photoURL:''
+		});
+	    }
+	    
+	    updates['/games/' + state.curgameid]=state.game;
+	    updates['/gameusers/' + state.curgameid]=state.gameusers;
+	    updates['/shiairec/' + state.curgameid]=state.shiairec;
+	    firebase.database().ref().update(updates);
+	},
+	loadGameMemberDatabase: (state) => {
+	    firebase.database().ref('/gameusers/' + state.curgameid ).on('value', function(snapshot) {
+		if(snapshot.exists) {
+		    state.gameusers = snapshot.val();
+		} else {
+		    console.log('[ERR] Not Found /gameusers/' + state.curgameid);
+		}
 	    });
-	    firebase.database().ref('/userinfo/' + state.user.uid).on('value',function(snapshot) {
-		state.userinfo = snapshot.val();
+	},
+	loadLoginUsersDatabase: (state) => {
+	    firebase.database().ref('/loginusers/' + state.curgameid  ).on('value', function(snapshot) {
+		if(snapshot.exists) {
+		    state.loginusers = snapshot.val();
+		} else {
+		    console.log('[ERR] Not Found /loginusers/' + state.curgameid);
+		}
+	    });
+	},
+
+	loadGameDatabase: (state,payload) => {
+	    firebase.database().ref('/shiairec/' + state.curgameid).on('value',function(snapshot) {
+		if(snapshot.exists) {
+		    state.shiairec = snapshot.val();
+		} else {
+		    console.log('[ERR] Not Found /shiairec/' + state.curgameid);
+		}		    
 	    });
 	},
 	save: (state) => {
@@ -115,19 +168,19 @@ export default new Vuex.Store({
 	},
 	updateShiaiRec(state, payload) {
 	    const updates= {};
-	    updates['/games/' + state.curgameid + '/shiairec/' + (payload.id-1)]  = payload;
+	    updates['/shiairec/' + state.curgameid + '/records/' + (payload.id-1)]  = payload;
 	    firebase.database().ref().update(updates);
 	},
 	setShiaiRec(state,payload) {
 	    if( payload.isRenewal ) {
-		state.game.shiairec=[];
+		state.shiairec.ownuserid[ state.user.uid ]=true;
+		state.shiairec.records=[];
 	    }
 	    payload.shiairec.forEach( v => {
-		state.game.shiairec.push(v);
+		state.shiairec.records.push(v);
 	    });
 	    if (! payload.isRenewal ) {
-		console.log(state.game.shiairec);
-		firebase.database().ref('/games/' + state.curgameid + '/shiairec/').set(state.game.shiairec);
+		firebase.database().ref('/shiairec/' + state.curgameid ).set(state.shiairec);
 	    }
 	},
 	setPeoples(state,payload) {
@@ -144,8 +197,17 @@ export default new Vuex.Store({
 	createGameidAction: (context) => {
 	    context.commit('createGameid');
 	},
-	async loadGameDatabaseAction (context,payload) {
-	    context.commit('loadGameDatabase');
+	loadGameDatabaseAction (context,payload) {
+	    context.commit('loadGameDatabase',payload);
+	},
+	loadGameMemberDatabaseAction(context,payload) {
+	    context.commit('loadGameMemberDatabase',payload);
+	},
+	loadLoginUsersDatabaseAction(context,payload) {
+	    context.commit('loadLoginUsersDatabase',payload);
+	},
+	loginUserDatabaseAction: (context,payload) => {
+	    context.commit('loginUserDatabase',payload);
 	},
 	setUserAction: (context,payload) => {
 	    context.commit('setUser',payload);

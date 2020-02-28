@@ -5,6 +5,7 @@ import Game from '../components/HelloWorld'
 import CreateGame from '../components/CreateGame'
 import Signout from '../components/Signout'
 import Signin from '../components/Signin'
+import AssignMember from '../components/AssignMember'
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -22,6 +23,12 @@ let router = new Router({
 	    path: '/game/:curgameid',
 	    name: 'game',
 	    component: Game,
+	    meta: { requiresAuth: true  }
+	},
+	{
+	    path: '/assignmember/:curgameid',
+	    name: 'assignmember',
+	    component: AssignMember,
 	    meta: { requiresAuth: true  }
 	},
 	{

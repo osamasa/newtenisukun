@@ -119,7 +119,8 @@ export default {
 	    if (user) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid })
+		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
+		this.$store.dispatch('loginUserDatabaseAction')
 		this.$store.dispatch('loadGameDatabaseAction');
 	    } else {
 		this.isLogin = false;
