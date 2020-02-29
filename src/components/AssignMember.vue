@@ -24,15 +24,32 @@
 	  </v-card-title>
 	  <v-card-text>
 	    <v-container>
-	      <tr v-for="(value, key, index) in loginusers" v-bind:key="key">
-		<td>{{ value.displayName }}</td>
-		<td>{{ value.photoURL }}</td>
-	      </tr>
+    <v-list>
+      <v-list-item
+        v-for="(item,key) in loginusers"
+	:key="key"
+	@click="setData(item,key);isDialog=false"
+         >
+        <v-list-item-content>
+          <v-list-item-title v-text="item.displayName"></v-list-item-title>
+        </v-list-item-content>
+
+        <v-list-item-avatar>
+          <v-img :src="item.photoURL"></v-img>
+        </v-list-item-avatar>
+      </v-list-item>
+    </v-list>
+    
+      <v-text-field
+        v-model="nowrec.displayName"
+        :counter="10"
+        label="手入力の名前"
+      ></v-text-field>
 	    </v-container>
 	  </v-card-text>
 	  <v-card-actions>
 	    <v-spacer></v-spacer>
-	    <v-btn @click="isDialog=false;" color="blue darken-1">Close</v-btn>
+	    <v-btn @click="setData(null,null);isDialog=false;" color="blue darken-1">閉じる</v-btn>	    
 	  </v-card-actions>
 	</v-card>
       </v-dialog>  
@@ -49,9 +66,9 @@ export default {
 	return {
             isLogin: false,
 	    isDialog: false,
-	    nowrec: {},
-	}},
-    created() {
+nowrec: {},
+	}}, 
+   created() {
     	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
     		this.isLogin = true;
@@ -66,8 +83,11 @@ export default {
 	})	     	
     },
     computed: {
+        debugLog(l) {
+	    console.log(l);
+	},
 	loginusers() {
-	    var obj = this.$store.getters.getLoginUsers;
+	    // var obj = this.$store.getters.getLoginUsers;
 	    return this.$store.getters.getLoginUsers;
 	},
 	gameusers: {
@@ -75,11 +95,18 @@ export default {
      		return this.$store.getters.getGameUsers;
 	    },
 	    set() {
-		this.$store.commit('setGameUsers', this.nowrec);
+//		this.$store.commit('setGameUsers', this.nowrec);
 	    }
 	}
     },
     methods: {
+	setData: function(v,k) {
+	    this.$store.dispatch('setGameUsersOneAction', {
+		nowrec: this.nowrec,
+		key: k,
+		value: v
+	    })
+	}
     }
 };
 </script>    

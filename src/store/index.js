@@ -99,6 +99,25 @@ export default new Vuex.Store({
 	    state.gameusers.ownuserid[ state.user.uid ] = true;
 	    firebase.database().ref('/gameusers/' + state.curgameid ).set(state.gameusers);
 	},
+	setGameUsersOne: (state,payload) => {
+	    const index = state.gameusers.records.findIndex((v) => v.no === payload.nowrec.no);
+	    if((payload.key) && (payload.value)) {
+		state.gameusers.records[index] ={
+		    no : payload.nowrec.no,
+		    userid: payload.key,
+		    displayName: payload.value.displayName,
+		    photoURL: payload.value.photoURL		    
+		}
+	    } else {
+		state.gameusers.records[index] ={
+		    no : payload.nowrec.no,
+		    userid: '',
+		    displayName: payload.nowrec.displayName,
+		    photoURL: ''
+		}
+	    }
+	    firebase.database().ref('/gameusers/' + state.curgameid + '/records/' + index + '/').set(state.gameusers.records[index]);
+	},
 	
 	initGameDatabase: (state) => {
 	    const updates= {};
@@ -238,6 +257,9 @@ export default new Vuex.Store({
 	},	    	
 	updateShiaiRecAction(context,payload) {
 	    context.commit('updateShiaiRec',payload);
+	},
+	setGameUsersOneAction(context,payload) {
+	    context.commit('setGameUsersOne',payload);
 	},
 	async setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
