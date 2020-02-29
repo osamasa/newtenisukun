@@ -101,20 +101,16 @@ export default new Vuex.Store({
 	},
 	setGameUsersOne: (state,payload) => {
 	    const index = state.gameusers.records.findIndex((v) => v.no === payload.nowrec.no);
+	    state.gameusers.records[index].no = payload.nowrec.no;
 	    if((payload.key) && (payload.value)) {
-		state.gameusers.records[index] ={
-		    no : payload.nowrec.no,
-		    userid: payload.key,
-		    displayName: payload.value.displayName,
-		    photoURL: payload.value.photoURL		    
-		}
-	    } else {
-		state.gameusers.records[index] ={
-		    no : payload.nowrec.no,
-		    userid: '',
-		    displayName: payload.nowrec.displayName,
-		    photoURL: ''
-		}
+		state.gameusers.records[index].userid=payload.key,
+		state.gameusers.records[index].displayName=payload.value.displayName,
+		state.gameusers.records[index].photoURL= payload.value.photoURL		    
+
+	    } else {		
+		state.gameusers.records[index].userid='';
+		state.gameusers.records[index].displayName=payload.nowrec.displayName;
+		state.gameusers.records[index].photoURL=''
 	    }
 	    firebase.database().ref('/gameusers/' + state.curgameid + '/records/' + index + '/').set(state.gameusers.records[index]);
 	},
