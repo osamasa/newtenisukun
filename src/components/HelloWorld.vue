@@ -100,7 +100,7 @@
     </v-container>
   </v-app>
   <div v-else>
-しばらくおまちください
+    しばらくおまちください
   </div>  
 </template>
 
@@ -121,7 +121,9 @@ export default {
 		this.$store.dispatch('setUserAction',user);
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
 		this.$store.dispatch('loginUserDatabaseAction')
-		this.$store.dispatch('loadGameDatabaseAction');
+		if((!this.$store.getters.getShiairecNum) && (!this.$store.getters.getShiairec)) {
+  		  this.$store.dispatch('loadGameDatabaseAction');
+    	        }
 	    } else {
 		this.isLogin = false;
 	    }

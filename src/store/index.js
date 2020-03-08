@@ -19,7 +19,7 @@ export default new Vuex.Store({
 	    displayName: "ほげほげ太郎",
 	    photoURL: "https://lh3.googleusercontent.com/a-/AAuE7mBnOXQMXtpHhReTB-pjTiZI-rsMzJXUJsQozUUiKA",
 	    games: {},
-	    record: [],
+	    records: [],
 	},
 	game:
 	    {
@@ -53,6 +53,9 @@ export default new Vuex.Store({
 	getGameUsers: (state) => {
 	    return state.gameusers.records;
 	},
+	getGame: (state) => {
+	    return state.game;o
+	},
 	getPeoples:  (state) => {
 	    return state.game.peoples;
 	},
@@ -78,13 +81,10 @@ export default new Vuex.Store({
     mutations: {
 	loginUserDatabase: (state) => {
 	    const updates= {};
+	    updates[ '/userinfo/' + state.user.uid + '/games/' + state.curgameid ] = true;
 	    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/displayName/'] = state.userinfo.displayName,
 	    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/photoURL/'] = state.userinfo.photoURL;
-	    updates[ '/userinfo/' + state.user.uid + '/displayName/'] = state.userinfo.displayName;
-	    updates[ '/userinfo/' + state.user.uid + '/photoURL/'] = state.userinfo.photoURL;
-	    updates[ '/userinfo/' + state.user.uid +'/games/' + state.curgameid ] = true;
 	    firebase.database().ref().update(updates);
-
 	},
 	setUser: (state,payload) => {
 	    state.user = payload;
@@ -119,6 +119,11 @@ export default new Vuex.Store({
 	    const updates= {};
 	    state.game.ownuserid[ state.user.uid ]=true;
 	    state.gameusers.ownuserid[ state.user.uid ]=true;
+	    state.shiairec.ownuserid[ state.user.uid ]=true;	    
+
+	    state.userinfo.displayName=state.user.displayName;
+	    state.userinfo.photoURL=state.user.photoURL;
+	    state.userinfo.games[state.curgameid] = true;
 	    
 	    for(let i=0;i<state.game.peoples;i++) {
 		state.gameusers.records.push({
@@ -128,12 +133,33 @@ export default new Vuex.Store({
 		    photoURL:''
 		});
 	    }
-	    
-	    updates['/games/' + state.curgameid]=state.game;
-	    updates['/gameusers/' + state.curgameid]=state.gameusers;
-	    updates['/shiairec/' + state.curgameid]=state.shiairec;
-	    firebase.database().ref().update(updates);
+
+	    firebase.database().ref('/games/' + state.curgameid).set(state.game,function(error) {
+		if (error) {
+		    console.log('[ERR] ' + '/games/' + state.curgameid);
+		    console.log('[ERR] ' + state.game);		    
+		} else {
+		    firebase.database().ref('/userinfo/' + state.user.uid).set(state.userinfo,function(error) {
+			if(error) {
+			    console.log('[ERR] ' + '/userinfo/' + state.user.uid);
+			    console.log('[ERR] ' + state.userinfo);		    
+			} else {
+			    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/displayName/'] = state.userinfo.displayName,
+			    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/photoURL/'] = state.userinfo.photoURL;
+			    updates['/gameusers/' + state.curgameid]=state.gameusers;
+			    updates['/shiairec/' + state.curgameid]=state.shiairec;
+			    
+			    firebase.database().ref().update(updates);
+			}
+		    })
+		}})
 	},
+	loadGameMemberDatabaseOnce: (state) => {
+	    firebase.database().ref('/gameusers/' + state.curgameid ).once('value').then(function(snapshot) {
+		state.gameusers = snapshot.val();
+		console.log('/gameusers/' + state.curgameid);
+	    });
+	},	
 	loadGameMemberDatabase: (state) => {
 	    firebase.database().ref('/gameusers/' + state.curgameid ).on('value', function(snapshot) {
 		if(snapshot.exists) {
@@ -218,6 +244,9 @@ export default new Vuex.Store({
 	loadGameMemberDatabaseAction(context,payload) {
 	    context.commit('loadGameMemberDatabase',payload);
 	},
+	loadGameMemberDatabaseOneceAction(context,payload) {
+	    context.commit('loadGameMemberDatabaseOnce',payload);	    
+	},	
 	loadLoginUsersDatabaseAction(context,payload) {
 	    context.commit('loadLoginUsersDatabase',payload);
 	},
