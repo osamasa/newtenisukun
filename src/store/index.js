@@ -137,19 +137,31 @@ export default new Vuex.Store({
 	    firebase.database().ref('/games/' + state.curgameid).set(state.game,function(error) {
 		if (error) {
 		    console.log('[ERR] ' + '/games/' + state.curgameid);
+		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + state.game);		    
 		} else {
 		    firebase.database().ref('/userinfo/' + state.user.uid).set(state.userinfo,function(error) {
 			if(error) {
 			    console.log('[ERR] ' + '/userinfo/' + state.user.uid);
+			    console.log('[ERR]' + error);
 			    console.log('[ERR] ' + state.userinfo);		    
 			} else {
-			    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/displayName/'] = state.userinfo.displayName,
-			    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/photoURL/'] = state.userinfo.photoURL;
-			    updates['/gameusers/' + state.curgameid]=state.gameusers;
-			    updates['/shiairec/' + state.curgameid]=state.shiairec;
-			    
-			    firebase.database().ref().update(updates);
+			    firebase.database().ref('/shiairec/' + state.curgameid).set(state.shiairec,function(error) {
+				if(error) {
+				    console.log('[ERR] ' + '/shiairec/' + state.curgameid);
+				    console.log('[ERR]' + error);
+				    console.log('[ERR] ' + state.shiairec);
+				} else {
+				    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/displayName/'] = state.userinfo.displayName,
+				    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/photoURL/'] = state.userinfo.photoURL;
+				    updates['/gameusers/' + state.curgameid]=state.gameusers;
+				    firebase.database().ref().update(updates,function(error) {
+					if(error) {
+					    console.log('[ERR]' + error);
+					}
+				    });
+				}
+			    });
 			}
 		    })
 		}})
