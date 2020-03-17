@@ -16,7 +16,7 @@
 	  label="人数">
 	</v-select>
 	<Datetime v-model="gamedate"
-		  :no-value-to-custom-elem="(true|false)"
+		  :no-value-to-custom-elem="true"
 		  :minute-interval="30"
 		  :format="'YYYY-MM-DD HH:mm'"
 		  :overlay="true"
