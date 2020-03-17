@@ -232,9 +232,9 @@ export default new Vuex.Store({
 	    payload.shiairec.forEach( v => {
 		state.shiairec.records.push(v);
 	    });
-	    if (! payload.isRenewal ) {
-		firebase.database().ref('/shiairec/' + state.curgameid ).set(state.shiairec);
-	    }
+	    
+	    firebase.database().ref('/shiairec/' + state.curgameid ).set(state.shiairec);
+
 	},
 	setPeoples(state,payload) {
 	    state.game.peoples = payload.peoples;

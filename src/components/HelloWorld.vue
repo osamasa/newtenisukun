@@ -129,6 +129,9 @@ export default {
 	})	     	
     },
     computed:{
+	getShiairecNum: function() {
+	    return this.$store.getters.getShiairecNum;
+	},
 	getResult: function() {
 	    return this.$store.getters.getShiairec;
         },
