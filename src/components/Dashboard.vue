@@ -8,94 +8,119 @@
 
       <v-col
         cols="12"
-        sm="6"
-        lg="3"
-      >
-        <base-material-stats-card
-          color="info"
-          icon="mdi-facebook"
-          title="Followers"
-          value="+245"
-          sub-icon="mdi-clock"
-          sub-text="Just Updated"
-        />
-      </v-col>
-
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <base-material-stats-card
-          color="primary"
-          icon="mdi-poll"
-          title="Website Visits"
-          value="75.521"
-          sub-icon="mdi-tag"
-          sub-text="Tracked from Google Analytics"
-        />
-      </v-col>
-
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <base-material-stats-card
-          color="success"
-          icon="mdi-store"
-          title="Revenue"
-          value="$ 34,245"
-          sub-icon="mdi-calendar"
-          sub-text="Last 24 Hours"
-        />
-      </v-col>
-
-      <v-col
-        cols="12"
-        sm="6"
-        lg="3"
-      >
-        <base-material-stats-card
-          color="orange"
-          icon="mdi-sofa"
-          title="Bookings"
-          value="184"
-          sub-icon="mdi-alert"
-          sub-icon-color="red"
-          sub-text="Get More Space..."
-        />
-      </v-col>
-
-      <v-col
-        cols="12"
-        md="6"
+        md="12"
       >
         <base-material-card
-          color="warning"
-          class="px-5 py-3"
+          color="info"
+          class="px-5 py-9"
         >
           <template v-slot:heading>
-            <div class="display-2 font-weight-light">
-              試合結果一覧
-            </div>
-            <div class="subtitle-1 font-weight-light">
-              最近参加された試合の結果の一覧
+            <div class="display-1 font-weight-light">
+              テニス乱数表くんV3
             </div>
           </template>
           <v-card-text>
-            <v-data-table
-              :headers="headers"
-              :items="items"
-            />
+	    このソフトは、仲間同士でテニスのダブルスするときに、組み合わせを決定するのに役立つ乱数表作成ソフトです。
+	    
+	    <div class="title">特徴は？</div>
+	  <ul>
+	    <li> 人数とコート面数から最適なダブルスの組み合わせを作れます</li>
+	    <li> お持ちのSNSアカウントでログインすれば、試合の記録が録れます。</li>
+	    <li> お友達もログインすれば一緒に試合記録が録れます。</li>
+	    <li> あとで試合レポートも確認できます</li>
+	  </ul>
           </v-card-text>
         </base-material-card>
       </v-col>
 
-      <v-col
+     <v-col
         cols="12"
-        md="6"
+        sm="6"
+        lg="3"
       >
+      <base-material-stats-card
+        color="info"
+        icon="mdi-facebook"
+        title="ログイン"
+        value="ログイン"
+        sub-icon="mdi-clock"
+        sub-text="すぐに開始する"
+        />
+     </v-col>
+     
+     <v-col
+       cols="12"
+       sm="6"
+       lg="3"
+       >
+       <base-material-stats-card
+         color="info"
+         icon="mdi-facebook"
+         title="乱数表"
+         value="作成"
+         sub-icon="mdi-clock"
+         sub-text="すぐに開始する"
+         />
+     </v-col>
+
+     <v-col
+        cols="12"
+        sm="6"
+        lg="3"
+      >
+      <base-material-stats-card
+        color="info"
+        icon="mdi-facebook"
+        title="ログイン"
+        value="ログイン"
+        sub-icon="mdi-clock"
+        sub-text="すぐに開始する"
+        />
+     </v-col>
+     
+     <v-col
+       cols="12"
+       sm="6"
+       lg="3"
+       >
+       <base-material-stats-card
+         color="info"
+         icon="mdi-facebook"
+         title="乱数表"
+         value="作成"
+         sub-icon="mdi-clock"
+         sub-text="すぐに開始する"
+         />
+     </v-col>
+     
+     <v-col
+       cols="12"
+       md="6"
+       >
+       <base-material-card
+         color="warning"
+         class="px-5 py-9"
+         >
+         <template v-slot:heading>
+           <div class="display-2 font-weight-light">
+             試合結果一覧
+           </div>
+           <div class="subtitle-1 font-weight-light">
+             最近参加された試合の結果の一覧
+           </div>
+         </template>
+         <v-card-text>
+           <v-data-table
+             :headers="headers"
+             :items="items"
+             />
+         </v-card-text>
+       </base-material-card>
+     </v-col>
+     <v-col
+       cols="12"
+       md="6"
+       >
         <base-material-card class="px-5 py-3">
           <template v-slot:heading>
             <v-tabs
