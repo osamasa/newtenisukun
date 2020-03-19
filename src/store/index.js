@@ -8,11 +8,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
 	curgameid: 123456,
-	isLogin: true,
-	isTwitter: false,
-	isFacebook: false,
-	isGoogle: true,
-	isYahoo: false,
 	nextPath: '',
 	user:{},
 	userinfo: {
@@ -115,7 +110,7 @@ export default new Vuex.Store({
 	    firebase.database().ref('/gameusers/' + state.curgameid + '/records/' + index + '/').set(state.gameusers.records[index]);
 	},
 	
-	initGameDatabase: (state) => {
+	initGameState: (state) => {
 	    const updates= {};
 	    state.game.ownuserid[ state.user.uid ]=true;
 	    state.gameusers.ownuserid[ state.user.uid ]=true;
@@ -133,39 +128,87 @@ export default new Vuex.Store({
 		    photoURL:''
 		});
 	    }
+	},
 
+	storeGameDb: (state) => {
 	    firebase.database().ref('/games/' + state.curgameid).set(state.game,function(error) {
 		if (error) {
 		    console.log('[ERR] ' + '/games/' + state.curgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + state.game);		    
-		} else {
-		    firebase.database().ref('/userinfo/' + state.user.uid).set(state.userinfo,function(error) {
+		}}
+								    );
+	},
+
+	loadUserInfoDb: (state) => {
+	    firebase.database().ref('/userinfo/' + state.user.uid).once('value').then(function(snapshot) {
+		if(snapshot.val()) {
+		    const curgameid = state.curgameid;
+		    const payload = { curgameid : true};
+		    state.userinfo = snapshot.val();
+		    state.userinfo.game = payload;
+		    firebase.database().ref('/userinfo/' + state.user.uid + '/games/' + state.curgameid).set(true,function(error) {
 			if(error) {
-			    console.log('[ERR] ' + '/userinfo/' + state.user.uid);
 			    console.log('[ERR]' + error);
-			    console.log('[ERR] ' + state.userinfo);		    
-			} else {
-			    firebase.database().ref('/shiairec/' + state.curgameid).set(state.shiairec,function(error) {
-				if(error) {
-				    console.log('[ERR] ' + '/shiairec/' + state.curgameid);
-				    console.log('[ERR]' + error);
-				    console.log('[ERR] ' + state.shiairec);
-				} else {
-				    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/displayName/'] = state.userinfo.displayName,
-				    updates[ '/loginusers/' + state.curgameid + '/users/' + state.user.uid  + '/photoURL/'] = state.userinfo.photoURL;
-				    updates['/gameusers/' + state.curgameid]=state.gameusers;
-				    firebase.database().ref().update(updates,function(error) {
-					if(error) {
-					    console.log('[ERR]' + error);
-					}
-				    });
-				}
-			    });
 			}
 		    })
-		}})
+		} else {
+		    state.userinfo.displayName=state.user.displayName;
+		    state.userinfo.photoURL=state.user.photoURL;
+		    state.userinfo.games[state.curgameid] = true;
+		    firebase.database().ref('/userinfo/' + state.user.uid ).set(state.userinfo,function(error) {
+			if(error) {
+			    console.log('[ERR]' + error);
+			}
+		    })
+		}
+	    })
 	},
+	
+	storeUserInfoDb: (state) => {
+	    firebase.database().ref('/userinfo/' + state.user.uid).set(state.userinfo,function(error) {
+		if (error) {
+		    console.log('[ERR] ' + '/userinfo/' + state.user.uid);
+		    console.log('[ERR]' + error);
+		}
+	    }
+								      )
+	},
+	
+	storeShiairecDb: (state) => {
+	    firebase.database().ref('/shiairec/' + state.curgameid).set(state.shiairec,function(error) {
+		if(error) {
+		    console.log('[ERR] ' + '/shiairec/' + state.curgameid);
+		    console.log('[ERR]' + error);
+		    console.log('[ERR] ' + state.shiairec);
+		}}
+								       )
+	},
+
+	storeLoginUsersDb: (state) => {
+	    const payload = {
+		photoURL : state.user.photoURL || '',
+		displayName : state.user.displayName || '名無しのゴンベイ'
+	    };
+	    firebase.database().ref('/loginusers/' + state.curgameid + '/users/' + state.user.uid).set(payload, function(error) {
+		if(error) {		
+		    console.log('[ERR]' + error);
+		    console.log('[ERR] login user displayname');
+		}
+	    }
+										      )
+	},
+
+	storeGameUsersDb: (state) => {
+	    firebase.database().ref('/gameusers/' + state.curgameid).set(state.gameusers,function(error) {
+		if(error) {
+		    console.log('[ERR] ' + '/gameusers/' + state.curgameid);
+		    console.log('[ERR]' + error);
+		    console.log('[ERR] ' + state.gameusers);
+		}}
+								       )
+	},
+	
 	loadGameMemberDatabaseOnce: (state) => {
 	    firebase.database().ref('/gameusers/' + state.curgameid ).once('value').then(function(snapshot) {
 		state.gameusers = snapshot.val();
@@ -247,6 +290,9 @@ export default new Vuex.Store({
 	},	
     },
     actions: {
+	getUserAction: (context) => {
+	    context.commit('getUser');
+	},
 	createGameidAction: (context) => {
 	    context.commit('createGameid');
 	},
@@ -298,6 +344,12 @@ export default new Vuex.Store({
 	setGameUsersOneAction(context,payload) {
 	    context.commit('setGameUsersOne',payload);
 	},
+	storeLoginUsersDbAction(context,payload) {
+	    context.commit('storeLoginUsersDb',payload);
+	},
+	loadUserInfoDbAction(context,payload) {
+	    context.commit('loadUserInfoDb',payload);
+	},
 	async setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
 	    await axios.get('/' + context.getters['getPeoples'] +'.csv')
@@ -325,8 +377,13 @@ export default new Vuex.Store({
 		.catch(error => console.log(error))
 	    context.commit('setShiaiRec', payload);
 	    if(payload.isRenewal) {
-		context.commit('initGameDatabase');
-	    } 
+		context.commit('initGameState');
+		context.commit('storeGameDb');
+		context.commit('storeUserInfoDb');
+		context.commit('storeShiairecDb');
+		context.commit('storeGameUsersDb');
+	    }
+	    context.commit('storeLoginUsersDb');	    
 	}
     }
 })

@@ -9,6 +9,7 @@ import AssignMember from '../components/AssignMember'
 import ViewResult from '../components/ViewResult'
 import GameResult from '../components/GameResult'
 import Dashboard from '../components/Dashboard'
+import ViewQRCode from '../components/ViewQRCode'
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -27,7 +28,14 @@ let router = new Router({
 	    name: 'Dashboard',
 	    component: Dashboard,
 	    meta: { requiresAuth: true }	    
+	},
+	{
+	    path: '/viewqrcode/:curgameid',
+	    name: 'viewqrcode',
+	    component: ViewQRCode,
+	    meta: { requiresAuth: true }	    
 	},	
+	
 	{
 	    path: '/gameresult/:curgameid',
 	    name: 'GameResult',

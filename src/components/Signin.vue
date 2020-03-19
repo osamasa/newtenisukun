@@ -1,7 +1,9 @@
 <template>
- <div v-if="notLogin">
-    <button @click="authGoogle">Google login</button>
-</div>
+  <div v-if="notLogin">
+    <v-btn color="grey lighten-5" @click="authGoogle">Google</v-btn>
+    <v-btn color="error" @click="authYahoo">Yahoo!</v-btn>
+    <v-btn color="indigo" @click="authFacebook">FaceBook</v-btn>
+  </div>
 <div v-else>
 しばらくお待ちください    
 </div>
@@ -26,10 +28,22 @@ export default {
 	})
     },
     methods: {  
-      authGoogle () {
-	  const provider = new firebase.auth.GoogleAuthProvider()
-	  firebase.auth().signInWithRedirect(provider)
-    }
+	authGoogle () {
+	    const provider = new firebase.auth.GoogleAuthProvider()
+	    firebase.auth().signInWithRedirect(provider)
+	},
+	authYahoo() {
+	    const provider = new firebase.auth.OAuthProvider('yahoo.com');
+	    firebase.auth().signInWithRedirect(provider)
+	},
+	authFacebook() {
+	    const provider = new firebase.auth.FacebookAuthProvider();
+	    firebase.auth().signInWithRedirect(provider)
+	},
+	authMicrosoft() {
+	    const provider = new firebase.auth.OAuthProvider('microsoft.com');
+	    firebase.auth().signInWithRedirect(provider)
+	}
   }
 }
 </script>

@@ -4,52 +4,123 @@
       app
       color="primary"
       dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <div class="d-flex align-center">
+      テニス乱数表君V3
+      </div>
+    <v-spacer></v-spacer>
+    <v-avatar v-if="isLogin">
+        <img
+          :src="photoURL"
+          :alt="displayName"
+        >
+      </v-avatar>    
+    <div class="d-flex align-center" v-if="isLogin">
+    <v-btn @click="signOut">ログアウト</v-btn>
+      </div>
+      <div class="d-flex align-center" v-else>
+    <v-btn @click="signIn">ログイン</v-btn>
+      </div>      
     </v-app-bar>
 
     <v-content>
       <router-view/>
     </v-content>
+
+
+     <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
+      >
+        <v-list-item v-if="isLogin">
+          <v-list-item-avatar>
+	    <v-img :src="photoURL"></v-img>
+          </v-list-item-avatar>
+  
+          <v-list-item-content>
+            <v-list-item-title>{{ displayName }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+	<v-list-item v-else>
+          <v-list-item-content>
+            <v-list-item-title>未ログイン</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+  	
+        <v-divider></v-divider>
+  
+        <v-list dense>
+  
+          <v-list-item
+            v-for="item in getItems"
+            :key="item.title"
+            link
+          >
+  	    <v-list-item-content>
+    <v-list-item-title @click="chgURL(item.url)" >{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+
   </v-app>
 </template>
 
 <script>
+import firebase from 'firebase';
 export default {
-  name: 'App',
+    name: 'App',
 
-  components: {
-  },
-  data: () => ({
-  }),
+    data: () => ({
+	drawer: null,
+	isLogin: false,
+	displayName: null,
+	photoURL: null,
+    }),
+    mounted() {
+	firebase.auth().onAuthStateChanged((users) => {
+	    if(users) {
+		this.displayName = users.displayName;
+		this.photoURL = users.photoURL;
+		this.isLogin = true;
+	    }
+	});
+    },
+    components: {
+    },
+    methods: {
+	signOut: function () {
+	    firebase.auth().signOut()
+	    this.isLogin=false;
+	    this.$router.push('/');
+	}  ,
+	signIn: function () {
+	    this.$router.push('/signin');
+	}  ,
+	chgURL: function(url) {
+	    this.$router.push(url)
+	}
+
+    },
+    computed: {
+            getItems: function() {
+		var items= [
+		    { title: 'トップ', icon: 'dashboard', url: '/'},
+		    { title: 'ゲーム作成', icon: 'question_answer',url: '/creategame'}
+		];
+
+		if((this.isLogin) && (this.$store.getters.getCurgameid)) {
+		    items.push({ title: 'ゲーム画面', icon: 'question_answer',url: '/game/' + this.$store.getters.getCurgameid });
+		items.push({ title: '割り当て', icon: 'question_answer' , url: '/assignmember/' + this.$store.getters.getCurgameid});
+		    items.push({ title: '結果', icon: 'question_answer' ,url: '/gameresult/' + this.$store.getters.getCurgameid });
+
+		}
+		return items;
+	    }
+    }
 };
 </script>

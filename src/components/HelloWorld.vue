@@ -27,7 +27,7 @@
 	      </div>
 	      <div v-else>
 		<v-card-actions>
-		  <v-btn color="primary" @click="dialog=true;nowrec=n;">結果入力</v-btn>
+		  <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力</v-btn>
 		</v-card-actions>
 	      </div>
 	    </div>	      	    
@@ -40,9 +40,9 @@
 	</v-row>
       </v-card>
       <v-card>
-	<v-btn :x-large=true color='secondary' :block=true @click='addRecord'>もっと試合を行う</v-btn>
+    <v-btn :x-large=true color='secondary' :block=true @click='addRecord'>もっと試合を行う</v-btn>
       </v-card>
-      <v-dialog v-model="dialog" persistent max-width="450px" v-if="dialog">
+      <v-dialog v-model="isDialog" persistent max-width="450px" v-if="isDialog">
 	<v-card>
 	  <v-card-title>
 	    <span class="headline">勝敗入力</span>
@@ -96,7 +96,6 @@
 	  </v-card-actions>
 	</v-card>
       </v-dialog>      
-      
     </v-container>
   </v-app>
   <div v-else>
@@ -106,22 +105,25 @@
 
 <script>
 import firebase from 'firebase';
+
 export default {
     data: () => {
 	return {
             isLogin: false,
-	    dialog: false,
+	    isDialog: false,
 	    localCount: 5,
-	    nowrec: {}
+	    nowrec: {},
 	}},
     created() {
     	firebase.auth().onAuthStateChanged((user) => {
-	    if (user) {
+	    if ( user ) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
+		this.$store.dispatch('storeLoginUsersDbAction');
+		this.$store.dispatch('loadUserInfoDbAction');
 		if(!this.$store.getters.getShiairecNum) {
-  		  this.$store.dispatch('loadGameDatabaseAction');
+  		    this.$store.dispatch('loadGameDatabaseAction');
     	        }
 	    } else {
 		this.isLogin = false;
@@ -148,11 +150,12 @@ export default {
     methods: {
         setResult: function() {
 	    this.$store.dispatch('updateShiaiRecAction',this.nowrec);
-	    this.dialog = false;
+	    this.isDialog = false;
 	},		
 	addRecord: function() {
 	    this.$store.dispatch('setShiaiRecAction',{isRenewal:false});
 	}
+
     }
 };
 </script>
