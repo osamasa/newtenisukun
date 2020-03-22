@@ -1,12 +1,29 @@
 <template>
-  <div v-if="notLogin">
-    <v-btn color="grey lighten-5" @click="authGoogle">Google</v-btn>
-    <v-btn color="error" @click="authYahoo">Yahoo!</v-btn>
-    <v-btn color="indigo" @click="authFacebook">FaceBook</v-btn>
-  </div>
-<div v-else>
-しばらくお待ちください    
-</div>
+  <v-row justify="center">
+    <v-dialog v-model="notLogin" persistent max-width="480" v-if="notLogin">
+      <v-card>
+	<v-card-title class="headline">ログイン方法をお選びください</v-card-title>
+	<v-list>
+	  <v-list-item>
+            <v-list-item-content>
+	      <v-btn color="grey lighten-5" @click="authGoogle">Google</v-btn>
+            </v-list-item-content>
+	  </v-list-item>
+	  <v-list-item>
+            <v-list-item-content>	  
+	      <v-btn color="error" @click="authYahoo">Yahoo!</v-btn>
+            </v-list-item-content>
+	  </v-list-item>	      
+	</v-list>
+        <v-card-actions>
+          <v-btn color="green darken-1" text @click="">戻る</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <div v-else>
+      しばらくお待ちください    
+    </div>
+  </v-row>
 </template>
 <script>
 import firebase from 'firebase'
@@ -43,7 +60,8 @@ export default {
 	authMicrosoft() {
 	    const provider = new firebase.auth.OAuthProvider('microsoft.com');
 	    firebase.auth().signInWithRedirect(provider)
-	}
+},
+
   }
 }
 </script>

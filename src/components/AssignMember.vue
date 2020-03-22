@@ -66,32 +66,27 @@ export default {
 	return {
             isLogin: false,
 	    isDialog: false,
-nowrec: {},
-	}}, 
+	    nowrec: {}
+	}},
    created() {
-    	firebase.auth().onAuthStateChanged((user) => {
+       firebase.auth().onAuthStateChanged((user) => {
+	   let retval = {};
 	    if (user) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
-		this.$store.dispatch('loginUserDatabaseAction');		
+		
 		this.$store.dispatch('loadGameMemberDatabaseAction');
-		this.$store.dispatch('loadLoginUsersDatabaseAction');
-	    } else {
-		this.isLogin = false;
 	    }
-	})	     	
-    },
+	})
+   },
     computed: {
         debugLog(l) {
 	    console.log(l);
 	},
-	loginusers() {
-	    // var obj = this.$store.getters.getLoginUsers;
-	    return this.$store.getters.getLoginUsers;
-	},
 	gameusers: {
 	    get() {
+		console.log(this.$store.getters.getGameUsers);
      		return this.$store.getters.getGameUsers;
 	    },
 	    set() {
@@ -106,6 +101,17 @@ nowrec: {},
 		key: k,
 		value: v
 	    })
+	}
+    },
+    computed: {
+	loginusers : function() {
+	    let retval = {};
+	    firebase.database().ref('/userinfo').orderByChild('games/' + this.$route.params.curgameid).startAt(true).endAt(true).once('value', function(snapshot) {
+		if(snapshot.val()) {
+		    retval = snapshot.val();
+		}
+	    })
+	    return retval;
 	}
     }
 };

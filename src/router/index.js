@@ -8,7 +8,7 @@ import Signin from '../components/Signin'
 import AssignMember from '../components/AssignMember'
 import ViewResult from '../components/ViewResult'
 import GameResult from '../components/GameResult'
-import Dashboard from '../components/Dashboard'
+import ListResult from '../components/ListResult'
 import ViewQRCode from '../components/ViewQRCode'
 import firebase from 'firebase'
 
@@ -24,9 +24,9 @@ let router = new Router({
 	    meta: { requiresAuth: true }	    
 	},
 	{
-	    path: '/test',
-	    name: 'Dashboard',
-	    component: Dashboard,
+	    path: '/listresult',
+	    name: 'ListResult',
+	    component: ListResult,
 	    meta: { requiresAuth: true }	    
 	},
 	{

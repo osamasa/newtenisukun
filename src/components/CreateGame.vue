@@ -38,7 +38,6 @@ export default {
     name: 'CreateGame',
     data: () => ({
         isLogin: false,
-	curgameid: '',
 	peoples:5,
 	items:[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 	valid: false,
@@ -65,13 +64,13 @@ export default {
     },
     methods: {
 	creategame: function (event) {
+	    this.$store.dispatch('resetGames');
 	    this.$store.dispatch('createGameidAction');
-	    this.curgameid = this.$store.getters.getCurgameid;	    
 	    this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 	    this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});
     	    this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
 	    this.$store.dispatch('setShiaiRecAction',{isRenewal:true});
-	    this.$router.push('/game/' + this.curgameid);
+	    this.$router.push('/game/' + this.$store.getters.getCurgameid);
 	}
     }
 }

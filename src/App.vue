@@ -113,10 +113,11 @@ export default {
 		    { title: 'ゲーム作成', icon: 'question_answer',url: '/creategame'}
 		];
 
-		if((this.isLogin) && (this.$store.getters.getCurgameid)) {
-		    items.push({ title: 'ゲーム画面', icon: 'question_answer',url: '/game/' + this.$store.getters.getCurgameid });
-		items.push({ title: '割り当て', icon: 'question_answer' , url: '/assignmember/' + this.$store.getters.getCurgameid});
-		    items.push({ title: '結果', icon: 'question_answer' ,url: '/gameresult/' + this.$store.getters.getCurgameid });
+		if((this.isLogin) && (this.$store.getters.getShiairec.length > 0)) {
+		    items.push({ title: 'ゲーム画面', url: '/game/' + this.$store.getters.getCurgameid });
+		items.push({ title: '割り当て', url: '/assignmember/' + this.$store.getters.getCurgameid});
+		    items.push({ title: '結果', url: '/gameresult/' + this.$store.getters.getCurgameid });
+		    items.push({ title: '友達を誘う', url: '/viewqrcode/' + this.$store.getters.getCurgameid });		    
 
 		}
 		return items;

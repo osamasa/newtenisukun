@@ -120,7 +120,7 @@ export default {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
-		this.$store.dispatch('storeLoginUsersDbAction');
+		this.$store.dispatch('storeGamesUsersDbAction');
 		this.$store.dispatch('loadUserInfoDbAction');
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');
