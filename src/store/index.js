@@ -210,7 +210,7 @@ export default new Vuex.Store({
 	    firebase.database().ref().update(updates);
 	},
 	async setGameUsersOneAction(context,payload) {
-	    const index = state.gameusers.findIndex((v) => v.no === payload.nowrec.no);
+	    const index = context.getters.getGameUsers.findIndex((v) => v.no === payload.nowrec.no);
 	    payload['index'] = index;
 	    context.commit('setGameUsersOne',payload);
 

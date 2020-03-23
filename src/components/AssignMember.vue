@@ -80,20 +80,6 @@ export default {
 	    }
 	})
    },
-    computed: {
-        debugLog(l) {
-	    console.log(l);
-	},
-	gameusers: {
-	    get() {
-		console.log(this.$store.getters.getGameUsers);
-     		return this.$store.getters.getGameUsers;
-	    },
-	    set() {
-//		this.$store.commit('setGameUsers', this.nowrec);
-	    }
-	}
-    },
     methods: {
 	setData: function(v,k) {
 	    this.$store.dispatch('setGameUsersOneAction', {
@@ -104,11 +90,18 @@ export default {
 	}
     },
     computed: {
+	gameusers : function() {
+	    return this.$store.getters.getGameUsers;
+	},
 	loginusers : function() {
-	    let retval = {};
+	    const retval = {};
 	    firebase.database().ref('/userinfo').orderByChild('games/' + this.$route.params.curgameid).startAt(true).endAt(true).once('value', function(snapshot) {
 		if(snapshot.val()) {
-		    retval = snapshot.val();
+		    snapshot.forEach(function(childSnapshot) {
+			let childKey = childSnapshot.key;
+			let childData = childSnapshot.val();
+			retval[childKey] = childData;
+		    })
 		}
 	    })
 	    return retval;
