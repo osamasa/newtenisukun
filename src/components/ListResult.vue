@@ -14,9 +14,8 @@
             <th>人数</th>
           </tr>
         </thead>
-
-	<tbody v-for="(item,key) in mygames" :key="key">
-	  <tr @click="linkurl(index)">
+	<tbody>
+	  <tr v-for="(item,key) in mygames" :key="key" @click="linkurl(key);">
             <td>{{ item.gamedate }}</td>
             <td>{{ item.gameplace }}</td>
 	    <td>{{ item.peoples }}</td>
@@ -26,9 +25,6 @@
     </base-material-card>
 </v-container>
 </v-app>
-<div v-else>
-  しばらくおまちください
-</div>  
 </template>
 <script>
 import firebase from 'firebase';
@@ -36,40 +32,29 @@ export default {
     data: () => {
 	return {
             isLogin: false,
-	    uid: null,
-	    mygames: null
+	    uid: null	    
 	}
     },
     created() {
     	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
-		console.log(1);
     		this.isLogin = true;
-		this.uid = user.uid;
+		this.$store.dispatch('setUserAction',user);
+		this.$store.dispatch('loadMyGamesAction');		
 	    } else {
-		console.log(2);
 		this.isLogin = false;
 	    }
 	})
     },
-    beforeMount() {
-	const retval = {};
-	firebase.database().ref('/games').orderByChild('users/' + this.uid).startAt(true).endAt(true).once('value',function(snapshot) {
-	    if(snapshot.val()) {
-		snapshot.forEach(function(childSnapshot) {
-		    let childKey = childSnapshot.key;
-		    let childData = childSnapshot.val();
-		    retval[childKey] = childData;
-		})		    
-	    } else {
-		console.log('[error] ' + '/games/users/' + this.uid);
-	    }
-	})
-	this.mygames =  retval;
+    computed: {
+	mygames: function () {
+	    return this.$store.getters.getMyGames;
+	}
     },
     methods: {
 	linkurl : function(i) {
-	    this.$router.push('/game/' + i);
+	    let routeData = this.$router.resolve('/game/'+i );
+	    window.open(routeData.href, '_blank');
 	}
     }
 }

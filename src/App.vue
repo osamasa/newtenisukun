@@ -99,7 +99,8 @@ export default {
 	    this.$router.push('/');
 	}  ,
 	signIn: function () {
-	    this.$router.push('/signin');
+	    let routeData = this.$router.resolve('/listresult');
+	    window.open(routeData.href,'_blank');	    
 	}  ,
 	chgURL: function(url) {
 	    this.$router.push(url)
@@ -113,7 +114,7 @@ export default {
 		    { title: 'ゲーム作成', icon: 'question_answer',url: '/creategame'}
 		];
 
-		if((this.isLogin) && (this.$store.getters.getShiairec.length > 0)) {
+		if((this.isLogin) && (this.$store.getters.getShiairec)) {
 		    items.push({ title: 'ゲーム画面', url: '/game/' + this.$store.getters.getCurgameid });
 		items.push({ title: 'メンバー割当', url: '/assignmember/' + this.$store.getters.getCurgameid});
 		    items.push({ title: '結果を見る', url: '/gameresult/' + this.$store.getters.getCurgameid });
@@ -121,6 +122,7 @@ export default {
 		    items.push({ title: '結果を教える', url: '/viewqrcode/gameresult/' + this.$store.getters.getCurgameid });		    
 
 		}
+
 		return items;
 	    }
     }

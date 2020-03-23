@@ -10,6 +10,7 @@ export default new Vuex.Store({
 	curgameid: 123456,
 	nextPath: '',
 	user:{},
+	mygames: {},
 	userinfo: {
 	    displayName: "ほげほげ太郎",
 	    photoURL: "https://lh3.googleusercontent.com/a-/AAuE7mBnOXQMXtpHhReTB-pjTiZI-rsMzJXUJsQozUUiKA",
@@ -28,6 +29,9 @@ export default new Vuex.Store({
 	shiairec: []
     },
     getters: {
+	getMyGames: (state) => {
+	    return state.mygames;
+	},
 	getNextPath: (state) => {
 	    return state.nextPath;
 	},
@@ -63,6 +67,9 @@ export default new Vuex.Store({
 	}
     },
     mutations: {
+	setMyGames: (state,payload) => {
+	    state.mygames = payload;
+	},
 	setUser: (state,payload) => {
 	    state.user = payload;
 	    state.userinfo.displayName=payload.displayName;
@@ -322,6 +329,18 @@ export default new Vuex.Store({
 		    console.log('[ERR] ' + context.getters.getShiairec);
 		}}
 								       )
+	},
+
+	async loadMyGamesAction(context) {
+	    const payload = {};
+	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).once('value',function(snapshot) {
+		if(snapshot.val()) {
+		    console.log(snapshot.val());
+		    context.commit('setMyGames',snapshot.val());
+		} else {
+		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
+		}
+	    })
 	},
 	
 	async setShiaiRecAction(context,payload) {

@@ -54,7 +54,7 @@ let router = new Router({
 	    component: AssignMember,
 	    meta: { requiresAuth: true  }
 	},
-		{
+	{
 	    path: '/viewresult/:curgameid',
 	    name: 'viewresult',
 	    component: ViewResult,
