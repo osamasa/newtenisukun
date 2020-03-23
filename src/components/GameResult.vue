@@ -100,6 +100,9 @@
       </v-simple-table>
     </base-material-card>
 </v-container>
+    <v-container>
+      <v-btn @click="goback();" color="primary">戻る</v-btn>
+    </v-container>          
   </v-app>
   <div v-else>
 しばらくおまちください
@@ -169,6 +172,9 @@ export default {
 		    return true;		    
 		}
 	    }).length;
+	},
+	goback: function() {
+	    this.$router.go(-1);
 	}	
     }
 }

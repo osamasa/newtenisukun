@@ -1,12 +1,9 @@
 <template>
-  <v-app v-if="isLogin">
+  <v-app>
     <v-container>
       <vue-qrcode :value=getGameURL :options="option" tag="img"></vue-qrcode>
     </v-container>
   </v-app>
-  <div v-else>
-    しばらくおまちください
-  </div>  
 </template>
 
 <script>
@@ -18,7 +15,6 @@ export default {
     },    
     data: () => {
 	return {
-	    isLogin: false,
 	    option: {
 		errorCorrectionLevel: "M",
 		maskPattern: 0,
@@ -30,21 +26,11 @@ export default {
 		    light: "#FFFFFFFF"
 		}
 	    }	    
-	}},
-    created() {
-    	firebase.auth().onAuthStateChanged((user) => {
-	    if (user) {
-    		this.isLogin = true;
-		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
-	    } else {
-		this.isLogin = false;
-	    }
-	})	     	
+	}
     },
     computed:{
 	getGameURL: function() {
-	    return 'http://172.20.10.6:8080/game/' + this.$store.getters.getCurgameid;
+	    return 'http://172.20.10.6:8080/' + this.$route.params.ope + '/' + this.$route.params.curgameid;
 	}
     },
     methods: {

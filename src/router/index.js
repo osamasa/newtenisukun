@@ -30,7 +30,7 @@ let router = new Router({
 	    meta: { requiresAuth: true }	    
 	},
 	{
-	    path: '/viewqrcode/:curgameid',
+	    path: '/viewqrcode/:ope/:curgameid',
 	    name: 'viewqrcode',
 	    component: ViewQRCode,
 	    meta: { requiresAuth: true }	    

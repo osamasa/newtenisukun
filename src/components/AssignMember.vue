@@ -2,7 +2,6 @@
   <v-app v-if="isLogin">
     <v-container>
       <v-simple-table>
-      <template v-slot:default>
         <thead>
           <tr>
             <th class="text-left">番号</th>
@@ -15,8 +14,10 @@
             <td >{{ item.displayName }}</td>
           </tr>
         </tbody>
-      </template>
-      </v-simple-table>
+    </v-simple-table>
+    <v-container>
+      <v-btn @click="goback();" color="primary">戻る</v-btn>
+    </v-container>      
       <v-dialog v-model="isDialog" persistent max-width="450px" >
 	<v-card>
 	  <v-card-title>
@@ -87,6 +88,9 @@ export default {
 		key: k,
 		value: v
 	    })
+	},
+	goback: function() {
+	    this.$router.go(-1);
 	}
     },
     computed: {

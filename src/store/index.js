@@ -251,14 +251,14 @@ export default new Vuex.Store({
 		    })
 		} else {
 		    const payload = {
-			displayName : state.user.displayName,
-			photoURL : state.user.photoURL,
+			displayName : context.getters.getUser.displayName,
+			photoURL : context.getters.getUser.photoURL,
 			records: [],
 			games : {}
 		    };
 		    payload.games.curgameid = true;
 		    context.commit('setUserinfo',payload);
-		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(state.userinfo,function(error) {
+		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
 			    console.log('[ERR]' + error);
 			}
