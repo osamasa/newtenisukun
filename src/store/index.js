@@ -97,15 +97,18 @@ export default new Vuex.Store({
 	    state.userinfo.displayName=state.user.displayName;
 	    state.userinfo.photoURL=state.user.photoURL;
 	    state.userinfo.games[state.curgameid] = true;
+
+	    const tmp = [];
 	    
 	    for(let i=0;i<state.game.peoples;i++) {
-		state.gameusers.push({
+		    tmp.push({
 		    no:(i+1),
 		    userid:'',
 		    displayName:'名無し',
 		    photoURL:''
 		});
 	    }
+	    state.gameusers = tmp;
 	},
 	setNextPath: (state, payload) => {
 	    state.nextPath = payload.nextpath;
