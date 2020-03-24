@@ -263,7 +263,7 @@ export default new Vuex.Store({
 			records: [],
 			games : {}
 		    };
-		    payload.games.curgameid = true;
+		    payload.games[ curgameid ] = true;
 		    context.commit('setUserinfo',payload);
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
@@ -339,6 +339,17 @@ export default new Vuex.Store({
 		}}
 								       )
 	},
+	async addShiairecDb (context,payload)  {
+	    payload.shiairec.forEach( v => {
+		firebase.database().ref('/shiairec/' + context.getters.getCurgameid + '/' + (v.id-1) ).set(v).then(function(error) {
+		if(error) {
+		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
+		    console.log('[ERR]' + error);
+		    console.log('[ERR] ' + context.getters.getShiairec);
+		}}
+														   )
+	    })
+	},			    
 
 	async loadMyGamesAction(context) {
 	    const payload = {};
@@ -376,14 +387,15 @@ export default new Vuex.Store({
 		    });
 		})
 		.catch(error => console.log(error))
-	    context.commit('setShiaiRec', payload);
 	    if(payload.isRenewal) {
 		context.commit('initGameState');
 		context.dispatch('storeGameDb');
 		context.dispatch('storeUserInfoDb');
 		context.dispatch('storeGameUsersDb');
+		context.dispatch('storeShiairecDb');
+	    } else {
+		context.dispatch('addShiairecDb',payload);
 	    }
-	    context.dispatch('storeShiairecDb');	    
 	}
     }
 })
