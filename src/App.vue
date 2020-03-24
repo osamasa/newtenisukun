@@ -17,11 +17,9 @@
         >
       </v-avatar>    
     <div class="d-flex align-center" v-if="isLogin">
-    <v-btn @click="signOut">ログアウト</v-btn>
+       <v-btn @click="signOut">ログアウト</v-btn>
       </div>
-      <div class="d-flex align-center" v-else>
-    <v-btn @click="signIn">ログイン</v-btn>
-      </div>      
+
     </v-app-bar>
 
     <v-content>
@@ -99,8 +97,7 @@ export default {
 	    this.$router.push('/');
 	}  ,
 	signIn: function () {
-	    let routeData = this.$router.resolve('/listresult');
-	    window.open(routeData.href,'_blank');	    
+	    this.$router.push('/tsignin');
 	}  ,
 	chgURL: function(url) {
 	    this.$router.push(url)

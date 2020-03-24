@@ -5,7 +5,9 @@ import './plugins/base'
 import vuetify from './plugins/vuetify';
 import store from './store'
 import firebase from 'firebase'
-
+import VueClipboard from 'vue-clipboard2'
+ 
+VueClipboard.config.autoSetContainer = true // add this line
 Vue.config.productionTip = false
 
 const firebaseConfig = {
@@ -21,6 +23,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+Vue.use(VueClipboard);
 
 new Vue({
     router,

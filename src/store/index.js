@@ -118,7 +118,7 @@ export default new Vuex.Store({
 	    state.gameusers = tmp;
 	},
 	setNextPath: (state, payload) => {
-	    state.nextPath = payload.nextpath;
+	    state.nextPath = payload.path;
 	},
 	setCurgamid(state, payload) {
 	    state.curgameid = payload.curgameid;
@@ -187,7 +187,7 @@ export default new Vuex.Store({
 	async doLoad (context) {
 	    if (localStorage.getItem('nextPath')) {
 		const payload = {
-		    nextpath : localStorage.getItem('nextPath'),
+		    path : localStorage.getItem('nextPath'),
 		};
 		context.commit('setNextPath',payload);
 		localStorage.clear;
@@ -292,6 +292,15 @@ export default new Vuex.Store({
 	    context.commit('setGameUsers',payload)
 	    context.commit('setShiaiRec',payload);
 	},
+	async loadGameDbAction (context,payload)  {
+	    firebase.database().ref('/games/' + context.getters.getCurgameid).once('value').then(function(snapshot) {
+		if(snapshot.exists) {
+		    context.commit('setGame',{game : snapshot.val()});
+		} else {
+		    console.log('[ERR] Not Found /games/' + context.getters.getCurgameid);
+		}
+	    })
+	},	    
 	async storeGameDb (context,payload)  {
 	    firebase.database().ref('/games/' + context.getters.getCurgameid).set(context.getters.getGame,function(error) {
 		if (error) {
@@ -333,9 +342,8 @@ export default new Vuex.Store({
 
 	async loadMyGamesAction(context) {
 	    const payload = {};
-	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).once('value',function(snapshot) {
+	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
-		    console.log(snapshot.val());
 		    context.commit('setMyGames',snapshot.val());
 		} else {
 		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
@@ -349,7 +357,7 @@ export default new Vuex.Store({
 		.then((res) => {
 		    let i=0;
 		    let n=0;
-		    const num = context.getters['getShiairecNum'] || 0;
+		    const num = payload.isRenewal ? 0 : context.getters['getShiairecNum'];
 		    let p1,p2,p3,p4
 		    res.data.split('\r\n').forEach(vv => {
 			vv.split(',').forEach(v => {
@@ -374,8 +382,8 @@ export default new Vuex.Store({
 		context.dispatch('storeGameDb');
 		context.dispatch('storeUserInfoDb');
 		context.dispatch('storeGameUsersDb');
-		context.dispatch('storeShiairecDb');
 	    }
+	    context.dispatch('storeShiairecDb');	    
 	}
     }
 })

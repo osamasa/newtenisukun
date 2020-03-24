@@ -1,7 +1,16 @@
 <template>
   <v-app>
     <v-container>
-      <vue-qrcode :value=getGameURL :options="option" tag="img"></vue-qrcode>
+    <vue-qrcode :value=getGameURL :options="option" tag="img"></vue-qrcode>
+    <div>
+    <v-btn type="button"
+      v-clipboard:copy="getGameURL"
+      v-clipboard:success="onCopy"
+      v-clipboard:error="onError">URLをコピー</v-btn>
+    </div>
+    </v-container>              
+    <v-container>
+    <v-btn @click="goback();" color="primary">戻る</v-btn>
     </v-container>
   </v-app>
 </template>
@@ -34,6 +43,15 @@ export default {
 	}
     },
     methods: {
+	goback: function() {
+	    this.$router.go(-1);
+	}	,
+ onCopy: function (e) {
+      alert('You just copied: ' + e.text)
+    },
+    onError: function (e) {
+      alert('Failed to copy texts')
+    }	
     }
 };
 </script>

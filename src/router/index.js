@@ -5,6 +5,7 @@ import Game from '../components/HelloWorld'
 import CreateGame from '../components/CreateGame'
 import Signout from '../components/Signout'
 import Signin from '../components/Signin'
+import TSignin from '../components/TSignin'
 import AssignMember from '../components/AssignMember'
 import ViewResult from '../components/ViewResult'
 import GameResult from '../components/GameResult'
@@ -32,8 +33,7 @@ let router = new Router({
 	{
 	    path: '/viewqrcode/:ope/:curgameid',
 	    name: 'viewqrcode',
-	    component: ViewQRCode,
-	    meta: { requiresAuth: true }	    
+	    component: ViewQRCode
 	},	
 	
 	{
@@ -70,6 +70,11 @@ let router = new Router({
 	    name: 'Signin',
 	    component: Signin,
 	    meta: { requiresAuthChangeURL: true  }
+	},
+	{
+	    path: '/tsignin',
+	    name: 'TSignin',
+	    component: TSignin
 	}
     ]
 })

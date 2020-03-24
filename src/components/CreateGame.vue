@@ -64,7 +64,7 @@ export default {
     },
     methods: {
 	creategame: function (event) {
-	    this.$store.dispatch('resetGames');
+	    this.$store.dispatch('resetGames');	    
 	    this.$store.dispatch('createGameidAction');
 	    this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 	    this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});

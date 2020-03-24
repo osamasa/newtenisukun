@@ -119,8 +119,8 @@ export default {
 	    if ( user ) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('resetGames');		
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
+		this.$store.dispatch('loadGameDbAction');	
 		this.$store.dispatch('storeGamesUsersDbAction');
 		this.$store.dispatch('loadUserInfoDbAction');
 		if(!this.$store.getters.getShiairecNum) {
