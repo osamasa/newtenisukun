@@ -174,7 +174,7 @@ export default {
 	    }).length;
 	},
 	goback: function() {
-	    this.$router.go(-1);
+	    this.$router.push('/game/' + this.$route.params.curgameid);
 	}	
     }
 }

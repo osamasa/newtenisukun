@@ -13,7 +13,6 @@ export default new Vuex.Store({
 	nextPath: '',
 	user:{},
 	mygames: {},
-	mygamescount: 0,
 	userinfo: {
 	    displayName: "ほげほげ太郎",
 	    photoURL: "https://lh3.googleusercontent.com/a-/AAuE7mBnOXQMXtpHhReTB-pjTiZI-rsMzJXUJsQozUUiKA",
@@ -32,17 +31,20 @@ export default new Vuex.Store({
 	shiairec: []
     },
     getters: {
-	getMyGamesCount: (state) => {
-	    return state.mygamescount;
-	},
 	getShiaiDba: (state) => {
 	    return state.shiaidba;
 	},
 	getGameusera: (state) => {
 	    return state.gameusera;
 	},
-	getMyGames: (state,payload) => {
+	getMyGames: (state) => {
 	    return state.mygames;
+	},
+	getMyGamesLimit(state,payload) {
+	    let iStart = (payload.page - 1) * payload.limit;
+	    let iLast = iStart + payload.limit;
+	    console.log(state);
+	    return state.mygames.slice(iStart,iLast);
 	},
 	getNextPath: (state) => {
 	    return state.nextPath;
@@ -86,9 +88,6 @@ export default new Vuex.Store({
 	setGameUsera:  (state,payload) => {
 	    state.gameusera = payload.gameusera;
 	},	
-	setMyGamesCount: (state,payload) => {
-	    state.mygamescount = payload.mygamescount;
-	},
 	setMyGames: (state,payload) => {
 	    state.mygames = payload;
 	},
@@ -380,39 +379,25 @@ export default new Vuex.Store({
 	    })
 	},			    
 
-	loadMyGamesCountAction(context) {
-	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).once('value').then(function(snapshot) {
-		context.commit('setMyGamesCount',{
-		    mygamescount : snapshot.numChildren()
-		});
-	    })
-	},
-	loadMyGamesAction(context,payload) {
-	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
+	async loadMyGamesAction(context) {
+	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).limitToLast(128).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const mygames = [];
 		    let i=0;
-		    const iStart = (payload.page-1) * payload.limit;
-		    const iEnd = iStart + payload.limit;
 		    snapshot.forEach(function(data) {
-
-			if((iStart == i) || ((iStart < i) && (iEnd > i))) {
-			    if((data.key) && (data.val().gamedate)) {
-				mygames.push(
-				    { id : data.key,
-				      gamedate : data.val().gamedate,
-				      people : data.val().people,
-				      gameplace : data.val().gameplace
-				    });
-
+			if((data.key) && (data.val().gamedate)) {
+			    mygames.push(
+				{ id : data.key,
+				  gamedate : data.val().gamedate,
+				  peoples : data.val().peoples,
+				  gameplace : data.val().gameplace
+				});
 			    } else {
 				i--;
 			    }
-			}
-			
 			i++;			
 		    });
-		    context.commit('setMyGames',mygames);
+		    context.commit('setMyGames',mygames.reverse());
 		} else {
 		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
 		}

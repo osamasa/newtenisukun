@@ -16,7 +16,7 @@
             </tr>
           </thead>
 	  <tbody>
-              <tr v-for="(item,key) in mygames" :key="key" @click="linkurl(item.id);">
+              <tr v-for="(item,key) in mygames" :key="key" @click="linkurl(item.id);" v-if="key>=start && key<end">
     <td>{{ key+1 }}</td>
               <td>{{ item.gamedate }}</td>
               <td>{{ item.gameplace }}</td>
@@ -50,8 +50,10 @@ export default {
             isLogin: false,
 	    uid: null,
             page: 1,
-	    nowcount : 0,
-            length: 6,
+	    start: 0,
+	    end: 5,
+	    nowcount: 0,
+	    length: 6,
 	    limit : 5,
 	}
     },
@@ -60,16 +62,10 @@ export default {
 	    if (user) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('loadMyGamesCountAction');
-		let a=Math.floor(this.$store.getters.getMyGamesCount / this.limit);
-		let b=this.$store.getters.getMyGamesCount % this.limit > 0 ? 1 : 0;
-
-		this.length = a + b;
-		
-		this.$store.dispatch('loadMyGamesAction',{
-		    'page' : this.page,
-		    'limit' : this.limit
-		});
+		this.$store.dispatch('loadMyGamesAction');
+		let a=Math.floor(this.$store.getters.getMyGames.length / this.limit);
+		let b=this.$store.getters.getMyGames.length % this.limit > 0 ? 1 : 0;
+		this.length = a+b;
 	    } else {
 		this.isLogin = false;
 	    }
@@ -88,7 +84,7 @@ export default {
     },
     methods: {
 	linkurl : function(i) {
-	    let routeData = this.$router.resolve('/game/'+i );
+	    let routeData = this.$router.resolve('/gameresult/'+i );
 	    window.open(routeData.href, '_blank');
 	},
 	doLogin : function() {
@@ -98,9 +94,8 @@ export default {
         },
 	getNumber : function(number){
 	    this.page = number;
-	    this.$store.dispatch('loadMyGamesAction',{'page' : this.page,
-						      'limit' : this.limit
-						     });
+	    this.start = (number-1) * this.limit;
+	    this.end = this.start + this.limit;	    
 	}
     }
 }
