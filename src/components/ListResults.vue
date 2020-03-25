@@ -1,28 +1,36 @@
 <template>
-  <v-app>
-    <v-container>
       <base-material-card
 	color="success"
 	icon="mdi-play-circle"
 	title="試合結果"
 	class="px-5 py-3"
-	 >
-	<v-simple-table v-if="isLogin">
+	>
+	<div v-if="isLogin">
+	<v-simple-table>
           <thead>
-            <tr>
+    <tr>
+               <th>番号</th>
               <th>試合日時</th>
               <th>場所</th>
               <th>人数</th>
             </tr>
           </thead>
 	  <tbody>
-	    <tr v-for="(item,key) in mygames" :key="key" @click="linkurl(key);">
+              <tr v-for="(item,key) in mygames" :key="key" @click="linkurl(item.id);">
+    <td>{{ key+1 }}</td>
               <td>{{ item.gamedate }}</td>
               <td>{{ item.gameplace }}</td>
 	      <td>{{ item.peoples }}</td>
             </tr>
-          </tbody>
+	  </tbody>
+    
 	</v-simple-table>
+	<v-pagination
+	  v-model="page"
+	  :length="length"
+          @input = "getNumber"
+          ></v-pagination>
+	</div>
 	<v-card-text v-else>
           <div class="subtitle-1 font-weight-light">
             自分の今までの履歴を確認できます
@@ -32,8 +40,6 @@
           </v-container>
         </v-card-text>
       </base-material-card>
-    </v-container>
-  </v-app>
 </template>
 <script>
 import firebase from 'firebase';
@@ -42,7 +48,11 @@ export default {
     data: () => {
 	return {
             isLogin: false,
-	    uid: null	    
+	    uid: null,
+            page: 1,
+	    nowcount : 0,
+            length: 6,
+	    limit : 5,
 	}
     },
     created() {
@@ -50,14 +60,29 @@ export default {
 	    if (user) {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('loadMyGamesAction');		
+		this.$store.dispatch('loadMyGamesCountAction');
+		let a=Math.floor(this.$store.getters.getMyGamesCount / this.limit);
+		let b=this.$store.getters.getMyGamesCount % this.limit > 0 ? 1 : 0;
+
+		this.length = a + b;
+		
+		this.$store.dispatch('loadMyGamesAction',{
+		    'page' : this.page,
+		    'limit' : this.limit
+		});
 	    } else {
 		this.isLogin = false;
 	    }
 	})
     },
+    mounted() {
+    },
     computed: {
-	mygames: function () {
+	mycount : function () {
+	    this.nowcount = this.nowcount + 1;
+	    return this.nowcount;
+	},
+	mygames : function () {
 	    return this.$store.getters.getMyGames;
 	}
     },
@@ -70,6 +95,12 @@ export default {
 	    this.$store.dispatch('setNextPathAction',{'path' : '/'});
 	    this.$store.dispatch('doSave');
 	    this.$router.push({ name: 'Signin' });
+        },
+	getNumber : function(number){
+	    this.page = number;
+	    this.$store.dispatch('loadMyGamesAction',{'page' : this.page,
+						      'limit' : this.limit
+						     });
 	}
     }
 }

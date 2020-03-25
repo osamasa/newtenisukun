@@ -74,20 +74,7 @@
 	sm="6"
 	lg="6"
 	>
-	<v-spacer></v-spacer>
-        <base-material-card
-	  icon="mdi-badminton"
-          color="warning"
-          class="px-5 py-6"
-	  title="乱数表作成"
-          >
-          <v-card-text>
-	    条件を入力してすぐにゲームを開始できます。
-	  </v-card-text>
-            <v-container class="pa-0" fluid >
-	      <v-btn>作成</v-btn>
-            </v-container>	  
-        </base-material-card>	  
+    <CreateGame></CreateGame>    
       </v-col>
      <v-col
        cols="12"
@@ -95,21 +82,23 @@
        lg="6"
        >
        <v-spacer></v-spacer>
-       <ListResults></ListResults>
+    <ListResults></ListResults>
      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import ListResults from './ListResults.vue'
-  export default {
+    import ListResults from './ListResults.vue'
+    import CreateGame from './CreateGame.vue'  
+    export default {
     name: 'DashboardDashboard',
     components: {
-      ListResults
+	ListResults,
+	CreateGame
     },
     data () {
-      return {
+	return {
       }
     },
     methods: {

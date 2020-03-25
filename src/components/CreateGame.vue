@@ -1,7 +1,12 @@
 <template>
-  <v-app v-if="isLogin">
-    <v-container>
-      <v-form v-model="valid">
+
+      <base-material-card
+	icon="mdi-badminton"
+        color="warning"
+        class="px-5 py-6"
+	title="乱数表作成"
+        >
+      <v-form v-model="valid" v-if="isLogin">
 	<v-text-field
           v-model="name"
           :rules="nameRules"
@@ -21,13 +26,16 @@
 		  :format="'YYYY-MM-DD HH:mm'"
 		  :overlay="true"
 		  /></Datetime>
-	<v-btn color="primary" @click="creategame">開始</v-btn>
-      </v-form>
-    </v-container>
-  </v-app>
-  <div v-else>
-しばらくおまちください
+<v-btn color="primary" @click="creategame">開始</v-btn>
+</v-form>
+<v-card-text v-else>
+  <div class="subtitle-1 font-weight-light">
+    ログインするとすぐに作成できます
   </div>
+  <v-btn @click="doLogin">ログイン</v-btn>
+</v-card-text>
+        </base-material-card>
+
 </template>
 <script>
 import Datetime from 'vue-ctk-date-time-picker';
@@ -53,7 +61,7 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.isLogin = true;
-		this.$store.dispatch('setUserAction',user);
+                this.$store.dispatch('setUserAction',user);
 	    } else {
 		this.isLogin = false;
 	    }
@@ -70,8 +78,14 @@ export default {
 	    this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});
     	    this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
 	    this.$store.dispatch('setShiaiRecAction',{isRenewal:true});
-	    this.$router.push('/game/' + this.$store.getters.getCurgameid);
-	}
+	    let routeData = this.$router.resolve('/game/'+this.$store.getters.getCurgameid );
+	    window.open(routeData.href, '_blank');
+    },
+	doLogin : function() {
+	    this.$store.dispatch('setNextPathAction',{'path' : '/'});
+	    this.$store.dispatch('doSave');
+	    this.$router.push({ name: 'Signin' });
+	}    
     }
 }
 </script>

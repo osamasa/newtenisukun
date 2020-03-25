@@ -26,22 +26,22 @@ export default new Vuex.Store({
 		gameplace: 'ほげほげ',
 		ownuserid: {},
 		peoples: 5,
-		users: []
+		users: {}
 	    },
 	gameusers: [],
 	shiairec: []
     },
     getters: {
-	getMyGamesCount: (state) => {
-	    return state.mygamescount;
-	},
-	getShiaiDba: (state) => {
+	getShiaiDba(state) => {
 	    return state.shiaidba;
 	},
-	getGameusera: (state) => {
+	getGameusera(state) => {
 	    return state.gameusera;
+	},	
+	getMyGamesCount(state) => {
+	    return state.mygamescount;
 	},
-	getMyGames: (state,payload) => {
+	getMyGames: (state) => {
 	    return state.mygames;
 	},
 	getNextPath: (state) => {
@@ -77,7 +77,6 @@ export default new Vuex.Store({
 	getUserinfo: (state) => {
 	    return state.userinfo;
 	}
-	
     },
     mutations: {
 	setShiaiDba:  (state,payload) => {
@@ -121,7 +120,8 @@ export default new Vuex.Store({
 	},
 	initGameState: (state) => {
 	    state.game.ownuserid[ state.user.uid ]=true;
-	    state.game.users[ state.user.uid ]=true;
+	    state.game.users[ state.user.uid ]=true;	    
+
 	    state.userinfo.displayName=state.user.displayName;
 	    state.userinfo.photoURL=state.user.photoURL;
 	    state.userinfo.games[state.curgameid] = true;
@@ -186,10 +186,10 @@ export default new Vuex.Store({
 		    };
 		    context.commit('setShiaiRec',payload);
 		} else {
-		    console.log('[ERR] Not Found /shiairec/' + state.curgameid);
+		    nconsole.log('[ERR] Not Found /shiairec/' + state.curgameid);
 		}		    
 	    });
-	    if(shiaidba) {
+	    is(shiaidba) {
 		context.commit('setShiaiDba',{'shiaidba' : shiaidba});
 	    }
 	},
@@ -203,7 +203,7 @@ export default new Vuex.Store({
 		}
 	    });
 	    if(gameusera) {
-//		context.commit('setGameUsera',{'gameusera',gameusera});
+		context.commit('setGameUsera',{'gameusera',gameusera});
 	    }
 	},
 	async setUserAction (context,payload)  {
@@ -305,13 +305,13 @@ export default new Vuex.Store({
 	    if(context.getters.getGameUsera) {
 		let a = context.getters.getGameUsera;
 		a.off();
-		context.commit('setGameUsera',{'gameusera' : null});
+		context.commit.setGameUsera({'gameusera' : null});
 		
 	    }
 	    if(context.getters.getShiaiDba) {
 		let b = context.getters.getShiaiDba
 		b.off();
-		context.commit('setShiaiDba',{'shiaidba' : null});
+		context.commit.setShiaiDba({'shiaidba' : null});
 	    }
 	    payload = {
 		curgameid : null,
@@ -360,6 +360,7 @@ export default new Vuex.Store({
 	},
 	
 	async storeShiairecDb (context,payload)  {
+	    
 	    firebase.database().ref('/shiairec/' + context.getters.getCurgameid).set(context.getters.getShiairec,function(error) {
 		if(error) {
 		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
@@ -380,39 +381,17 @@ export default new Vuex.Store({
 	    })
 	},			    
 
-	loadMyGamesCountAction(context) {
+	async loadMyGamesCountAction(context) {
 	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).once('value').then(function(snapshot) {
 		context.commit('setMyGamesCount',{
 		    mygamescount : snapshot.numChildren()
 		});
 	    })
 	},
-	loadMyGamesAction(context,payload) {
-	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
+	async loadMyGamesAction(context,payload) {
+	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
-		    const mygames = [];
-		    let i=0;
-		    const iStart = (payload.page-1) * payload.limit;
-		    const iEnd = iStart + payload.limit;
-		    snapshot.forEach(function(data) {
-
-			if((iStart == i) || ((iStart < i) && (iEnd > i))) {
-			    if((data.key) && (data.val().gamedate)) {
-				mygames.push(
-				    { id : data.key,
-				      gamedate : data.val().gamedate,
-				      people : data.val().people,
-				      gameplace : data.val().gameplace
-				    });
-
-			    } else {
-				i--;
-			    }
-			}
-			
-			i++;			
-		    });
-		    context.commit('setMyGames',mygames);
+		    context.commit('setMyGames',snapshot.val());
 		} else {
 		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
 		}

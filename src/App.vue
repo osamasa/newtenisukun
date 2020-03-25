@@ -112,7 +112,6 @@ export default {
             getItems: function() {
 		var items= [
 		    { title: 'トップ', icon: 'dashboard', url: '/'},
-		    { title: 'ゲーム作成', icon: 'question_answer',url: '/creategame'}
 		];
 
 		if((this.isLogin) && (this.$store.getters.getShiairec)) {

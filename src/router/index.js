@@ -2,7 +2,6 @@ import Vue from 'vue'
 import store from './../store'
 import Router from 'vue-router'
 import Game from '../components/HelloWorld'
-import CreateGame from '../components/CreateGame'
 import Signout from '../components/Signout'
 import Signin from '../components/Signin'
 import AssignMember from '../components/AssignMember'
@@ -21,12 +20,6 @@ let router = new Router({
 	    path: '/',
 	    name: 'Index',
 	    component: Index
-	},
-	{
-	    path: '/creategame',
-	    name: 'CreateGame',
-	    component: CreateGame,
-	    meta: { requiresAuth: true }	    
 	},
 	{
 	    path: '/viewqrcode/:ope/:curgameid',
