@@ -64,6 +64,10 @@
         </v-list>
       </v-navigation-drawer>
 
+    <v-footer>
+      <v-spacer></v-spacer>
+      <div>&copy; {{ new Date().getFullYear() }}&nbsp;OSAMASA&nbsp;Inc.</div>
+    </v-footer>
 
   </v-app>
 </template>
