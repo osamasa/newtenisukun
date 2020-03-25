@@ -5,12 +5,11 @@ import Game from '../components/HelloWorld'
 import CreateGame from '../components/CreateGame'
 import Signout from '../components/Signout'
 import Signin from '../components/Signin'
-import TSignin from '../components/TSignin'
 import AssignMember from '../components/AssignMember'
 import ViewResult from '../components/ViewResult'
 import GameResult from '../components/GameResult'
-import ListResult from '../components/ListResult'
 import ViewQRCode from '../components/ViewQRCode'
+import Index from '../components/index'
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -19,15 +18,14 @@ let router = new Router({
     mode: 'history',
     routes: [
 	{
+	    path: '/',
+	    name: 'Index',
+	    component: Index
+	},
+	{
 	    path: '/creategame',
 	    name: 'CreateGame',
 	    component: CreateGame,
-	    meta: { requiresAuth: true }	    
-	},
-	{
-	    path: '/listresult',
-	    name: 'ListResult',
-	    component: ListResult,
 	    meta: { requiresAuth: true }	    
 	},
 	{
@@ -70,11 +68,6 @@ let router = new Router({
 	    name: 'Signin',
 	    component: Signin,
 	    meta: { requiresAuthChangeURL: true  }
-	},
-	{
-	    path: '/tsignin',
-	    name: 'TSignin',
-	    component: TSignin
 	}
     ]
 })
