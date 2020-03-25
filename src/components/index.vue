@@ -36,7 +36,7 @@
       <v-col
 	cols="12"
 	sm="6"
-	lg="3"
+	lg="6"
 	>
 	<v-spacer></v-spacer>
         <base-material-card
@@ -53,7 +53,7 @@
       <v-col
 	cols="12"
 	sm="6"
-	lg="3"
+	lg="6"
 	>
 	<v-spacer></v-spacer>
         <base-material-card
@@ -72,7 +72,7 @@
       <v-col
 	cols="12"
 	sm="6"
-	lg="3"
+	lg="6"
 	>
 	<v-spacer></v-spacer>
         <base-material-card
@@ -92,9 +92,10 @@
      <v-col
        cols="12"
        md="6"
-       lg="3"
+       lg="6"
        >
-	   <ListResults></ListResults>
+       <v-spacer></v-spacer>
+       <ListResults></ListResults>
      </v-col>
     </v-row>
   </v-container>

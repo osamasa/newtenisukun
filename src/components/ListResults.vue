@@ -23,12 +23,12 @@
             </tr>
           </tbody>
 	</v-simple-table>
-	<v-card-text>
+	<v-card-text v-else>
           <div class="subtitle-1 font-weight-light">
             自分の今までの履歴を確認できます
           </div>
           <v-container class="pa-0" fluid >
-	    <v-btn>ログイン</v-btn>
+	    <v-btn @click="doLogin">ログイン</v-btn>
           </v-container>
         </v-card-text>
       </base-material-card>
@@ -65,6 +65,11 @@ export default {
 	linkurl : function(i) {
 	    let routeData = this.$router.resolve('/game/'+i );
 	    window.open(routeData.href, '_blank');
+	},
+	doLogin : function() {
+	    this.$store.dispatch('setNextPathAction',{'path' : '/'});
+	    this.$store.dispatch('doSave');
+	    this.$router.push({ name: 'Signin' });
 	}
     }
 }
