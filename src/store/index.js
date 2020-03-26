@@ -390,7 +390,7 @@ export default new Vuex.Store({
 		if(snapshot.val()) {
 		    const mygames = [];
 		    snapshot.forEach(function(data) {
-			if((data.key) && (data.val().gamedate)) {
+			if((data.key) && (data.val().gameplace)) {
 			    mygames.push(
 				{ id : data.key,
 				  gamedate : data.val().gamedate,
