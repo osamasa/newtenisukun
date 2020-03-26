@@ -53,7 +53,6 @@ export default {
 	    start: 0,
 	    end: 5,
 	    nowcount: 0,
-	    length: 6,
 	    limit : 5,
 	}
     },
@@ -63,9 +62,6 @@ export default {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
 		this.$store.dispatch('loadMyGamesAction');
-		let a=Math.floor(this.$store.getters.getMyGames.length / this.limit);
-		let b=this.$store.getters.getMyGames.length % this.limit > 0 ? 1 : 0;
-		this.length = a+b;
 	    } else {
 		this.isLogin = false;
 	    }
@@ -74,6 +70,9 @@ export default {
     mounted() {
     },
     computed: {
+    	length : function () {
+	    return Math.floor(this.$store.getters.getMyGamesCount / this.limit) + (this.$store.getters.getMyGamesCount % this.limit > 0 ? 1 : 0);
+	},
 	mycount : function () {
 	    this.nowcount = this.nowcount + 1;
 	    return this.nowcount;

@@ -12,7 +12,8 @@ export default new Vuex.Store({
 	curgameid: 123456,
 	nextPath: '',
 	user:{},
-	mygames: {},
+	mygames: [],
+	mygamescount :0,
 	userinfo: {
 	    displayName: "ほげほげ太郎",
 	    photoURL: "https://lh3.googleusercontent.com/a-/AAuE7mBnOXQMXtpHhReTB-pjTiZI-rsMzJXUJsQozUUiKA",
@@ -40,10 +41,12 @@ export default new Vuex.Store({
 	getMyGames: (state) => {
 	    return state.mygames;
 	},
+	getMyGamesCount: (state) => {
+	    return state.mygamescount;
+	},
 	getMyGamesLimit(state,payload) {
 	    let iStart = (payload.page - 1) * payload.limit;
 	    let iLast = iStart + payload.limit;
-	    console.log(state);
 	    return state.mygames.slice(iStart,iLast);
 	},
 	getNextPath: (state) => {
@@ -90,6 +93,9 @@ export default new Vuex.Store({
 	},	
 	setMyGames: (state,payload) => {
 	    state.mygames = payload;
+	},
+	setMyGamesCount: (state,payload) => {
+	    state.mygamescount = payload;
 	},
 	setUser: (state,payload) => {
 	    state.user = payload;
@@ -383,7 +389,6 @@ export default new Vuex.Store({
 	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).limitToLast(128).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const mygames = [];
-		    let i=0;
 		    snapshot.forEach(function(data) {
 			if((data.key) && (data.val().gamedate)) {
 			    mygames.push(
@@ -392,12 +397,10 @@ export default new Vuex.Store({
 				  peoples : data.val().peoples,
 				  gameplace : data.val().gameplace
 				});
-			    } else {
-				i--;
 			    }
-			i++;			
 		    });
 		    context.commit('setMyGames',mygames.reverse());
+		    context.commit('setMyGamesCount',mygames.length);
 		} else {
 		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
 		}
