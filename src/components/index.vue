@@ -40,7 +40,7 @@
 	>
 	<v-spacer></v-spacer>
         <base-material-card
-	  icon="mdi-asterisk"
+	  icon="mdi-at"
           color="info"
           class="px-5 py-6"
 	  title="お知らせ"
