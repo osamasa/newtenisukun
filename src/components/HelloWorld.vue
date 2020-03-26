@@ -152,9 +152,10 @@ export default {
     data: () => {
 	return {
             isLogin: false,
-	    hidden: false,
+	    hidden: true,
 	    isDialog: false,
 	    localCount: 5,
+	    scrollY : 0,
 	    nowrec: {}
 	}},
     created() {
@@ -215,14 +216,14 @@ export default {
 		document.body.clientHeight, document.documentElement.clientHeight
 	    );
 
-	    // 一番下までスクロールした時の数値を取得(window.innerHeight分(画面表示領域分)はスクロールをしないため引く)
-	    const pageMostBottom = scrollHeight - window.innerHeight;	    
+	    const pageMostBottom = scrollHeight - window.innerHeight;
 
-	    if((( window.scrollY / pageMostBottom) * 100) > 95) {
+	    if((this.scrollY <= window.scrollY) && ((( window.scrollY / pageMostBottom) * 100) > 95)) {
 		this.hidden = false;
 	    } else {
 		this.hidden = true;
 	    }
+	    this.scrollY = window.scrollY;
 	}
     }
 };

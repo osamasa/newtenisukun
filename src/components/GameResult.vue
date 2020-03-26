@@ -101,7 +101,24 @@
     </base-material-card>
 </v-container>
     <v-container>
-      <v-btn @click="goback();" color="primary">戻る</v-btn>
+     <v-row
+        class="mb-6"
+      >
+        <v-col
+           lg=1
+	   md=1
+	   sm=1
+	>
+	      <v-btn @click="goback();" color="primary">試合へ</v-btn>
+        </v-col>
+        <v-col
+           lg=1
+   	   md=1
+   	   sm=1
+	>
+	      <v-btn @click="goback();" color="warning">QRコード表示</v-btn>
+        </v-col>	      
+     </v-row>	
     </v-container>          
   </v-app>
   <div v-else>
@@ -122,6 +139,7 @@ export default {
     		this.isLogin = true;
 		this.$store.dispatch('setUserAction',user);
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
+		this.$store.dispatch('loadGameDbAction');
 		this.$store.dispatch('loadGameDatabaseAction');
 		this.$store.dispatch('loadGameMemberDatabaseAction');
 	    } else {

@@ -1,6 +1,13 @@
 <template>
   <v-app v-if="isLogin">
     <v-container>
+          <base-material-card
+	icon="mdi-account-multiple"
+        color="info"
+        class="px-5 py-9"
+	title="メンバー割当て"
+        >
+
       <v-simple-table>
         <thead>
           <tr>
@@ -53,7 +60,8 @@
 	    <v-btn @click="setData(null,null);isDialog=false;" color="blue darken-1">閉じる</v-btn>	    
 	  </v-card-actions>
 	</v-card>
-      </v-dialog>  
+    </v-dialog>
+              </base-material-card>  
     </v-container>
   </v-app>
   <div v-else>
@@ -66,6 +74,7 @@ import firebase from 'firebase';
 export default {
     data: () => {
 	return {
+	    loginusers : [],
             isLogin: false,
 	    isDialog: false,
 	    nowrec: {}
@@ -81,6 +90,19 @@ export default {
 		this.$store.dispatch('loadGameMemberDatabaseAction');
 	    }
 	})
+   },
+   mounted() {
+       const retval = {};
+       firebase.database().ref('/userinfo').orderByChild('games/' + this.$route.params.curgameid).startAt(true).endAt(true).once('value', function(snapshot) {
+	   if(snapshot.val()) {
+	       snapshot.forEach(function(childSnapshot) {
+		   let childKey = childSnapshot.key;
+		   let childData = childSnapshot.val();
+		   retval[childKey] = childData;
+	       })
+	   }
+       })
+       this.loginusers = retval;
    },
     methods: {
 	setData: function(v,k) {
@@ -98,19 +120,6 @@ export default {
 	gameusers : function() {
 	    return this.$store.getters.getGameUsers;
 	},
-	loginusers : function() {
-	    const retval = {};
-	    firebase.database().ref('/userinfo').orderByChild('games/' + this.$route.params.curgameid).startAt(true).endAt(true).once('value', function(snapshot) {
-		if(snapshot.val()) {
-		    snapshot.forEach(function(childSnapshot) {
-			let childKey = childSnapshot.key;
-			let childData = childSnapshot.val();
-			retval[childKey] = childData;
-		    })
-		}
-	    })
-	    return retval;
-	}
     }
 };
 </script>    
