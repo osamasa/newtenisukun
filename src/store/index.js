@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+	isAnonymous: false,
 	shiaidba: null,
 	gameusera: null,
 	curgameid: 123456,
@@ -32,6 +33,9 @@ export default new Vuex.Store({
 	shiairec: []
     },
     getters: {
+	getIsAnonymous: (state) => {
+	    return state.isAnonymous;
+	},
 	getShiaiDba: (state) => {
 	    return state.shiaidba;
 	},
@@ -98,9 +102,8 @@ export default new Vuex.Store({
 	    state.mygamescount = payload;
 	},
 	setUser: (state,payload) => {
-	    state.user = payload;
-	    state.userinfo.displayName=payload.displayName;
-	    state.userinfo.photoURL=payload.photoURL;
+	    state.isAnonymous = payload.user.isAnonymous;
+	    state.user = payload.user;
 	},
 	setUserinfo: (state,payload) => {
 	    state.userinfo = payload;
@@ -127,9 +130,11 @@ export default new Vuex.Store({
 	initGameState: (state) => {
 	    state.game.ownuserid[ state.user.uid ]=true;
 	    state.game.users[ state.user.uid ]=true;
+	    /*
 	    state.userinfo.displayName=state.user.displayName;
 	    state.userinfo.photoURL=state.user.photoURL;
 	    state.userinfo.games[state.curgameid] = true;
+	    */
 
 	    const tmp = [];
 	    
@@ -211,9 +216,6 @@ export default new Vuex.Store({
 //		context.commit('setGameUsera',{'gameusera',gameusera});
 	    }
 	},
-	async setUserAction (context,payload)  {
-	    context.commit('setUser',payload);
-	},
 	async doSave(context) {
 	    await localStorage.setItem('nextPath',context.getters.getNextPath);
 	},
@@ -272,33 +274,33 @@ export default new Vuex.Store({
 	    });
 	    
 	},
-	async loadUserInfoDbAction(context) {
-	    const curgameid = context.getters.getCurgameid;	    
+	async setUserInfoDbGameAction(context,payload) {
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
+		if(error) {
+		    console.log('[ERR]' + error);
+		}
+	    })
+	},
+	async loadUserInfoDbAction(context,payload) {
+	    context.commit('setUser',payload)
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
-		    const payload = {
+		    const _payload = {
 			displayName : snapshot.val().displayName,
 			photoURL : snapshot.val().photoURL,
 			records: snapshot.val().records,
 			games : snapshot.val().games
 		    };
-		    payload.games.curgameid = true;
-		    context.commit('setUserinfo',payload);
-		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + curgameid).set(true,function(error) {
-			if(error) {
-			    console.log('[ERR]' + error);
-			}
-		    })
+		    _payload.games.curgameid = true;
+		    context.commit('setUserinfo',_payload);
 		} else {
-		    const payload = {
+		    const _payload = {
 			displayName : context.getters.getUser.displayName,
 			photoURL : context.getters.getUser.photoURL,
 			records: [],
 			games : {}
 		    };
-		    payload.games[ curgameid ] = true;
-		    context.commit('setUserinfo',payload);
-		    console.log(payload);
+		    context.commit('setUserinfo',_payload);
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
 			    console.log('[ERR]' + error);

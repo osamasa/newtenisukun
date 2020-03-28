@@ -228,11 +228,11 @@ export default {
     	firebase.auth().onAuthStateChanged((user) => {
 	    if ( user ) {
     		this.isLogin = true;
-		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
-		this.$store.dispatch('loadGameDbAction');	
+		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
+		this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
 		this.$store.dispatch('storeGamesUsersDbAction');
-		this.$store.dispatch('loadUserInfoDbAction');
+		this.$store.dispatch('setUserInfoDbGameAction');		
+		this.$store.dispatch('loadGameDbAction');	
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');
     	        }

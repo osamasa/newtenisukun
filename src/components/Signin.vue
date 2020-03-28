@@ -11,7 +11,7 @@
 	  </v-list-item>
 	  <v-list-item>
             <v-list-item-content>	  
-	      <v-btn color="error" @click="authYahoo">Yahoo!</v-btn>
+	      <v-btn color="error" @click="authAnonymouse">お試し（匿名）</v-btn>
             </v-list-item-content>
 	  </v-list-item>	      
 	</v-list>
@@ -38,29 +38,41 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.notLogin = false;
-		this.$store.dispatch('setUserAction',user);
-		this.$store.dispatch('loadUserInfoDbAction');
+		this.$store.dispatch('loadUserInfoDbAction',{'user':user});
 	    } else {
 		this.notLogin = true;
 	    }
 	})
     },
-    methods: {  
+    methods: {
+        authAnonymouse () {
+	    firebase.auth().signInAnonymously().catch(function(error) {
+		console.log('[ERR] ' + erro.code + ' ' + error.message);
+	    });		       
+	},
 	authGoogle () {
 	    const provider = new firebase.auth.GoogleAuthProvider()
-	    firebase.auth().signInWithRedirect(provider)
+	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
+		console.log('[ERR] ' + erro.code + ' ' + error.message);
+	    });		       
 	},
 	authYahoo() {
 	    const provider = new firebase.auth.OAuthProvider('yahoo.com');
-	    firebase.auth().signInWithRedirect(provider)
+	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
+		console.log('[ERR] ' + erro.code + ' ' + error.message);
+	    });		       
 	},
 	authFacebook() {
 	    const provider = new firebase.auth.FacebookAuthProvider();
-	    firebase.auth().signInWithRedirect(provider)
+	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
+		console.log('[ERR] ' + erro.code + ' ' + error.message);
+	    });		       
 	},
 	authMicrosoft() {
 	    const provider = new firebase.auth.OAuthProvider('microsoft.com');
-	    firebase.auth().signInWithRedirect(provider)
+	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
+		console.log('[ERR] ' + erro.code + ' ' + error.message);
+	    });		       
 },
 
   }

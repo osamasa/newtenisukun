@@ -5,7 +5,6 @@ import Game from '../components/HelloWorld'
 import Signout from '../components/Signout'
 import Signin from '../components/Signin'
 import AssignMember from '../components/AssignMember'
-import ViewResult from '../components/ViewResult'
 import GameResult from '../components/GameResult'
 import ViewQRCode from '../components/ViewQRCode'
 import Index from '../components/index'
@@ -43,12 +42,6 @@ let router = new Router({
 	    path: '/assignmember/:curgameid',
 	    name: 'assignmember',
 	    component: AssignMember,
-	    meta: { requiresAuth: true  }
-	},
-	{
-	    path: '/viewresult/:curgameid',
-	    name: 'viewresult',
-	    component: ViewResult,
 	    meta: { requiresAuth: true  }
 	},
 	{

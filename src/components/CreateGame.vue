@@ -83,7 +83,7 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.isLogin = true;
-                this.$store.dispatch('setUserAction',user);
+		this.$store.dispatch('loadUserInfoDbAction',{'user': user});		
 	    } else {
 		this.isLogin = false;
 	    }
@@ -102,6 +102,9 @@ export default {
 	    if(ret) {
 		this.$store.dispatch('resetGames');	    
 		this.$store.dispatch('createGameidAction');
+		
+		console.log(this.$store.getters.getCurgameid);
+		
 		this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 		this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});
     		this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
