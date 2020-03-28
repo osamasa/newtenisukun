@@ -9,6 +9,7 @@ import GameResult from '../components/GameResult'
 import ViewQRCode from '../components/ViewQRCode'
 import Index from '../components/index'
 import firebase from 'firebase'
+import ChangeAuth from '../components/ChangeAuth.vue'
 
 Vue.use(Router)
 
@@ -19,6 +20,11 @@ let router = new Router({
 	    path: '/',
 	    name: 'Index',
 	    component: Index
+	},
+	{
+	    path: '/changeauth',
+	    name: 'ChangeAuth',
+	    component: ChangeAuth,
 	},
 	{
 	    path: '/viewqrcode/:ope/:curgameid',

@@ -389,7 +389,6 @@ export default new Vuex.Store({
 	},			    
 
 	async loadMyGamesAction(context) {
-	    console.log(context.getters.getUser.uid);
 	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).limitToLast(128).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const mygames = [];
@@ -407,6 +406,8 @@ export default new Vuex.Store({
 		    context.commit('setMyGamesCount',mygames.length);
 		} else {
 		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
+		    context.commit('setMyGames',[]);
+		    context.commit('setMyGamesCount',0);
 		}
 	    })
 	},

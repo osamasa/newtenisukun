@@ -15,17 +15,18 @@
           :src="photoURL"
           :alt="displayName"
         >
-      </v-avatar>    
-    <div class="d-flex align-center" v-if="isLogin">
+    </v-avatar>
+    <div class="d-flex align-center" v-if="isAnonymous">
+       <v-btn @click="chgAuth">お試し中</v-btn>
+    </div>
+    <div class="d-flex align-center" v-else-if="isLogin">
        <v-btn @click="signOut">ログアウト</v-btn>
-      </div>
-
+    </div>
     </v-app-bar>
 
     <v-content>
       <router-view/>
     </v-content>
-
 
      <v-navigation-drawer
         v-model="drawer"
@@ -41,7 +42,6 @@
             <v-list-item-title>{{ displayName }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-
 	<v-list-item v-else>
           <v-list-item-content>
             <v-list-item-title>未ログイン</v-list-item-title>
@@ -51,7 +51,7 @@
         <v-divider></v-divider>
   
         <v-list dense>
-  
+ 
           <v-list-item
             v-for="item in getItems"
             :key="item.title"
@@ -80,14 +80,16 @@ export default {
     data: () => ({
 	drawer: null,
 	isLogin: false,
+	isAnonymous : false,
 	displayName: null,
 	photoURL: null,
     }),
     mounted() {
-	firebase.auth().onAuthStateChanged((users) => {
-	    if(users) {
-		this.displayName = users.displayName;
-		this.photoURL = users.photoURL;
+	firebase.auth().onAuthStateChanged((user) => {
+	    if(user) {
+		this.isAnonymous = user.isAnonymous;	    
+		this.displayName = user.displayName;
+		this.photoURL = user.photoURL;
 		this.isLogin = true;
 	    }
 	});
@@ -99,14 +101,13 @@ export default {
 	    firebase.auth().signOut()
 	    this.isLogin=false;
 	    this.$router.push('/');
-	}  ,
-	signIn: function () {
-	    this.$router.push('/tsignin');
-	}  ,
+	},
 	chgURL: function(url) {
 	    this.$router.push(url)
-	}
-
+	},
+	chgAuth: function(url) {
+	    this.$router.push('/changeauth');
+	}	
     },
     computed: {
             getItems: function() {
