@@ -61,7 +61,7 @@ export default {
     },
     computed:{
 	getGameURL: function() {
-	    return 'http://172.20.10.6:8080/' + this.$route.params.ope + '/' + this.$route.params.curgameid;
+	    return 'https://mytenisransuuhyoukunv3.firebaseapp.com/' + this.$route.params.ope + '/' + this.$route.params.curgameid;
 	},
 	isGame: function() {
 	  if(this.$route.params.ope === "game") {
