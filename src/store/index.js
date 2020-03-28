@@ -405,7 +405,6 @@ export default new Vuex.Store({
 		    context.commit('setMyGames',mygames.reverse());
 		    context.commit('setMyGamesCount',mygames.length);
 		} else {
-		    console.log('[error] ' + '/games/users/' + context.getters.getUser.uid);
 		    context.commit('setMyGames',[]);
 		    context.commit('setMyGamesCount',0);
 		}

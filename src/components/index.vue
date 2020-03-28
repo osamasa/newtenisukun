@@ -74,7 +74,7 @@
 	sm="6"
 	lg="6"
 	>
-    <CreateGame></CreateGame>    
+    <CreateGame></CreateGame>
       </v-col>
      <v-col
        cols="12"
