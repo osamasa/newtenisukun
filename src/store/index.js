@@ -272,7 +272,7 @@ export default new Vuex.Store({
 	    });
 	    
 	},
-	async loadUserInfoDbAction(context,payload) {
+	async loadUserInfoDbAction(context) {
 	    const curgameid = context.getters.getCurgameid;	    
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
@@ -298,6 +298,7 @@ export default new Vuex.Store({
 		    };
 		    payload.games[ curgameid ] = true;
 		    context.commit('setUserinfo',payload);
+		    console.log(payload);
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
 			    console.log('[ERR]' + error);
@@ -386,7 +387,8 @@ export default new Vuex.Store({
 	},			    
 
 	async loadMyGamesAction(context) {
-	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).limitToLast(128).once('value').then(function(snapshot) {
+	    console.log(context.getters.getUser.uid);
+	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).limitToLast(128).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const mygames = [];
 		    snapshot.forEach(function(data) {

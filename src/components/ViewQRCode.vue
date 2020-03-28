@@ -1,6 +1,24 @@
 <template>
   <v-app>
     <v-container>
+      <base-material-card
+	color="success"
+	icon="mdi-play-circle"
+	title="QRコード"
+	class="px-5 py-8"
+	>
+	<v-row>
+	<v-col>
+<v-text v-if="isGame">
+試合に参加するお友達を誘いましょう。
+</v-text>
+<v-text v-else>
+試合が終わった後に結果をお知らせできます。
+</v-text>
+	</v-col>
+	</v-row>
+	<v-row>
+	<v-col>
     <vue-qrcode :value=getGameURL :options="option" tag="img"></vue-qrcode>
     <div>
     <v-btn type="button"
@@ -8,9 +26,13 @@
       v-clipboard:success="onCopy"
       v-clipboard:error="onError">URLをコピー</v-btn>
     </div>
-    </v-container>              
+    </v-col>
+    </v-row>
+    </base-material-card>
+    </v-container>
     <v-container>
     <v-btn @click="goback();" color="primary">戻る</v-btn>
+        </base-material-card>
     </v-container>
   </v-app>
 </template>
@@ -40,6 +62,13 @@ export default {
     computed:{
 	getGameURL: function() {
 	    return 'http://172.20.10.6:8080/' + this.$route.params.ope + '/' + this.$route.params.curgameid;
+	},
+	isGame: function() {
+	  if(this.$route.params.ope === "game") {
+	    return true;
+	  } else {
+	    return false;
+	  }
 	}
     },
     methods: {

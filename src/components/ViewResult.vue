@@ -46,7 +46,7 @@
 	  </v-list-group>
 	</v-list>
       </v-card>
-    </v-container>
+    </v-container>    
   </v-app>
   <div v-else>
     しばらくおまちください

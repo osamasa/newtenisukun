@@ -31,7 +31,7 @@
 	      <div v-if="n['rs'] > 0">
 		{{ n['rs'] ==  1 ? '○' : n['rs'] == 2 ? '☓' : '△'}}{{ n['r1'] }}
 		<v-card-actions>
-		  <v-btn color="primary" @click="dialog=true;nowrec=n;">結果修正</v-btn>
+		  <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正</v-btn>
 		</v-card-actions>
 	      </div>
 	      <div v-else>
@@ -59,6 +59,9 @@
 	  </v-card-title>
 	  <v-card-text>
 	    <v-container>
+      	      <div>
+		<input type="radio" v-model="nowrec.rs" value="0">なし
+	      </div>	    
 	      <div>
 		<input type="radio" v-model="nowrec.rs" value="1">{{nowrec.p1}},{{nowrec.p2}}の勝ち
 	      </div>
@@ -68,6 +71,7 @@
 	      <div>
 		<input type="radio" v-model="nowrec.rs" value="3">引き分け
 	      </div>
+	            	      <div><v-spacer></v-spacer></div>
 	      <div>
 		{{nowrec.p1}},{{nowrec.p2}}の点数:
 		<select v-model="nowrec.r1">
@@ -102,7 +106,7 @@
 	  </v-card-text>
 	  <v-card-actions>
 	    <v-spacer></v-spacer>
-	    <v-btn color="blue darken-1" text @click="setResult">Close</v-btn>
+	    <v-btn color="warning" @click="setResult">閉じる</v-btn>
 	  </v-card-actions>
 	</v-card>
       </v-dialog>
@@ -111,12 +115,17 @@
     <v-footer
      padless
 fixed
-      >
+      >    
       <v-row>
+	<v-col
+	  cols="4"
+	  class="pa-0"
+	  >
+	</v-col>
         <v-col
-          cols="12"
+          cols="4"
           class="pa-0"
-          style="height: 24px;"
+          style="height: 38px;"
           >
     <v-layout justify-center>
     <v-fab-transition>
@@ -124,9 +133,9 @@ fixed
                     color="pink"
                     fab
                     dark
-                    small
-                    absolute
                     top
+                    large
+                    absolute
                     center
 @click='addRecord'
 v-show="!hidden"
@@ -135,9 +144,66 @@ v-show="!hidden"
     </v-btn>
     </v-fab-transition>    
           </v-layout>
-    </v-col>
+	</v-col>
+	<v-col
+	  cols="4"
+	  class="pa-0"
+	  >
+	  <v-layout>
+    <v-fab-transition>
+ <v-speed-dial
+        fab
+	absolute
+        bottom
+	large
+        right
+        open-on-hover
+	v-show="hidden"
+      >
+        <template v-slot:activator>
+          <v-btn
+            color="blue darken-2"
+            dark
+            fab
+          >
+            <v-icon>mdi-apple-keyboard-command</v-icon>	  
+           </v-btn>
+        </template>
+        <v-btn
+          fab
+          dark
+          small
+          color="green"
+	  @click="assignmember"	  
+        >
+          <v-icon>mdi-account-multiple</v-icon>
+        </v-btn>
+        <v-btn
+          fab
+          dark
+          small
+          color="indigo"
+  	  @click="showqrcode"	  
+
+        >
+           <v-icon>mdi-qrcode</v-icon>	  	
+        </v-btn>
+        <v-btn
+          fab
+          dark
+          small
+          color="red"
+	  @click="showresult"
+        >
+           <v-icon>mdi-check-circle</v-icon>	  		
+        </v-btn>
+      </v-speed-dial>    
+    </v-fab-transition>    
+          </v-layout>
+
+	</v-col>	
     </v-row>
-    </v-footer>
+</v-footer>
   </v-app>
   <div v-else>
     しばらくおまちください
@@ -201,8 +267,17 @@ export default {
 	    }
 	}	
     },
-    methods: {
-        setResult: function() {
+methods: {
+    assignmember: function() {
+	this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
+    },
+    showqrcode: function() {
+	this.$router.push('/viewqrcode/game/' + this.$store.getters.getCurgameid);
+    },
+    showresult: function() {
+	this.$router.push('/gameresult/' + this.$store.getters.getCurgameid);
+    },        
+    setResult: function() {
 	    this.$store.dispatch('updateShiaiRecAction',this.nowrec);
 	    this.isDialog = false;
 	},		

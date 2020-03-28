@@ -19,7 +19,7 @@
       <v-card-text>
         <v-container class="pa-0" fluid >
 	  <v-row >
-            <v-col cols="1" md="6" >
+            <v-col>
 	      <div>場所: {{this.getGame('gameplace')}}</div>
 	      <div>日時: {{this.getGame('gamedate')}}から</div>
 	      <div>人数: {{this.getGame('peoples')}}人</div>	      	      
@@ -100,26 +100,61 @@
       </v-simple-table>
     </base-material-card>
 </v-container>
-    <v-container>
-     <v-row
-        class="mb-6"
+<v-footer
+     padless
+fixed
+    >
+      <v-row>
+	<v-col
+	  cols="12"
+	  class="pa-0"
+	  >
+	  <v-layout>
+    <v-fab-transition>
+ <v-speed-dial
+        fab
+	absolute
+        bottom
+	large
+        right
+        open-on-hover
       >
-        <v-col
-           lg=1
-	   md=1
-	   sm=1
-	>
-	      <v-btn @click="goback();" color="primary">試合へ</v-btn>
-        </v-col>
-        <v-col
-           lg=1
-   	   md=1
-   	   sm=1
-	>
-	      <v-btn @click="goback();" color="warning">QRコード表示</v-btn>
-        </v-col>	      
-     </v-row>	
-    </v-container>          
+        <template v-slot:activator>
+          <v-btn
+            color="blue darken-2"
+            dark
+            fab
+          >
+            <v-icon>mdi-apple-keyboard-command</v-icon>	  
+           </v-btn>
+        </template>
+        <v-btn
+          fab
+          dark
+          small
+          color="green"
+  	  @click="playgame"
+        >
+          <v-icon>mdi-badminton</v-icon>
+        </v-btn>
+        <v-btn
+          fab
+          dark
+          small
+          color="indigo"
+  	  @click="showqrcode"
+        >
+           <v-icon>mdi-qrcode</v-icon>	  	
+        </v-btn>
+      </v-speed-dial>    
+    </v-fab-transition>    
+          </v-layout>
+
+	</v-col>	
+    </v-row>
+
+</v-footer>
+    
   </v-app>
   <div v-else>
 しばらくおまちください
@@ -148,6 +183,12 @@ export default {
 	})
     },
     methods: {
+        playgame: function() {
+	    this.$router.push('/game/' + this.$store.getters.getCurgameid);
+	},
+        showqrcode: function() {
+	    this.$router.push('/viewqrcode/gameresult/' + this.$store.getters.getCurgameid);
+	},	
 	getShiaiResult: function (r1,r2) {
 	    if(r1==r2) {
 		return '△';

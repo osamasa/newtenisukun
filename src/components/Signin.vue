@@ -38,6 +38,8 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.notLogin = false;
+		this.$store.dispatch('setUserAction',user);
+		this.$store.dispatch('loadUserInfoDbAction');
 	    } else {
 		this.notLogin = true;
 	    }
