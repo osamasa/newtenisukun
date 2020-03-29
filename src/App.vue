@@ -7,7 +7,7 @@
       >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <div class="d-flex align-center">
-      テニス乱数表君V3
+      <router-link to="/" class=".mycolor"><img src="@/assets/title.png"/></router-link>
       </div>
     <v-spacer></v-spacer>
     <v-avatar v-if="isLogin">
@@ -129,3 +129,10 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+a.router-link-active::before {
+  width : 100%;
+  opacity : 1;
+}
+</style>

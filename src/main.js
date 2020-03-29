@@ -6,6 +6,7 @@ import vuetify from './plugins/vuetify';
 import store from './store'
 import firebase from 'firebase'
 import VueClipboard from 'vue-clipboard2'
+import titleMixin from './util/title'
  
 VueClipboard.config.autoSetContainer = true // add this line
 Vue.config.productionTip = false
@@ -24,6 +25,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 Vue.use(VueClipboard);
+Vue.mixin(titleMixin);
 
 new Vue({
     router,

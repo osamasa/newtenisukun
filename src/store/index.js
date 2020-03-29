@@ -62,11 +62,14 @@ export default new Vuex.Store({
 	getShiairecNum: (state) => {
 	    return state.shiairec.length;
 	},
-	getGameUsers: (state) => {
-	    return state.gameusers;
-	},
 	getGame: (state) => {
 	    return state.game;
+	},
+	getGameInUser: (state) => {
+	    return state.game.users;
+	},
+	getGameUsers: (state) => {
+	    return state.gameusers;
 	},
 	getPeoples:  (state) => {
 	    return state.game.peoples;

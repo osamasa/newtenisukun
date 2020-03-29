@@ -1,5 +1,5 @@
 <template>
-  <v-app v-if="isLogin">    
+  <v-app>    
     <v-container 
       id="regular-tables"
       fluid
@@ -25,6 +25,11 @@
 	      <div>人数: {{this.getGame('peoples')}}人</div>	      	      
             </v-col>
 	  </v-row>
+      	  <v-row  justify="end">
+    <v-col cols=3>
+	<a target="_blank" href="https://line.me/R/msg/text/?今日はお疲れ様でした。"><img src="@/assets/line.png"/></a>    
+        </v-col>
+	</v-row>
         </v-container>
       </v-card-text>
     </base-material-card>
@@ -133,7 +138,7 @@ fixed
           dark
           small
           color="green"
-  	  @click="playgame"
+          @click="playgame"
         >
           <v-icon>mdi-badminton</v-icon>
         </v-btn>
@@ -156,31 +161,21 @@ fixed
 </v-footer>
     
   </v-app>
-  <div v-else>
-しばらくおまちください
-  </div>  
 </template>
 <script>
 import firebase from 'firebase';
 export default {
     data: () => {
 	return {
-	    isLogin: false
 	}
     },
+    title: '今日のテニス結果',    
     created() {
-    	firebase.auth().onAuthStateChanged((user) => {
-	    if (user) {
-    		this.isLogin = true;
-		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
-		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
-		this.$store.dispatch('loadGameDbAction');
-		this.$store.dispatch('loadGameDatabaseAction');
-		this.$store.dispatch('loadGameMemberDatabaseAction');
-	    } else {
-		this.isLogin = false;
-	    }
-	})
+    	this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
+	this.$store.dispatch('loadGameDbAction');
+	this.$store.dispatch('loadGameDatabaseAction');
+	this.$store.dispatch('loadGameMemberDatabaseAction');
+	this.isLogin = false;
     },
     methods: {
         playgame: function() {
@@ -235,6 +230,12 @@ export default {
 	goback: function() {
 	    this.$router.push('/game/' + this.$route.params.curgameid);
 	}	
+    },
+    computed: {
+
+    	getLineUrl: function() {
+	    return 'https://mytenisransuuhyoukunv3.firebaseapp.com/gameresult/'  + this.$route.params.curgameid;
+	},
     }
 }
 </script>

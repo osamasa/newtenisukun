@@ -9,22 +9,24 @@
 	>
 	<v-row>
 	<v-col>
-<v-text v-if="isGame">
+<div v-if="isGame">
 試合に参加するお友達を誘いましょう。
-</v-text>
-<v-text v-else>
+</div>
+<div v-else>
 試合が終わった後に結果をお知らせできます。
-</v-text>
+</div>
 	</v-col>
 	</v-row>
-	<v-row>
-	<v-col>
     <vue-qrcode :value=getGameURL :options="option" tag="img"></vue-qrcode>
     <div>
+    <v-row>
+    <v-col cols=2>
     <v-btn type="button"
       v-clipboard:copy="getGameURL"
       v-clipboard:success="onCopy"
       v-clipboard:error="onError">URLをコピー</v-btn>
+    </v-col>
+    </v-row>
     </div>
     </v-col>
     </v-row>
@@ -37,10 +39,11 @@
   </v-app>
 </template>
 
-<script>
-import firebase from 'firebase';
+    <script>
+    import firebase from 'firebase';
 import VueQrcode from "@chenfengyuan/vue-qrcode";
 export default {
+    title: '今日のテニス結果',
     components: {
 	VueQrcode
     },    
@@ -56,7 +59,7 @@ export default {
 		    dark: "#000000FF",
 		    light: "#FFFFFFFF"
 		}
-	    }	    
+	    },
 	}
     },
     computed:{
@@ -64,23 +67,23 @@ export default {
 	    return 'https://mytenisransuuhyoukunv3.firebaseapp.com/' + this.$route.params.ope + '/' + this.$route.params.curgameid;
 	},
 	isGame: function() {
-	  if(this.$route.params.ope === "game") {
-	    return true;
-	  } else {
-	    return false;
-	  }
+	    if(this.$route.params.ope === "game") {
+		return true;
+	    } else {
+		return false;
+	    }
 	}
     },
     methods: {
 	goback: function() {
 	    this.$router.go(-1);
-	}	,
- onCopy: function (e) {
-      alert('You just copied: ' + e.text)
-    },
-    onError: function (e) {
-      alert('Failed to copy texts')
-    }	
+	},
+	onCopy: function (e) {
+	    alert('You just copied: ' + e.text)
+	},
+	onError: function (e) {
+	    alert('Failed to copy texts')
+	}	
     }
 };
 </script>

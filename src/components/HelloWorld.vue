@@ -3,13 +3,16 @@
   <v-app v-if="isLogin">
 
     <v-container>
+
       <base-material-card
 	icon="mdi-animation-play"
         color="info"
         class="px-5 py-9"
 	:title="thisTitle"
         >
-    
+	<div align="right">
+	<a target="_blank" href="https://line.me/R/msg/text/?一緒にテニスをしましょう"><img src="@/assets/line.png"/></a>
+	</div>
       <v-card v-for="(n,index) in getResult" :key="index">
 	第{{ n['id'] }}試合
 	<v-row
@@ -215,6 +218,7 @@ v-show="!hidden"
 import firebase from 'firebase';
 
 export default {
+    title: 'テニス試合中', 
     data: () => {
 	return {
             isLogin: false,
@@ -265,7 +269,7 @@ export default {
 	    } else {
 		return '☓'
 	    }
-	}	
+	},
     },
 methods: {
     assignmember: function() {

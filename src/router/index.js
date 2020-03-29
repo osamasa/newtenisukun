@@ -35,8 +35,7 @@ let router = new Router({
 	{
 	    path: '/gameresult/:curgameid',
 	    name: 'GameResult',
-	    component: GameResult,
-	    meta: { requiresAuth: true  }
+	    component: GameResult
 	},	
 	{
 	    path: '/game/:curgameid',
