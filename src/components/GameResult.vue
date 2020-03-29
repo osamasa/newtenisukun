@@ -27,7 +27,7 @@
 	  </v-row>
       	  <v-row  justify="end">
     <v-col cols=3>
-	<a target="_blank" href="https://line.me/R/msg/text/?今日はお疲れ様でした。"><img src="@/assets/line.png"/></a>    
+	<a target="_blank" href="https://line.me/R/msg/text/?今日はお疲れ様でした。今日の試合結果をお知らせします。"><img src="@/assets/line.png"/></a>    
         </v-col>
 	</v-row>
         </v-container>
@@ -137,11 +137,20 @@ fixed
           fab
           dark
           small
-          color="green"
+          color="orange"
           @click="playgame"
         >
           <v-icon>mdi-badminton</v-icon>
-        </v-btn>
+    </v-btn>
+        <v-btn
+          fab
+          dark
+          small
+          color="green"
+	  @click="assignmember"	  
+        >
+          <v-icon>mdi-account-multiple</v-icon>
+        </v-btn>    
         <v-btn
           fab
           dark
@@ -178,6 +187,9 @@ export default {
 	this.isLogin = false;
     },
     methods: {
+    assignmember: function() {
+	this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
+    },	
         playgame: function() {
 	    this.$router.push('/game/' + this.$store.getters.getCurgameid);
 	},
