@@ -20,16 +20,60 @@
           :chips="true"
 	  label="人数">
 	</v-select>
-	<Datetime v-model="gamedate"
-		  :rules="dateTimeRules"
-		  :no-value-to-custom-elem="true"
-		  :minute-interval="30"
-		  :format="'YYYY-MM-DD HH:mm'"
-		  :overlay="true"
-		  required
-		  /></Datetime>
-<v-spacer></v-spacer>
-<div>
+<v-menu
+          ref="menu"
+          v-model="menu"
+          :close-on-content-click="false"
+          :return-value.sync="date"
+          transition="scale-transition"
+          offset-y
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="date"
+              label="日付を選択"
+              :rules="dateTimeRules"
+              readonly
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="date" no-title scrollable>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+            <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+          </v-date-picker>
+        </v-menu>
+
+ <v-dialog
+          ref="dialog"
+          v-model="modal2"
+          :return-value.sync="time"
+          persistent
+          width="290px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="time"
+	      :allowed-minutes="allowedStep"
+              label="時刻を選択"
+              :rules="dateTimeRules"
+              readonly
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-time-picker
+            v-if="modal2"
+            v-model="time"
+            full-width
+          >
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="modal2 = false">Cancel</v-btn>
+            <v-btn text color="primary" @click="$refs.dialog.save(time)">OK</v-btn>
+          </v-time-picker>
+        </v-dialog>
+
+      <div>
       <v-btn
         :disabled="!valid"
         color="success"
@@ -45,7 +89,7 @@
       >
         クリア
       </v-btn>
-</div>
+   </div>
 </v-form>
 <v-card-text v-else>
   <div class="subtitle-1 font-weight-light">
@@ -57,7 +101,6 @@
 
 </template>
 <script>
-import Datetime from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import firebase from 'firebase';
 
@@ -76,8 +119,10 @@ export default {
 	dateTimeRules: [
 	    v => !!v || '日時はご入力ください'
 	],
-        fromDateMenu: false,
-        gamedate: null,
+        date: null,
+        time: null,	
+	menu : false,
+	modal2 : false
     }),
     created() {
 	firebase.auth().onAuthStateChanged((user) => {
@@ -90,12 +135,12 @@ export default {
 	})
     },    
     components: {
-	Datetime
     },
     methods: {
         reset: function() {
 	    this.$refs.form.reset();
 	},
+	allowedStep: m => m % 30 === 0,
 	creategame: function (event) {
 	    let ret=this.$refs.form.validate();
 
