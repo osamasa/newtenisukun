@@ -11,7 +11,7 @@
 	:title="thisTitle"
         >
 	<div align="right">
-	<a target="_blank" href="https://line.me/R/msg/text/?リンクをクリックして、一緒にテニスをしましょう"><img src="@/assets/line.png"/></a>
+	<a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>
 	</div>
       <v-card v-for="(n,index) in getResult" :key="index">
 	第{{ n['id'] }}試合
@@ -270,6 +270,10 @@ export default {
 		return '☓'
 	    }
 	},
+	getMyURL : function() {
+
+  	  return encodeURI("https://line.me/R/msg/text/?ゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://mytenisransuuhyoukunv3.firebaseapp.com/" + this.$route.path + "\r\n\r\n");
+	}
     },
 methods: {
     assignmember: function() {

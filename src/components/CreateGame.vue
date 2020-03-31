@@ -55,7 +55,6 @@
           <template v-slot:activator="{ on }">
             <v-text-field
               v-model="time"
-	      :allowed-minutes="allowedStep"
               label="時刻を選択"
               :rules="dateTimeRules"
               readonly
@@ -140,7 +139,6 @@ export default {
         reset: function() {
 	    this.$refs.form.reset();
 	},
-	allowedStep: m => m % 30 === 0,
 	creategame: function (event) {
 	    let ret=this.$refs.form.validate();
 
@@ -151,7 +149,7 @@ export default {
 		console.log(this.$store.getters.getCurgameid);
 		
 		this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
-		this.$store.dispatch('setGamedateAction',{'gamedate': this.gamedate});
+		this.$store.dispatch('setGamedateAction',{'gamedate': this.date + ' ' + this.time});
     		this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
 		this.$store.dispatch('setShiaiRecAction',{isRenewal:true});
 		let routeData = this.$router.resolve('/game/'+this.$store.getters.getCurgameid );

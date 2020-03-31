@@ -27,7 +27,7 @@
 	  </v-row>
       	  <v-row  justify="end">
     <v-col cols=3>
-	<a target="_blank" href="https://line.me/R/msg/text/?今日はお疲れ様でした。今日の試合結果をお知らせします。"><img src="@/assets/line.png"/></a>    
+	<a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>    
         </v-col>
 	</v-row>
         </v-container>
@@ -244,10 +244,9 @@ export default {
 	}	
     },
     computed: {
-
-    	getLineUrl: function() {
-	    return 'https://mytenisransuuhyoukunv3.firebaseapp.com/gameresult/'  + this.$route.params.curgameid;
-	},
+	getMyURL : function() {
+  	  return encodeURI("https://line.me/R/msg/text/?ゲームの結果を確認する場合は下記をクリック\r\n\r\nhttps://mytenisransuuhyoukunv3.firebaseapp.com/" + this.$route.path + "\r\n\r\n");	
+	}
     }
 }
 </script>
