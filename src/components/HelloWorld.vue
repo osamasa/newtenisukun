@@ -55,56 +55,41 @@
     <v-btn :x-large=true color='secondary' :block=true @click='addRecord'>もっと試合を行う</v-btn>
     </v-card>
 -->
-      <v-dialog v-model="isDialog" persistent max-width="450px" v-if="isDialog">
+      <v-dialog v-model="isDialog" persistent max-width="640px" v-if="isDialog">
 	<v-card>
 	  <v-card-title>
 	    <span class="headline">勝敗入力</span>
 	  </v-card-title>
 	  <v-card-text>
 	    <v-container>
-      	      <div>
-		<input type="radio" v-model="nowrec.rs" value="0">なし
-	      </div>	    
-	      <div>
-		<input type="radio" v-model="nowrec.rs" value="1">{{nowrec.p1}},{{nowrec.p2}}の勝ち
-	      </div>
-	      <div>
-		<input type="radio" v-model="nowrec.rs" value="2">{{nowrec.p3}},{{nowrec.p4}}の勝ち
-	      </div>
-	      <div>
-		<input type="radio" v-model="nowrec.rs" value="3">引き分け
-	      </div>
-	            	      <div><v-spacer></v-spacer></div>
-	      <div>
+             <v-row>
+	       <v-col>
+                 <v-radio-group v-model="nowrec.rs" row>
+                     <v-radio label="なし" value="radio-1"></v-radio>
+                     <v-radio :label="this.getRadioLabel(nowrec.p1,nowrec.p2)" value="1"></v-radio>
+                     <v-radio :label="this.getRadioLabel(nowrec.p3,nowrec.p4)" value="2"></v-radio>
+                     <v-radio label="引き分け" value="3"></v-radio>		     
+                 </v-radio-group>
+       	       </v-col>
+             </v-row>
+      	      <v-row><v-col>
 		{{nowrec.p1}},{{nowrec.p2}}の点数:
-		<select v-model="nowrec.r1">
-		  <option disabled value="">Please select one</option>
-		  <option>0</option>
-		  <option>1</option>
-		  <option>2</option>
-		  <option>3</option>
-		  <option>4</option>
-		  <option>5</option>  
-		  <option>6</option>
-		  <option>7</option>
-		  <option>8</option>  
-		</select>
-	      </div>
-	      <div>
+	      <v-select v-model="nowrec.r1"
+		outlined
+		label="点数を選択してください2"
+		:items="[0,1,2,3,4,5,6,7,8,9,10]"		
+		>
+		</v-select>
+	      </v-col></v-row>				
+	      <v-row><v-col>
 		{{nowrec.p3}},{{nowrec.p4}}の点数:
-		<select v-model="nowrec.r2">
-		  <option disabled value="">Please select one</option>
-		  <option>0</option>
-		  <option>1</option>
-		  <option>2</option>
-		  <option>3</option>
-		  <option>4</option>
-		  <option>5</option>  
-		  <option>6</option>
-		  <option>7</option>
-		  <option>8</option>  
-		</select>
-	      </div>
+	      <v-select v-model="nowrec.r2"
+		outlined
+		label="点数を選択してください2"
+		:items="[0,1,2,3,4,5,6,7,8,9,10]"		
+		>
+		</v-select>
+	      </v-col></v-row>		
 	    </v-container>
 	  </v-card-text>
 	  <v-card-actions>
@@ -121,35 +106,7 @@ fixed
       >    
       <v-row>
 	<v-col
-	  cols="4"
-	  class="pa-0"
-	  >
-	</v-col>
-        <v-col
-          cols="4"
-          class="pa-0"
-          style="height: 38px;"
-          >
-    <v-layout justify-center>
-    <v-fab-transition>
-    <v-btn                    
-                    color="pink"
-                    fab
-                    dark
-                    top
-                    large
-                    absolute
-                    center
-@click='addRecord'
-v-show="!hidden"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-    </v-btn>
-    </v-fab-transition>    
-          </v-layout>
-	</v-col>
-	<v-col
-	  cols="4"
+	  cols="12"
 	  class="pa-0"
 	  >
 	  <v-layout>
@@ -161,7 +118,6 @@ v-show="!hidden"
 	large
         right
         open-on-hover
-	v-show="hidden"
       >
         <template v-slot:activator>
           <v-btn
@@ -200,6 +156,16 @@ v-show="!hidden"
         >
            <v-icon>mdi-check-circle</v-icon>	  		
         </v-btn>
+        <v-btn                    
+                    color="pink"
+                    fab
+                    dark
+                    small
+                    @click='addRecord'
+                  >
+                    <v-icon>mdi-plus</v-icon>
+    </v-btn>
+	
       </v-speed-dial>    
     </v-fab-transition>    
           </v-layout>
@@ -222,7 +188,6 @@ export default {
     data: () => {
 	return {
             isLogin: false,
-	    hidden: true,
 	    isDialog: false,
 	    localCount: 5,
 	    scrollY : 0,
@@ -252,6 +217,11 @@ export default {
 	window.removeEventListener('scroll', this.calculateScrollY);
     },
     computed:{
+        getRadioLabel: function() {
+	  return function (p1,p2) {
+             return p1 + ','  + p2 + 'の勝ち'
+	     }
+        },
         thisTitle: function() {
 	    return this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + this.$store.getters.getPeoples + '人';
 	},
