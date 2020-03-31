@@ -9,6 +9,7 @@
         cols="12"
         md="12"
       >
+	  
         <base-material-card
           color="light-blue darken-1"
           class="px-5 py-9"
@@ -97,10 +98,9 @@
 	ListResults,
 	CreateGame
     },
-    data () {
-	return {
-      }
-    },
+    data: () => ({
+
+    }),    
     methods: {
     },
   }
