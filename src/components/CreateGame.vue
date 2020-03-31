@@ -96,8 +96,7 @@
   </div>
   <v-btn @click="doLogin">ログイン</v-btn>
 </v-card-text>
-        </base-material-card>
-
+</base-material-card>
 </template>
 <script>
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
