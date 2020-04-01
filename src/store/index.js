@@ -7,24 +7,25 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+	isLoading: false,
 	isAnonymous: false,
 	shiaidba: null,
 	gameusera: null,
-	curgameid: 123456,
+	curgameid: '',
 	nextPath: '',
 	user:{},
 	mygames: [],
 	mygamescount :0,
 	userinfo: {
-	    displayName: "ほげほげ太郎",
-	    photoURL: "https://lh3.googleusercontent.com/a-/AAuE7mBnOXQMXtpHhReTB-pjTiZI-rsMzJXUJsQozUUiKA",
+	    displayName: "",
+	    photoURL: "",
 	    games: {},
 	    records: [],
 	},
 	game:
 	    {
-		gamedate: '2020-02-25 16:00',
-		gameplace: 'ほげほげ',
+		gamedate: '',
+		gameplace: '',
 		ownuserid: {},
 		peoples: 5,
 		users: []
@@ -33,6 +34,9 @@ export default new Vuex.Store({
 	shiairec: []
     },
     getters: {
+	getIsLoading: (state) => {
+	    return state.isLoading;
+	},
 	getIsAnonymous: (state) => {
 	    return state.isAnonymous;
 	},
@@ -92,6 +96,9 @@ export default new Vuex.Store({
 	
     },
     mutations: {
+	setIsLoading: (state,payload) => {
+	    state.isLoading = payload.isLoading;
+	},	
 	setShiaiDba:  (state,payload) => {
 	    state.shiaidba = payload.shiaidba;
 	},
@@ -264,7 +271,6 @@ export default new Vuex.Store({
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] gameuser one record updae error');
 		}
-
 	    }
 													 );
 	},
@@ -285,6 +291,7 @@ export default new Vuex.Store({
 	    })
 	},
 	async loadUserInfoDbAction(context,payload) {
+	    context.commit('setIsLoading',{isLoading:false});	    
 	    context.commit('setUser',payload)
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
@@ -296,6 +303,7 @@ export default new Vuex.Store({
 		    };
 		    _payload.games.curgameid = true;
 		    context.commit('setUserinfo',_payload);
+		    context.commit('setIsLoading',{isLoading:false});		    
 		} else {
 		    const _payload = {
 			displayName : context.getters.getUser.displayName,
@@ -308,6 +316,7 @@ export default new Vuex.Store({
 			if(error) {
 			    console.log('[ERR]' + error);
 			}
+			context.commit('setIsLoading',{isLoading:false});
 		    })
 		}
 	    })

@@ -33,42 +33,6 @@
         </base-material-card>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col
-	cols="12"
-	sm="6"
-	lg="6"
-	>
-	<v-spacer></v-spacer>
-        <base-material-card
-	  icon="mdi-at"
-          color="info"
-          class="px-5 py-6"
-	  title="お知らせ"
-          >
-          <v-card-text>
-	    ベータ版公開開始(2020/03/28)
-	  </v-card-text>
-        </base-material-card>	  
-      </v-col>
-      <v-col
-	cols="12"
-	sm="6"
-	lg="6"
-	>
-	<v-spacer></v-spacer>
-        <base-material-card
-	  icon="mdi-auto-fix"
-          color="alert"
-          class="px-5 py-6"
-	  title="使い方"
-          >
-          <v-card-text>
-	    ---工事中---
-	  </v-card-text>
-        </base-material-card>	  
-      </v-col>
-    </v-row>
     <v-row>    
       <v-col
 	cols="12"

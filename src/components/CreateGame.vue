@@ -1,5 +1,4 @@
 <template>
-
       <base-material-card
 	icon="mdi-badminton"
         color="warning"
@@ -144,9 +143,6 @@ export default {
 	    if(ret) {
 		this.$store.dispatch('resetGames');	    
 		this.$store.dispatch('createGameidAction');
-		
-		console.log(this.$store.getters.getCurgameid);
-		
 		this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 		this.$store.dispatch('setGamedateAction',{'gamedate': this.date + ' ' + this.time});
     		this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});

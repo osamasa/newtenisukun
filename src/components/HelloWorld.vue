@@ -217,6 +217,9 @@ export default {
 	window.removeEventListener('scroll', this.calculateScrollY);
     },
     computed:{
+	isLoading: function() {
+             this.$store.getters.getIsLoading();
+	},
         getRadioLabel: function() {
 	  return function (p1,p2) {
              return p1 + ','  + p2 + 'の勝ち'
