@@ -152,6 +152,7 @@ export default {
 	    }
 	},
 	doLogin : function() {
+	    this.$store.dispatch('setIsLoadingAction',true);
 	    this.$store.dispatch('setNextPathAction',{'path' : '/'});
 	    this.$store.dispatch('doSave');
 	    this.$router.push({ name: 'Signin' });

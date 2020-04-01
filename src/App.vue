@@ -1,5 +1,16 @@
 <template>
   <v-app>
+     <v-overlay
+        opacity=0.46
+	:value="isLoading"
+     >
+     <v-progress-circular
+        :size="70"
+        :width="7"
+        color="white"
+        indeterminate
+      ></v-progress-circular>
+     </v-overlay>
     <v-app-bar
       app
       color="primary"
@@ -38,22 +49,27 @@
 
 <script>
 import firebase from 'firebase';
+
 export default {
     name: 'App',
 
     data: () => ({
-	isLogin: false,
 	isAnonymous : false,
 	displayName: null,
 	photoURL: null,
+	isLogin:false,
     }),
-    mounted() {
+    components: {
+    }, 
+    created() {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if(user) {
 		this.isAnonymous = user.isAnonymous;	    
 		this.displayName = user.displayName;
 		this.photoURL = user.photoURL;
 		this.isLogin = true;
+	    } else {
+	    	this.$store.dispatch('setIsLoadingAction',false);
 	    }
 	});
     },
@@ -63,16 +79,21 @@ export default {
 	signOut: function () {
 	    firebase.auth().signOut()
 	    this.isLogin=false;
+	    this.$store.dispatch('setIsLoadingAction',false);
 	    this.$router.push('/');
 	},
 	chgURL: function(url) {
 	    this.$router.push(url)
 	},
 	chgAuth: function(url) {
+            this.$store.dispatch('setIsLoadingAction',true);
 	    this.$router.push('/changeauth');
 	}	
     },
     computed: {
+      	isLoading: function() {
+	   return this.$store.getters.getIsLoading;
+	}
     }
 };
 </script>

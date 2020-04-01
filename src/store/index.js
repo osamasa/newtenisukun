@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-	isLoading: false,
+	isLoading: true,
 	isAnonymous: false,
 	shiaidba: null,
 	gameusera: null,
@@ -35,6 +35,7 @@ export default new Vuex.Store({
     },
     getters: {
 	getIsLoading: (state) => {
+	    console.log(state.isLoading);
 	    return state.isLoading;
 	},
 	getIsAnonymous: (state) => {
@@ -97,7 +98,7 @@ export default new Vuex.Store({
     },
     mutations: {
 	setIsLoading: (state,payload) => {
-	    state.isLoading = payload.isLoading;
+	    state.isLoading = payload;
 	},	
 	setShiaiDba:  (state,payload) => {
 	    state.shiaidba = payload.shiaidba;
@@ -207,7 +208,8 @@ export default new Vuex.Store({
 		    context.commit('setShiaiRec',payload);
 		} else {
 		    console.log('[ERR] Not Found /shiairec/' + state.curgameid);
-		}		    
+		}
+ 	        context.commit('setIsLoading',false);		
 	    });
 	    if(shiaidba) {
 		context.commit('setShiaiDba',{'shiaidba' : shiaidba});
@@ -291,7 +293,6 @@ export default new Vuex.Store({
 	    })
 	},
 	async loadUserInfoDbAction(context,payload) {
-	    context.commit('setIsLoading',{isLoading:false});	    
 	    context.commit('setUser',payload)
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
@@ -303,7 +304,6 @@ export default new Vuex.Store({
 		    };
 		    _payload.games.curgameid = true;
 		    context.commit('setUserinfo',_payload);
-		    context.commit('setIsLoading',{isLoading:false});		    
 		} else {
 		    const _payload = {
 			displayName : context.getters.getUser.displayName,
@@ -316,7 +316,6 @@ export default new Vuex.Store({
 			if(error) {
 			    console.log('[ERR]' + error);
 			}
-			context.commit('setIsLoading',{isLoading:false});
 		    })
 		}
 	    })
@@ -412,7 +411,7 @@ export default new Vuex.Store({
 				  peoples : data.val().peoples,
 				  gameplace : data.val().gameplace
 				});
-			    }
+			}
 		    });
 		    context.commit('setMyGames',mygames.reverse());
 		    context.commit('setMyGamesCount',mygames.length);
@@ -420,7 +419,13 @@ export default new Vuex.Store({
 		    context.commit('setMyGames',[]);
 		    context.commit('setMyGamesCount',0);
 		}
+		context.commit('setIsLoading',false);
 	    })
+	},
+
+	setIsLoadingAction(context,payload) {
+	    console.log(1);
+	    context.commit('setIsLoading',payload);
 	},
 	
 	async setShiaiRecAction(context,payload) {
