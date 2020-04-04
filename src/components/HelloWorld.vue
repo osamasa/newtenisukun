@@ -1,20 +1,21 @@
 <template>
-  
   <v-app v-if="isLogin">
-
-    <v-container>
-
-      <base-material-card
-	icon="mdi-animation-play"
-        color="info"
-        class="px-5 py-9"
-	:title="thisTitle"
-        >
-	<div align="right">
-	  <a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>
-	</div>
-	<v-card v-for="(n,index) in getResult" :key="index">
+    <base-material-card
+      icon="mdi-animation-play"
+      color="info"
+      class="px-5 py-9"
+      :title="thisTitle"
+      >
+      <div align="right">
+	<a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>
+      </div>
+      <v-card v-for="(n,index) in getResult" :key="index" @click="nowTouch = index"
+	      v-bind:class="{ active: isActive(index) }"
+	      >
+	<v-card-title>
 	  第{{ n['id'] }}試合
+	</v-card-title>	
+	<v-card-text>	
 	  <v-row
 	    class='mb-1'
 	    no-gutters>
@@ -32,16 +33,7 @@
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
-		  {{ n['rs'] ==  1 ? '○' : n['rs'] == 2 ? '☓' : '△'}}{{ n['r1'] }}
-		  <v-card-actions>
-		    <v-btn color="primary" @click="openDialg(n)">結果修正＆メモ</v-btn>
-		  </v-card-actions>
-		</div>
-		<div v-else>
-		  <v-card-actions>
-		    <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力＆メモ</v-btn>
-		  </v-card-actions>
-		</div>
+		  {{ n['rs'] ==  1 ? '○' : n['rs'] == 2 ? '☓' : '△'}}{{ n['r1'] }}	      </div>
 	      </div>	      	    
 	      <div v-else-if="k==4">
 		<div v-if="n['rs'] > 0">
@@ -50,69 +42,70 @@
 	      </div>
 	    </v-col>
 	  </v-row>
-	</v-card>
-	<!--      <v-card>
-		  <v-btn :x-large=true color='secondary' :block=true @click='addRecord'>もっと試合を行う</v-btn>
-	</v-card>
-	-->
-	<v-dialog v-model="isDialog" persistent max-width="640px" v-if="isDialog">
-	  <v-card>
-	    <v-card-title>
-	      <span class="headline">勝敗入力＆メモ</span>
-	    </v-card-title>
-	    <v-card-text>
-	      <v-container>
-		<v-row>
-		  <v-col>
-                    <v-radio-group v-model="nowrec.rs" row>
-                      <v-radio label="なし" value="radio-1"></v-radio>
-                      <v-radio :label="this.getRadioLabel(nowrec.p1,nowrec.p2)" value="1"></v-radio>
-                      <v-radio :label="this.getRadioLabel(nowrec.p3,nowrec.p4)" value="2"></v-radio>
-                      <v-radio label="引き分け" value="3"></v-radio>		     
-                    </v-radio-group>
-       		  </v-col>
-		</v-row>
-      		<v-row><v-col>
-		    {{nowrec.p1}},{{nowrec.p2}}の点数:
-		    <v-select v-model="nowrec.r1"
-			      outlined
-			      label="点数を選択してください2"
-			      :items="[0,1,2,3,4,5,6,7,8,9,10]"		
-			      >
-		    </v-select>
-		</v-col></v-row>				
-		<v-row><v-col>
-		    {{nowrec.p3}},{{nowrec.p4}}の点数:
-		    <v-select v-model="nowrec.r2"
-			      outlined
-			      label="点数を選択してください2"
-			      :items="[0,1,2,3,4,5,6,7,8,9,10]"		
-			      >
-		    </v-select>
-		  </v-col>
-		</v-row>
-		<v-row>
-		  <v-col>
-		    <v-textarea
-		      name="input-7-1"
-		      v-model=nowmemo
-		      clearable
-		      clear-icon="mdi-cancel"
-		      label="メモ"
-		      hint="試合中に気づいたことを記入"
-		      ></v-textarea>
-		  </v-col>
-		</v-row>
-	      </v-container>
-	    </v-card-text>
-	    <v-card-actions>
-	      <v-spacer></v-spacer>
-	      <v-btn color="warning" @click="setResult">閉じる</v-btn>
+	  <v-row v-if="isAnonymous === false">
+	    <v-col>
+	      <v-text-field
+		label="メモを入力"
+		v-model="this.getMyMemos[index]"
+		dense
+		></v-text-field>
+	    </v-col>
+	  </v-row>
+	</v-card-text>
+	<v-row>
+	  <v-col cols=1>
+	    <v-card-actions v-if="n['rs'] > 0">
+	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正</v-btn>
 	    </v-card-actions>
-	  </v-card>
-	</v-dialog>
-      </base-material-card>  
-    </v-container>
+	    <v-card-actions v-else>
+	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力</v-btn>
+	    </v-card-actions>	
+	  </v-col>
+	</v-row>      
+      </v-card>
+
+      <v-dialog v-model="isDialog" persistent max-width="640px" v-if="isDialog">
+	<v-card>
+	  <v-card-title>
+	    <span class="headline">勝敗入力</span>
+	  </v-card-title>
+	  <v-card-text>
+	    <v-row>
+	      <v-col>
+		<v-radio-group v-model="nowrec.rs" row>
+		  <v-radio label="なし" value="radio-1"></v-radio>
+		  <v-radio :label="this.getRadioLabel(nowrec.p1,nowrec.p2)" value="1"></v-radio>
+		  <v-radio :label="this.getRadioLabel(nowrec.p3,nowrec.p4)" value="2"></v-radio>
+		  <v-radio label="引き分け" value="3"></v-radio>		     
+		</v-radio-group>
+	      </v-col>
+	    </v-row>
+	    <v-row><v-col>
+		{{nowrec.p1}},{{nowrec.p2}}の点数:
+		<v-select v-model="nowrec.r1"
+			  outlined
+			  label="点数を選択してください2"
+			  :items="[0,1,2,3,4,5,6,7,8,9,10]"		
+			  >
+		</v-select>
+	    </v-col></v-row>				
+	    <v-row><v-col>
+		{{nowrec.p3}},{{nowrec.p4}}の点数:
+		<v-select v-model="nowrec.r2"
+			  outlined
+			  label="点数を選択してください2"
+			  :items="[0,1,2,3,4,5,6,7,8,9,10]"		
+			  >
+		</v-select>
+	    </v-col></v-row>		
+	  </v-card-text>
+	  <v-card-actions>
+	    <v-spacer></v-spacer>
+	    <v-btn color="warning" @click="setResult">閉じる</v-btn>
+	  </v-card-actions>
+	</v-card>
+      </v-dialog>
+    </base-material-card>  
     <v-footer
       padless
       fixed
@@ -155,8 +148,7 @@
 		  dark
 		  small
 		  color="indigo"
-  		  @click="showqrcode"	  
-
+		  @click="showqrcode"
 		  >
 		  <v-icon>mdi-qrcode</v-icon>	  	
 		</v-btn>
@@ -170,19 +162,17 @@
 		  <v-icon>mdi-check-circle</v-icon>	  		
 		</v-btn>
 		<v-btn                    
-                  color="pink"
-                  fab
-                  dark
-                  small
-                  @click='addRecord'
-                  >
-                  <v-icon>mdi-plus</v-icon>
+		  color="pink"
+		  fab
+		  dark
+		  small
+		  @click='addRecord'
+		  >
+		  <v-icon>mdi-plus</v-icon>
 		</v-btn>
-		
 	      </v-speed-dial>    
 	    </v-fab-transition>    
-          </v-layout>
-
+	  </v-layout>
 	</v-col>	
       </v-row>
     </v-footer>
@@ -190,7 +180,6 @@
   <div v-else>
     しばらくおまちください
   </div>
-  
 </template>
 
 <script>
@@ -200,6 +189,7 @@ export default {
     title: 'テニス試合中', 
     data: () => {
 	return {
+	    nowTouch:0,
             isLogin: false,
 	    isDialog: false,
 	    localCount: 5,
@@ -220,6 +210,7 @@ export default {
 		this.$store.dispatch('loadGameDbAction');	
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');
+  		    this.$store.dispatch('loadMyMemosDatabaseAction');
     	        }
 	    } else {
 		this.isLogin = false;
@@ -233,8 +224,19 @@ export default {
 	window.removeEventListener('scroll', this.calculateScrollY);
     },
     computed:{
+        getMyMemos: function () {
+	      return this.$store.getters.getMyMemos;
+	},
+        isActive: function() {
+            return function(i) {
+	      return (i === this.nowTouch);
+	    }
+	},
+	isAnonymous : function() {
+	     this.$store.getters.getIsAnonymous;
+	},
 	isLoading: function() {
-             this.$store.getters.getIsLoading();
+             this.$store.getters.getIsLoading;
 	},
         getRadioLabel: function() {
 	  return function (p1,p2) {

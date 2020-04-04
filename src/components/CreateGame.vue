@@ -109,7 +109,7 @@ export default {
 	peoples:5,
 	items:[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 	valid: false,
-	name: '',
+	name: '某所',
 	nameRules: [
 	    v => !!v || '場所名はご入力ください'
 	],
@@ -122,6 +122,17 @@ export default {
 	modal2 : false
     }),
     created() {
+        const hourcont = ['01','02', '03' , '04', '05','06','07', '08' , '09','10','11', '12']
+    	const d = new Date();
+	const year = d.getFullYear();
+	const month = d.getMonth() < 9 ? '0' + (d.getMonth()+1) : d.getMonth()+1
+	const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate();
+	let minutes = (d.getMinutes() < 31) && (d.getMinutes() > 0) ? '30' : '00';
+	let hour = ((d.getMinutes() > 30) && (d.getMinutes() < 60)) ? d.getHours() : d.getHours()-1;
+
+	this.date = `${ year }-${ month }-${ day }`;
+	this.time = `${ hourcont[hour] }:${ minutes }`
+	
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.isLogin = true;
