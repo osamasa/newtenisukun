@@ -8,7 +8,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
 	isLoading: true,
-	isAnonymous: false,
 	shiaidba: null,
 	gameusera: null,
 	curgameid: '',
@@ -17,10 +16,10 @@ export default new Vuex.Store({
 	mygames: [],
 	mygamescount :0,
 	userinfo: {
+   	    isAnonymous: false,
 	    displayName: "",
 	    photoURL: "",
 	    games: {},
-	    records: [],
 	},
 	game:
 	    {
@@ -37,9 +36,6 @@ export default new Vuex.Store({
 	getIsLoading: (state) => {
 	    console.log(state.isLoading);
 	    return state.isLoading;
-	},
-	getIsAnonymous: (state) => {
-	    return state.isAnonymous;
 	},
 	getShiaiDba: (state) => {
 	    return state.shiaidba;
@@ -113,7 +109,6 @@ export default new Vuex.Store({
 	    state.mygamescount = payload;
 	},
 	setUser: (state,payload) => {
-	    state.isAnonymous = payload.user.isAnonymous;
 	    state.user = payload.user;
 	},
 	setUserinfo: (state,payload) => {
@@ -141,12 +136,7 @@ export default new Vuex.Store({
 	initGameState: (state) => {
 	    state.game.ownuserid[ state.user.uid ]=true;
 	    state.game.users[ state.user.uid ]=true;
-	    /*
-	    state.userinfo.displayName=state.user.displayName;
-	    state.userinfo.photoURL=state.user.photoURL;
-	    state.userinfo.games[state.curgameid] = true;
-	    */
-
+	    
 	    const tmp = [];
 	    
 	    for(let i=0;i<state.game.peoples;i++) {
@@ -299,8 +289,8 @@ export default new Vuex.Store({
 		    const _payload = {
 			displayName : snapshot.val().displayName,
 			photoURL : snapshot.val().photoURL,
-			records: snapshot.val().records,
-			games : snapshot.val().games
+			games : snapshot.val().games,
+			isAnonymous : snapshot.val().isAnonymous
 		    };
 		    _payload.games.curgameid = true;
 		    context.commit('setUserinfo',_payload);
@@ -308,7 +298,7 @@ export default new Vuex.Store({
 		    const _payload = {
 			displayName : context.getters.getUser.displayName,
 			photoURL : context.getters.getUser.photoURL,
-			records: [],
+			isAnonymous : context.getters.getUser.isAnonymous,
 			games : {}
 		    };
 		    context.commit('setUserinfo',_payload);
@@ -446,7 +436,7 @@ export default new Vuex.Store({
 				p3=v;
 			    } else {
 				p4=v;				
-				payload.shiairec.push({"id":num+(++n), "p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
+				payload.shiairec.push({"id":num+(++n), "p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 , "memo": {}});
 			    }
 			    i++;
 			});
