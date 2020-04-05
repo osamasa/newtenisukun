@@ -246,7 +246,7 @@ export default new Vuex.Store({
 		}
 	    });
 	    if(gameusera) {
-//		context.commit('setGameUsera',{'gameusera',gameusera});
+		context.commit('setGameUsera',{'gameusera':gameusera});
 	    }
 	},
 	async doSave(context) {

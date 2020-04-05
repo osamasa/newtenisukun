@@ -19,7 +19,7 @@
           :chips="true"
 	  label="人数">
 	</v-select>
-<v-menu
+    <v-menu
           ref="menu"
           v-model="menu"
           :close-on-content-click="false"
@@ -136,7 +136,7 @@ export default {
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
 		this.isLogin = true;
-		this.$store.dispatch('loadUserInfoDbAction',{'user': user});		
+		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
 	    } else {
 		this.isLogin = false;
 	    }

@@ -94,12 +94,38 @@
         </thead>
 
 	<tbody v-for="(n,index) in this.getShiairec()" :key="index">
-          <tr v-if="n['rs']" >
+          <tr v-if="n['rs']">
             <td>{{ n['id'] }}</td>
             <td>{{getShiaiResult(n['r1'],n['r2'])}} {{ n['p1'] }},{{ n['p2'] }}</td>
             <td>{{ n['r1'] }} VS {{ n['r2'] }}</td>
             <td>{{getShiaiResult(n['r2'],n['r1'])}} {{ n['p3'] }},{{ n['p4'] }}</td>
             <td></td>
+          </tr>
+        </tbody>
+      </v-simple-table>
+    </base-material-card>
+
+
+    <div class="py-3" />
+
+    <base-material-card
+      color="blue"
+      icon="mdi-note-text"
+      title="メモ"
+      class="px-5 py-3"
+    >
+      <v-simple-table>
+        <thead>
+          <tr>
+            <th>試合番号</th>
+            <th>メモ内容</th>
+          </tr>
+        </thead>
+
+	<tbody v-for="(n,index) in this.getMyMemos" :key="index">
+          <tr v-if="n">
+            <td>{{ index+1 }}</td>
+            <td>{{ n }}</td>
           </tr>
         </tbody>
       </v-simple-table>
@@ -114,56 +140,23 @@ fixed
 	  cols="12"
 	  class="pa-0"
 	  >
-	  <v-layout>
-    <v-fab-transition>
- <v-speed-dial
-        fab
-	absolute
-        bottom
-	large
-        right
-        open-on-hover
-      >
-        <template v-slot:activator>
-          <v-btn
-            color="blue darken-2"
-            dark
-            fab
-          >
-            <v-icon>mdi-apple-keyboard-command</v-icon>	  
-           </v-btn>
-        </template>
-        <v-btn
-          fab
-          dark
-          small
-          color="orange"
-          @click="playgame"
-        >
-          <v-icon>mdi-badminton</v-icon>
+    <v-bottom-navigation
+      dark
+    >
+      <v-btn value="メンバー割" @click="assignmember"	  >
+        <span>メンバー割</span>
+        <v-icon>mdi-account-multiple</v-icon>
+      </v-btn>
+  
+      <v-btn value="ゲームへ" @click="playgame">
+        <span>ゲームへ</span>
+        <v-icon>mdi-badminton</v-icon>
     </v-btn>
-        <v-btn
-          fab
-          dark
-          small
-          color="green"
-	  @click="assignmember"	  
-        >
-          <v-icon>mdi-account-multiple</v-icon>
-        </v-btn>    
-        <v-btn
-          fab
-          dark
-          small
-          color="indigo"
-  	  @click="showqrcode"
-        >
-           <v-icon>mdi-qrcode</v-icon>	  	
-        </v-btn>
-      </v-speed-dial>    
-    </v-fab-transition>    
-          </v-layout>
-
+      <v-btn value="QRコード" @click="showqrcode">
+        <span>QRコード表示</span>
+        <v-icon>mdi-qrcode</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
 	</v-col>	
     </v-row>
 
@@ -245,6 +238,9 @@ export default {
 	}	
     },
     computed: {
+        getMyMemos: function() {
+	    return this.$store.getters.getMyMemos;
+	},
 	getMyURL : function() {
   	  return encodeURI("https://line.me/R/msg/text/?ゲームの結果を確認する場合は下記をクリック\r\n\r\nhttps://mytenisransuuhyoukunv3.firebaseapp.com/" + this.$route.path + "\r\n\r\n");	
 	}

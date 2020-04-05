@@ -110,71 +110,36 @@
     <v-footer
       padless
       fixed
-      >    
-      <v-row>
-	<v-col
-	  cols="12"
-	  class="pa-0"
-	  >
-	  <v-layout>
-	    <v-fab-transition>
-	      <v-speed-dial
-		fab
-		absolute
-		bottom
-		large
-		right
-		open-on-hover
-		>
-		<template v-slot:activator>
-		  <v-btn
-		    color="blue darken-2"
-		    dark
-		    fab
-		    >
-		    <v-icon>mdi-apple-keyboard-command</v-icon>	  
-		  </v-btn>
-		</template>
-		<v-btn
-		  fab
-		  dark
-		  small
-		  color="green"
-		  @click="assignmember"	  
-		  >
-		  <v-icon>mdi-account-multiple</v-icon>
-		</v-btn>
-		<v-btn
-		  fab
-		  dark
-		  small
-		  color="indigo"
-		  @click="showqrcode"
-		  >
-		  <v-icon>mdi-qrcode</v-icon>	  	
-		</v-btn>
-		<v-btn
-		  fab
-		  dark
-		  small
-		  color="red"
-		  @click="showresult"
-		  >
-		  <v-icon>mdi-check-circle</v-icon>	  		
-		</v-btn>
-		<v-btn                    
-		  color="pink"
-		  fab
-		  dark
-		  small
-		  @click='addRecord'
-		  >
-		  <v-icon>mdi-plus</v-icon>
-		</v-btn>
-	      </v-speed-dial>    
-	    </v-fab-transition>    
-	  </v-layout>
-	</v-col>	
+    >
+    <v-row>
+    <v-col
+        cols="12"
+        class="pa-0"
+    >
+    <v-bottom-navigation
+      dark
+    >
+      <v-btn value="試合追加" @click='addRecord'>
+        <span>試合追加</span>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+  
+      <v-btn value="メンバー割" @click="assignmember">
+        <span>メンバー割</span>
+        <v-icon>mdi-account-multiple</v-icon>
+      </v-btn>
+  
+      <v-btn value="結果確認" @click="showresult">
+        <span>結果確認</span>
+        <v-icon>mdi-check-circle</v-icon>
+    </v-btn>
+
+      <v-btn value="QRコード" @click="showqrcode">
+        <span>QRコード表示</span>
+        <v-icon>mdi-qrcode</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
+    </v-col>
       </v-row>
     </v-footer>
   </v-app>
