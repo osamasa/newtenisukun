@@ -13,7 +13,7 @@
 	      v-bind:class="{ active: isActive(index) }"
 	      >
 	<v-card-title>
-	  第{{ n['id'] }}試合
+	<v-icon v-show="index==nowTouch">mdi-checkbox-marked-circle</v-icon>第{{ n['id'] }}試合
 	</v-card-title>	
 	<v-card-text>	
 	  <v-row
@@ -42,12 +42,13 @@
 	      </div>
 	    </v-col>
 	  </v-row>
-	  <v-row v-if="isAnonymous === false">
+	  <v-row v-show="!isAnonymous">
 	    <v-col>
 	      <v-text-field
 		label="メモを入力"
-		v-model="this.getMyMemos[index]"
 		dense
+		@change="chgMemos(index)"
+		v-model="getMyMemos[index]"
 		></v-text-field>
 	    </v-col>
 	  </v-row>
@@ -183,7 +184,7 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+    import firebase from 'firebase';
 
 export default {
     title: 'テニス試合中', 
@@ -195,7 +196,6 @@ export default {
 	    localCount: 5,
 	    scrollY : 0,
 	    nowrec: {},
-	    nowmemo: '',
 	    uid : null
 	}},
     created() {
@@ -207,10 +207,10 @@ export default {
 		this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
 		this.$store.dispatch('storeGamesUsersDbAction');
 		this.$store.dispatch('setUserInfoDbGameAction');		
-		this.$store.dispatch('loadGameDbAction');	
+		this.$store.dispatch('loadGameDbAction');
+  		this.$store.dispatch('loadMyMemosDatabaseAction');		
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');
-  		    this.$store.dispatch('loadMyMemosDatabaseAction');
     	        }
 	    } else {
 		this.isLogin = false;
@@ -218,30 +218,27 @@ export default {
 	})	     	
     },
     mounted() {
-	window.addEventListener('scroll', this.calculateScrollY);
-    },
-    beforeDestroy() {
-	window.removeEventListener('scroll', this.calculateScrollY);
     },
     computed:{
-        getMyMemos: function () {
-	      return this.$store.getters.getMyMemos;
+        getMyMemos: function() {
+	    return this.$store.getters.getMyMemos;
 	},
+	
         isActive: function() {
             return function(i) {
-	      return (i === this.nowTouch);
+		return (i === this.nowTouch);
 	    }
 	},
 	isAnonymous : function() {
-	     this.$store.getters.getIsAnonymous;
+	    this.$store.getters.getUser.isAnonymous;
 	},
 	isLoading: function() {
-             this.$store.getters.getIsLoading;
+            this.$store.getters.getIsLoading;
 	},
         getRadioLabel: function() {
-	  return function (p1,p2) {
-             return p1 + ','  + p2 + 'の勝ち'
-	     }
+	    return function (p1,p2) {
+		return p1 + ','  + p2 + 'の勝ち'
+	    }
         },
         thisTitle: function() {
 	    return this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + this.$store.getters.getPeoples + '人';
@@ -263,63 +260,33 @@ export default {
 	},
 	getMyURL : function() {
 
-  	  return encodeURI("https://line.me/R/msg/text/?ゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://mytenisransuuhyoukunv3.firebaseapp.com/" + this.$route.path + "\r\n\r\n");
+  	    return encodeURI("https://line.me/R/msg/text/?ゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://mytenisransuuhyoukunv3.firebaseapp.com/" + this.$route.path + "\r\n\r\n");
 	}
     },
-methods: {
-    assignmember: function() {
-	this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
-    },
-    showqrcode: function() {
-	this.$router.push('/viewqrcode/game/' + this.$store.getters.getCurgameid);
-    },
-    showresult: function() {
-	this.$router.push('/gameresult/' + this.$store.getters.getCurgameid);
-    },
-    openDialg: function(n) {
-	this.nowrec=n;
-	console.log(this.nowrec);
-	this.nowmemo=''
-	if(this.nowrec.memo) {
-	    if(this.nowrec.memo[this.uid]) {
-		this.nowmemo = String(this.nowrec.memo[this.uid]);
-	    } 
-	}
-	this.isDialog=true;	
-    },
-    setResult: function() {
-	if(!this.nowrec['memo']) {
-	    const _memo={};
-	    console.log(0);	    
-	    _memo[this.uid] = String(this.nowmemo);
-	    console.log(1);
-	    this.nowrec['memo']=_memo;
-	} else {
-	    console.log(2);
-	    this.nowrec.memo[this.uid] = String(this.nowmemo);
-	}
-	this.$store.dispatch('updateShiaiRecAction',this.nowrec);
-	this.isDialog = false;
-    },		
-    addRecord: function() {
-	    this.$store.dispatch('setShiaiRecAction',{isRenewal:false});
+    methods: {
+        chgMemos: function(index) {
+	    this.$store.dispatch('updateMyMemoAction',{'id': index});
 	},
-	calculateScrollY: function() {
-	    const scrollHeight = Math.max(
-		document.body.scrollHeight, document.documentElement.scrollHeight,
-		document.body.offsetHeight, document.documentElement.offsetHeight,
-		document.body.clientHeight, document.documentElement.clientHeight
-	    );
-
-	    const pageMostBottom = scrollHeight - window.innerHeight;
-
-	    if((this.scrollY <= window.scrollY) && ((( window.scrollY / pageMostBottom) * 100) > 95)) {
-		this.hidden = false;
-	    } else {
-		this.hidden = true;
-	    }
-	    this.scrollY = window.scrollY;
+	assignmember: function() {
+	    this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
+	},
+	showqrcode: function() {
+	    this.$router.push('/viewqrcode/game/' + this.$store.getters.getCurgameid);
+	},
+	showresult: function() {
+	    this.$router.push('/gameresult/' + this.$store.getters.getCurgameid);
+	},
+	openDialg: function(n) {
+	    this.nowrec=n;
+	    this.isDialog=true;	
+	},
+	setResult: function() {
+	    this.$store.dispatch('updateShiaiRecAction',this.nowrec);
+	    this.isDialog = false;
+	},		
+	addRecord: function() {
+	    this.$store.dispatch('setShiaiRecAction',{isRenewal:false});
 	}
     }
-};
+}
 </script>

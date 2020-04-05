@@ -122,7 +122,7 @@ export default {
 	modal2 : false
     }),
     created() {
-        const hourcont = ['01','02', '03' , '04', '05','06','07', '08' , '09','10','11', '12']
+        const hourcont = ['01','02', '03' , '04', '05','06','07', '08' , '09']
     	const d = new Date();
 	const year = d.getFullYear();
 	const month = d.getMonth() < 9 ? '0' + (d.getMonth()+1) : d.getMonth()+1
@@ -131,7 +131,7 @@ export default {
 	let hour = ((d.getMinutes() > 30) && (d.getMinutes() < 60)) ? d.getHours() : d.getHours()-1;
 
 	this.date = `${ year }-${ month }-${ day }`;
-	this.time = `${ hourcont[hour] }:${ minutes }`
+	this.time = `${ hourcont[hour] ? hourcont[hour] : hour+1 }:${ minutes }`
 	
 	firebase.auth().onAuthStateChanged((user) => {
 	    if (user) {
