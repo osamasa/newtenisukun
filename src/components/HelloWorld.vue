@@ -42,24 +42,14 @@
 	      </div>
 	    </v-col>
 	  </v-row>
-	  <v-row v-show="!isAnonymous">
-	    <v-col>
-	      <v-text-field
-		label="メモを入力"
-		dense
-		@change="chgMemos(index)"
-		v-model="getMyMemos[index]"
-		></v-text-field>
-	    </v-col>
-	  </v-row>
 	</v-card-text>
 	<v-row>
 	  <v-col cols=1>
 	    <v-card-actions v-if="n['rs'] > 0">
-	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正</v-btn>
+	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正&メモ入力</v-btn>
 	    </v-card-actions>
 	    <v-card-actions v-else>
-	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力</v-btn>
+	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力&メモ入力</v-btn>
 	    </v-card-actions>	
 	  </v-col>
 	</v-row>      
@@ -98,7 +88,17 @@
 			  :items="[0,1,2,3,4,5,6,7,8,9,10]"		
 			  >
 		</v-select>
-	    </v-col></v-row>		
+    </v-col></v-row>
+    	  <v-row v-show="!isAnonymous">
+	    <v-col>
+	      <v-text-field
+		label="メモを入力（他の人には見られません）"
+		dense
+		@change="chgMemos(nowrec.id-1)"
+		v-model="getMyMemos[nowrec.id-1]"
+		></v-text-field>
+	    </v-col>
+	  </v-row>
 	  </v-card-text>
 	  <v-card-actions>
 	    <v-spacer></v-spacer>
@@ -193,15 +193,11 @@ export default {
 	    nowTouch:0,
             isLogin: false,
 	    isDialog: false,
-	    localCount: 5,
-	    scrollY : 0,
 	    nowrec: {},
-	    uid : null
 	}},
     created() {
     	firebase.auth().onAuthStateChanged((user) => {
 	    if ( user ) {
-		this.uid = user.uid;
     		this.isLogin = true;
 		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
 		this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
@@ -223,7 +219,6 @@ export default {
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
 	},
-	
         isActive: function() {
             return function(i) {
 		return (i === this.nowTouch);
@@ -231,9 +226,6 @@ export default {
 	},
 	isAnonymous : function() {
 	    this.$store.getters.getUser.isAnonymous;
-	},
-	isLoading: function() {
-            this.$store.getters.getIsLoading;
 	},
         getRadioLabel: function() {
 	    return function (p1,p2) {
@@ -243,23 +235,10 @@ export default {
         thisTitle: function() {
 	    return this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + this.$store.getters.getPeoples + '人';
 	},
-	getShiairecNum: function() {
-	    return this.$store.getters.getShiairecNum;
-	},
 	getResult: function() {
 	    return this.$store.getters.getShiairec;
         },
-	getShiaiResult: function (r1,r2) {
-	    if(r1==r2) {
-		return '△';
-	    } else if(r1 > r2) {
-		return '○';
-	    } else {
-		return '☓'
-	    }
-	},
 	getMyURL : function() {
-
   	    return encodeURI("https://line.me/R/msg/text/?ゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://mytenisransuuhyoukunv3.firebaseapp.com/" + this.$route.path + "\r\n\r\n");
 	}
     },
@@ -275,10 +254,6 @@ export default {
 	},
 	showresult: function() {
 	    this.$router.push('/gameresult/' + this.$store.getters.getCurgameid);
-	},
-	openDialg: function(n) {
-	    this.nowrec=n;
-	    this.isDialog=true;	
 	},
 	setResult: function() {
 	    this.$store.dispatch('updateShiaiRecAction',this.nowrec);
