@@ -328,7 +328,7 @@ export default new Vuex.Store({
 			games : snapshot.val().games,
 			isAnonymous : snapshot.val().isAnonymous
 		    };
-		    _payload.games.curgameid = true;
+
 		    context.commit('setUserinfo',_payload);
 		} else {
 		    const _payload = {
