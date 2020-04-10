@@ -12,13 +12,20 @@ VueClipboard.config.autoSetContainer = true // add this line
 Vue.config.productionTip = false
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDSW9cH4jXyDdMpnyAvXJ_yoG6fo9PYJKs",
-    authDomain: "mytenisransuuhyoukunv3.firebaseapp.com",
-    databaseURL: "https://mytenisransuuhyoukunv3.firebaseio.com",
-    projectId: "mytenisransuuhyoukunv3",
-    storageBucket: "mytenisransuuhyoukunv3.appspot.com",
-    messagingSenderId: "556741671747",
-    appId: "1:556741671747:web:1e921cf2b0e247bb64cdf6"
+//    apiKey: "AIzaSyDSW9cH4jXyDdMpnyAvXJ_yoG6fo9PYJKs",
+//    authDomain: "mytenisransuuhyoukunv3.firebaseapp.com",
+//    databaseURL: "https://mytenisransuuhyoukunv3.firebaseio.com",
+//    projectId: "mytenisransuuhyoukunv3",
+//    storageBucket: "mytenisransuuhyoukunv3.appspot.com",
+//    messagingSenderId: "556741671747",
+//    appId: "1:556741671747:web:1e921cf2b0e247bb64cdf6"
+  apiKey: "AIzaSyDSW9cH4jXyDdMpnyAvXJ_yoG6fo9PYJKs",
+  authDomain: "mytenisransuuhyoukunv3.firebaseapp.com",
+  databaseURL: "https://mytenisransuuhyoukunv3.firebaseio.com",
+  projectId: "mytenisransuuhyoukunv3",
+  storageBucket: "mytenisransuuhyoukunv3.appspot.com",
+  messagingSenderId: "556741671747",
+  appId: "1:556741671747:web:2f60872ee183149e64cdf6"
 };
 
 // Initialize Firebase
