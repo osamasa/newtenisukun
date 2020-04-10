@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site" : "rshkn3",
     "public": "dist",
     "ignore": [
       "firebase.json",
