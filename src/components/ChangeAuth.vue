@@ -39,8 +39,8 @@ export default {
     methods: {
 	authGoogle () {
 	    const provider = new firebase.auth.GoogleAuthProvider()
-	    googleUser = firebase.auth().signInWithRedirect(provider).catch(function(error) {
-		console.log('[ERR] ' + erro.code + ' ' + error.message);
+	    const googleUser = firebase.auth().signInWithRedirect(provider).catch(function(error) {
+		console.log('[ERR] ' + error.code + ' ' + error.message);
 	    });		       
 	    const credential = firebase.auth.GoogleAuthProvider.credential(
 		googleUser.getAuthResponse().id_token);
