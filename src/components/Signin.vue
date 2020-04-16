@@ -47,31 +47,31 @@ export default {
     methods: {
         authAnonymouse () {
 	    firebase.auth().signInAnonymously().catch(function(error) {
-		console.log('[ERR] ' + erro.code + ' ' + error.message);
+		console.log('[ERR] ' + error.code + ' ' + error.message);
 	    });		       
 	},
 	authGoogle () {
 	    const provider = new firebase.auth.GoogleAuthProvider()
 	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
-		console.log('[ERR] ' + erro.code + ' ' + error.message);
+		console.log('[ERR] ' + error.code + ' ' + error.message);
 	    });		       
 	},
 	authYahoo() {
 	    const provider = new firebase.auth.OAuthProvider('yahoo.com');
 	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
-		console.log('[ERR] ' + erro.code + ' ' + error.message);
+		console.log('[ERR] ' + error.code + ' ' + error.message);
 	    });		       
 	},
 	authFacebook() {
 	    const provider = new firebase.auth.FacebookAuthProvider();
 	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
-		console.log('[ERR] ' + erro.code + ' ' + error.message);
+		console.log('[ERR] ' + error.code + ' ' + error.message);
 	    });		       
 	},
 	authMicrosoft() {
 	    const provider = new firebase.auth.OAuthProvider('microsoft.com');
 	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
-		console.log('[ERR] ' + erro.code + ' ' + error.message);
+		console.log('[ERR] ' + error.code + ' ' + error.message);
 	    });		       
 },
 
