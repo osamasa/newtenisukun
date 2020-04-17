@@ -424,6 +424,7 @@ export default new Vuex.Store({
 		    console.log('[ERR] ' + '/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid );
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getMyMemos);
+
 		}}
 															       )
 	    }
@@ -483,7 +484,16 @@ export default new Vuex.Store({
 	setIsLoadingAction(context,payload) {
 	    context.commit('setIsLoading',payload);
 	},
-	
+
+	removeGamedata(context,payload) {
+	    const updates= {};
+	    updates['/games/' + payload.curgameid] =null;
+	    updates['/shiairec/' + payload.curgameid] =null;
+	    updates['/gameusers/' + payload.curgameid] =null;
+	    updates['/mymemos/' + payload.curgameid]=null;	    
+	    firebase.database().ref().update(updates);
+	    context.dispatch('loadMyGamesAction');
+	},
 	async setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
 	    await axios.get('/' + context.getters['getPeoples'] +'.csv')
