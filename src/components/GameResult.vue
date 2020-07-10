@@ -235,14 +235,15 @@ export default {
 	},
 	goback: function() {
 	    this.$router.push('/game/' + this.$route.params.curgameid);
-	}	
+	}	,
+
     },
     computed: {
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
 	},
 	getMyURL : function() {
-  	  return encodeURI("https://line.me/R/msg/text/?ゲームの結果を確認する場合は下記をクリック\r\n\r\nhttps://rshkn3.web.app/" + this.$route.path + "\r\n\r\n");	
+  	    return encodeURI("https://line.me/R/msg/text/?ゲームの結果を確認する場合は下記をクリック\r\n\r\nhttps://rshkn3.web.app/" + this.$route.path + "\r\n\r\n");	
 	}
     }
 }
