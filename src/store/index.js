@@ -323,7 +323,7 @@ export default new Vuex.Store({
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const _payload = {
-			displayName : snapshot.val().displayName,
+			displayName : snapshot.val().displayName ,
 			photoURL : snapshot.val().photoURL,
 			games : snapshot.val().games,
 			isAnonymous : snapshot.val().isAnonymous
@@ -332,9 +332,9 @@ export default new Vuex.Store({
 		    context.commit('setUserinfo',_payload);
 		} else {
 		    const _payload = {
-			displayName : context.getters.getUser.displayName,
-			photoURL : context.getters.getUser.photoURL,
-			isAnonymous : context.getters.getUser.isAnonymous,
+			displayName : context.getters.getUser.displayName || context.getters.getUser.email,
+			photoURL : context.getters.getUser.photoURL || '',
+			isAnonymous : context.getters.getUser.isAnonymous || false,
 			games : {}
 		    };
 		    context.commit('setUserinfo',_payload);
