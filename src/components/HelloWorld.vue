@@ -24,12 +24,12 @@
 	      :key="k"
 	      cols="6">
 	      <div v-if="k==1">
-		<v-btn>{{ n['p1'] }}</v-btn>
-		<v-btn>{{ n['p2'] }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p1'] }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p2'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==2">
-		<v-btn>{{ n['p3'] }}</v-btn>
-		<v-btn>{{ n['p4'] }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p3'] }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p4'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
@@ -130,7 +130,7 @@
       </v-btn>
   
       <v-btn value="結果確認" @click="showresult">
-        <span>結果確認</span>
+        <span>結果を確認する</span>
         <v-icon>mdi-check-circle</v-icon>
     </v-btn>
 
@@ -204,7 +204,7 @@ export default {
 	    return this.$store.getters.getShiairec;
         },
 	getMyURL : function() {
-  	    return encodeURI("https://line.me/R/msg/text/?ゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://rshkn3.web.app" + this.$route.path + "\r\n\r\n");
+	    return encodeURI("https://line.me/R/msg/text/?" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://rshkn3.web.app" + this.$route.path + "\r\n\r\n");
 	}
     },
     methods: {

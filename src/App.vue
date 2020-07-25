@@ -19,7 +19,7 @@
       <router-link to="/" icon @click="">
         <v-icon>mdi-home</v-icon>
       </router-link>
-      <h3>テニス乱数表君V3</h3>
+      <h3 color="info">テニス乱数表君V3</h3>
     <v-spacer></v-spacer>
     <v-avatar v-if="isLogin">
         <img
