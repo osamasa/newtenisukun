@@ -243,7 +243,7 @@ export default {
 	    return this.$store.getters.getMyMemos;
 	},
 	getMyURL : function() {
-  	    return encodeURI("https://line.me/R/msg/text/?今日はお疲れ様でした。\r\n" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームの結果は下記をクリック\r\n\r\nhttps://rshkn3.web.app/" + this.$route.path + "\r\n\r\n");
+  	    return encodeURI("https://line.me/R/msg/text/?今日はお疲れ様でした。\r\n" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームの結果は下記をクリック\r\n\r\nhttps://rshkn3.web.app/" + this.$route.path + "\r\n\r\n" + "--\r\nテニス乱数表君V3\r\nhttps://rshkn3.web.app/\r\n");
 	}
     }
 }

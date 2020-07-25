@@ -204,7 +204,7 @@ export default {
 	    return this.$store.getters.getShiairec;
         },
 	getMyURL : function() {
-	    return encodeURI("https://line.me/R/msg/text/?" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://rshkn3.web.app" + this.$route.path + "\r\n\r\n");
+	    return encodeURI("https://line.me/R/msg/text/?" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームに参加していただける場合は下記のリンクをクリック\r\n\r\nhttps://rshkn3.web.app" + this.$route.path + "\r\n\r\n" + "--\r\nテニス乱数表君V3\r\nhttps://rshkn3.web.app/\r\n");
 	}
     },
     methods: {
