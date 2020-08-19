@@ -5,7 +5,7 @@
       color="info"
       class="px-5 py-9"
       :title="thisTitle"
-      >
+      >      
       <div align="right">
 	<a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>
       </div>
@@ -134,9 +134,9 @@
         <v-icon>mdi-check-circle</v-icon>
     </v-btn>
 
-      <v-btn value="QRコード" @click="showqrcode">
-        <span>QRコード表示</span>
-        <v-icon>mdi-qrcode</v-icon>
+      <v-btn value="修正" @click="showmodpage">
+        <span>修正</span>
+        <v-icon>mdi-pencil</v-icon>
       </v-btn>
     </v-bottom-navigation>
     </v-col>
@@ -214,8 +214,8 @@ export default {
 	assignmember: function() {
 	    this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
 	},
-	showqrcode: function() {
-	    this.$router.push('/viewqrcode/game/' + this.$store.getters.getCurgameid);
+	showmodpage: function() {
+	    this.$router.push('/modpage/' + this.$store.getters.getCurgameid);
 	},
 	showresult: function() {
 	    this.$router.push('/gameresult/' + this.$store.getters.getCurgameid);

@@ -6,7 +6,7 @@ import Signout from '../components/Signout'
 import Signin from '../components/Signin'
 import AssignMember from '../components/AssignMember'
 import GameResult from '../components/GameResult'
-import ViewQRCode from '../components/ViewQRCode'
+import ModPage from '../components/ModPage.vue'
 import Index from '../components/index'
 import firebase from 'firebase'
 import ChangeAuth from '../components/ChangeAuth.vue'
@@ -27,9 +27,9 @@ let router = new Router({
 	    component: ChangeAuth,
 	},
 	{
-	    path: '/viewqrcode/:ope/:curgameid',
-	    name: 'viewqrcode',
-	    component: ViewQRCode
+	    path: '/modpage/:curgameid',
+	    name: 'modpage',
+	    component: ModPage
 	},	
 	
 	{

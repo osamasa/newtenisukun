@@ -235,6 +235,13 @@ export default new Vuex.Store({
 		}		    
 	    });
 	},
+
+	async updateGameData(context,payload) {
+	    const updates = {};
+	    updates[ '/games/' + context.getters.getCurgameid + '/gamedate' ] = payload.gamedate;
+	    updates[ '/games/' + context.getters.getCurgameid + '/gameplace' ] = payload.gameplace;
+	    firebase.database().ref().update(updates);
+	},
 	
 	async loadGameMemberDatabaseAction(context,payload) {
 	    const gameusera = firebase.database().ref('/gameusers/' + context.getters.getCurgameid );
@@ -379,7 +386,7 @@ export default new Vuex.Store({
 	    context.commit('setMyMemos',payload);
 	},
 	async loadGameDbAction (context,payload)  {
-	    firebase.database().ref('/games/' + context.getters.getCurgameid).once('value').then(function(snapshot) {
+	    firebase.database().ref('/games/' + context.getters.getCurgameid).on('value',function(snapshot) {
 		if(snapshot.exists) {
 		    context.commit('setGame',{game : snapshot.val()});
 		} else {

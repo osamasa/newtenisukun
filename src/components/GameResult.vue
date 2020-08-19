@@ -151,10 +151,10 @@ fixed
       <v-btn value="ゲームへ" @click="playgame">
         <span>ゲームに戻る</span>
         <v-icon>mdi-badminton</v-icon>
-    </v-btn>
-      <v-btn value="QRコード" @click="showqrcode">
-        <span>QRコード表示</span>
-        <v-icon>mdi-qrcode</v-icon>
+      </v-btn>
+      <v-btn value="修正" @click="showmodpage">
+        <span>修正</span>
+        <v-icon>mdi-pencil</v-icon>      
       </v-btn>
     </v-bottom-navigation>
 	</v-col>	
@@ -181,8 +181,11 @@ export default {
 	this.isLogin = false;
     },
     methods: {
-    assignmember: function() {
-	this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
+	showmodpage: function() {
+	    this.$router.push('/modpage/' + this.$store.getters.getCurgameid);
+	},	
+	assignmember: function() {
+	    this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
     },	
         playgame: function() {
 	    this.$router.push('/game/' + this.$store.getters.getCurgameid);
