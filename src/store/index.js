@@ -294,7 +294,13 @@ export default new Vuex.Store({
 	    context.commit('setNextPath',payload);	    
 	},
 	async setCurgamidAction(context,payload) {
-	    context.commit('setCurgamid',payload);
+	    if(!payload.curgameid) {
+		context.commit('setErrorno',-2);
+		context.commit('setErrormsg','試合番号取得エラー、もう一度やり直してください');
+		console.log('[ERR] gameid is null');		
+	    } else {
+		context.commit('setCurgamid',payload);
+	    }
 	},
 	async setPeoplesAction(context,payload) {
 	    context.commit('setPeoples',payload);
