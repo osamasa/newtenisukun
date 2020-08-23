@@ -1,5 +1,8 @@
 <template>
-  <v-app>    
+<v-app>
+  <v-alert v-if="getErrorno" type="error">
+    {{ getErrorno }}:{{ getErrormsg }}
+  </v-alert>    
     <v-container 
       id="regular-tables"
       fluid
@@ -166,6 +169,7 @@ fixed
 </template>
 <script>
 import firebase from 'firebase';
+import { mapGetters, mapMutations } from 'vuex'
 export default {
     data: () => {
 	return {
@@ -242,6 +246,10 @@ export default {
 
     },
     computed: {
+	...mapGetters([
+	    'getErrorno',
+	    'getErrormsg'
+	]),	
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
 	},

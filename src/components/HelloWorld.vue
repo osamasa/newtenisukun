@@ -1,5 +1,8 @@
 <template>
-  <v-app v-if="isLogin">
+<v-app v-if="isLogin">
+  <v-alert v-if="getErrorno" type="error">
+    {{ getErrorno }}:{{ getErrormsg }}
+  </v-alert>  
     <base-material-card
       icon="mdi-animation-play"
       color="info"
@@ -142,6 +145,7 @@
     </v-col>
       </v-row>
     </v-footer>
+
   </v-app>
   <div v-else>
     しばらくおまちください
@@ -150,7 +154,7 @@
 
 <script>
     import firebase from 'firebase';
-
+import { mapGetters, mapMutations } from 'vuex'
 export default {
     title: 'テニス試合中', 
     data: () => {
@@ -165,6 +169,7 @@ export default {
 	    if ( user ) {
     		this.isLogin = true;
 		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
+
 		this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
 		this.$store.dispatch('storeGamesUsersDbAction');
 		this.$store.dispatch('setUserInfoDbGameAction');		
@@ -181,6 +186,10 @@ export default {
     mounted() {
     },
     computed:{
+	...mapGetters([
+	    'getErrorno',
+	    'getErrormsg'
+	]),
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
 	},
@@ -208,6 +217,10 @@ export default {
 	}
     },
     methods: {
+	...mapMutations([
+	    'setErrorno',
+	    'setErrormsg'
+	]),	
         chgMemos: function(index) {
 	    this.$store.dispatch('updateMyMemoAction',{'id': index});
 	},

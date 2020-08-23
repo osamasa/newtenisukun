@@ -7,6 +7,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+	errorno:0,
+	errormsg:'',
 	isLoading: true,
 	shiaidba: null,
 	gameusera: null,
@@ -34,6 +36,12 @@ export default new Vuex.Store({
 	mymemos: []
     },
     getters: {
+	getErrorno: (state) => {
+	    return state.errorno;
+	},
+	getErrormsg: (state) => {
+	    return state.errormsg;
+	},	
 	getMyMemos: (state) => {
 	    return state.mymemos;
 	},
@@ -64,7 +72,11 @@ export default new Vuex.Store({
 	    return state.shiairec;
 	},
 	getShiairecNum: (state) => {
-	    return state.shiairec.length;
+	    if((Array.isArray(state.shiairec)) && (state.shiairec.length >0)) {
+		return state.shiairec.length;
+	    } else {
+		return null;
+	    }
 	},
 	getGame: (state) => {
 	    return state.game;
@@ -96,6 +108,12 @@ export default new Vuex.Store({
 	
     },
     mutations: {
+	setErrorno: (state,payload) => {
+	    state.errorno = payload;
+	},
+	setErrormsg: (state,payload) => {
+	    state.errormsg = payload;
+	},		
 	setIsLoading: (state,payload) => {
 	    state.isLoading = payload;
 	},	
@@ -205,14 +223,15 @@ export default new Vuex.Store({
 	async loadGameDatabaseAction (context) {
 	    const shiaidba = firebase.database().ref('/shiairec/' + context.getters.getCurgameid);
 	    shiaidba.on('value',function(snapshot) {
-		if(snapshot.exists) {
+		if((snapshot.exists) && (snapshot.val()) && (snapshot.val().length)) {
 		    const payload = {
 			shiairec : snapshot.val(),
 			isRenewal : true
 		    };
 		    context.commit('setShiaiRec',payload);
 		} else {
-		    console.log('[ERR] Not Found /shiairec/' + state.curgameid);
+		    context.commit('setErrorno',-1);
+		    context.commit('setErrormsg','試合情報取得失敗。もう一度作り直してください');				    console.log('[ERR] Not Found /shiairec/' + context.getCurgameid);
 		}
  	        context.commit('setIsLoading',false);		
 	    });
