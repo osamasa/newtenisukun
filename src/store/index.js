@@ -231,7 +231,8 @@ export default new Vuex.Store({
 		    context.commit('setShiaiRec',payload);
 		} else {
 		    context.commit('setErrorno',-1);
-		    context.commit('setErrormsg','試合情報取得失敗。もう一度作り直してください');				    console.log('[ERR] Not Found /shiairec/' + context.getCurgameid);
+		    context.commit('setErrormsg','試合情報取得失敗。もう一度ホーム画面から作り直してください');
+		    console.log('[ERR] Not Found /shiairec/' + context.getCurgameid);
 		}
  	        context.commit('setIsLoading',false);		
 	    });
@@ -250,7 +251,9 @@ export default new Vuex.Store({
 		    };
 		    context.commit('setMyMemos',payload);
 		} else {
-		    console.log('[ERR] Not Found /mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid);
+//		    context.commit('setErrorno',-1);
+//		    context.commit('setErrormsg','メモ情報取得失敗。もう一度ホーム画面から作り直してください');		    
+//		    console.log('[ERR] Not Found /mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid);
 		}		    
 	    });
 	},
@@ -268,6 +271,8 @@ export default new Vuex.Store({
 		if(snapshot.exists) {
 		    context.commit('setGameUsers',snapshot.val())
 		} else {
+		    context.commit('setErrorno',-3);
+		    context.commit('setErrormsg','メンバー情報取得失敗。もう一度ホーム画面から作り直してください');
 		    console.log('[ERR] Not Found /gameusers/' + state.curgameid);
 		}
 	    });
@@ -295,8 +300,8 @@ export default new Vuex.Store({
 	},
 	async setCurgamidAction(context,payload) {
 	    if(!payload.curgameid) {
-		context.commit('setErrorno',-2);
-		context.commit('setErrormsg','試合番号取得エラー、もう一度やり直してください');
+		context.commit('setErrorno',-4);
+		context.commit('setErrormsg','試合番号取得失敗。もう一度ホーム画面からやり直してください');		
 		console.log('[ERR] gameid is null');		
 	    } else {
 		context.commit('setCurgamid',payload);
@@ -328,6 +333,8 @@ export default new Vuex.Store({
 
 	    firebase.database().ref('/gameusers/' + context.getters.getCurgameid + '/' + index + '/').set(context.getters.getGameUsers[index],function(error) {
 		if(error) {
+		    context.commit('setErrorno',-5);
+		    context.commit('setErrormsg','ユーザー情報更新失敗、しばらくしてからやり直してください ' + error);				    
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] gameuser one record updae error');
 		}
@@ -337,6 +344,8 @@ export default new Vuex.Store({
 	async storeGamesUsersDbAction(context,payload) {
 	    firebase.database().ref('/games/' + context.getters.getCurgameid + '/users/' + context.getters.getUser.uid).set(true, function(error) {
 		if(error) {
+		    context.commit('setErrorno',-6);
+		    context.commit('setErrormsg','ゲームメンバー情報更新失敗、しばらくしてからやり直してください ' + error);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] games user login');
 		}
@@ -346,6 +355,8 @@ export default new Vuex.Store({
 	async setUserInfoDbGameAction(context,payload) {
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
 		if(error) {
+		    context.commit('setErrorno',-7);
+		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		    
 		    console.log('[ERR]' + error);
 		}
 	    })
@@ -372,6 +383,8 @@ export default new Vuex.Store({
 		    context.commit('setUserinfo',_payload);
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
+			    context.commit('setErrorno',-8);
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
 			    console.log('[ERR]' + error);
 			}
 		    })
@@ -415,6 +428,8 @@ export default new Vuex.Store({
 		if(snapshot.exists) {
 		    context.commit('setGame',{game : snapshot.val()});
 		} else {
+		    context.commit('setErrorno',-9);
+		    context.commit('setErrormsg','ゲーム情報読み込み失敗、しばらくしてからやり直してください ' + error);
 		    console.log('[ERR] Not Found /games/' + context.getters.getCurgameid);
 		}
 	    })
@@ -422,6 +437,8 @@ export default new Vuex.Store({
 	async storeGameDb (context,payload)  {
 	    firebase.database().ref('/games/' + context.getters.getCurgameid).set(context.getters.getGame,function(error) {
 		if (error) {
+		    context.commit('setErrorno',-10);
+		    context.commit('setErrormsg','ゲーム情報更新失敗、しばらくしてからやり直してください ' + error);		    
 		    console.log('[ERR] ' + '/games/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		}}
@@ -431,6 +448,8 @@ export default new Vuex.Store({
 	async storeGameUsersDb(context,payload) {
 	    firebase.database().ref('/gameusers/' + context.getters.getCurgameid).set(context.getters.getGameUsers,function(error) {
 		if(error) {
+		    context.commit('setErrorno',-11);
+		    context.commit('setErrormsg','ゲームユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
 		    console.log('[ERR] ' + '/gameusers/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getGameUsers);
@@ -441,6 +460,8 @@ export default new Vuex.Store({
 	async storeShiairecDb (context,payload)  {
 	    firebase.database().ref('/shiairec/' + context.getters.getCurgameid).set(context.getters.getShiairec,function(error) {
 		if(error) {
+		    context.commit('setErrorno',-12);
+		    context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);		    
 		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getShiairec);
@@ -465,7 +486,9 @@ export default new Vuex.Store({
 	async addShiairecDb (context,payload)  {
 	    payload.shiairec.forEach( v => {
 		firebase.database().ref('/shiairec/' + context.getters.getCurgameid + '/' + (v.id-1) ).set(v).then(function(error) {
-		if(error) {
+		    if(error) {
+		    context.commit('setErrorno',-13);
+		    context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);		    			
 		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getShiairec);
@@ -478,7 +501,7 @@ export default new Vuex.Store({
 	    if(!context.getters.getUser.isAnonymous) {
 		payload.shiairec.forEach( v => {
 		    firebase.database().ref('/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid + '/' + (v.id-1) ).set("").then(function(error) {
-			if(error) {
+			if(error) {			    
 			    console.log('[ERR]' + '/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid + '/' + (v.id-1));
 			    console.log('[ERR]' + error);
 			    console.log('[ERR] ' + context.getters.getMyMemos);
@@ -551,7 +574,10 @@ export default new Vuex.Store({
 			});
 		    });
 		})
-		.catch(error => console.log(error))
+		.catch(error => {
+		    context.commit('setErrorno',-14);
+		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);		    		    
+		    console.log(error);})
 	    if(payload.isRenewal) {
 		context.commit('initGameState');
 		context.commit('setShiaiRec',payload);
