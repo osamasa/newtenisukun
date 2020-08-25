@@ -27,12 +27,12 @@
 	      :key="k"
 	      cols="6">
 	      <div v-if="k==1">
-		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p1'] }}</v-btn>
-		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p2'] }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p1']) }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p2']) }}</v-btn>
 	      </div>
 	      <div v-else-if="k==2">
-		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p3'] }}</v-btn>
-		<v-btn @click="isDialog=true;nowrec=n;">{{ n['p4'] }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p3']) }}</v-btn>
+		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p4']) }}</v-btn>
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
@@ -178,6 +178,7 @@ export default {
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');
     	        }
+		this.$store.dispatch('loadGameMemberDatabaseAction');
 	    } else {
 		this.isLogin = false;
 	    }
@@ -190,6 +191,18 @@ export default {
 	    'getErrorno',
 	    'getErrormsg'
 	]),
+	getMyName: function() {
+	    return function(n) {
+		let d = this.$store.getters.getGameUsers;
+		if(!d) {
+		    return n;
+		} else {
+		    let s = d.find(m => parseInt(m.no) == parseInt(n));
+		    return s.displayName ? s.displayName + '(' + s.no + ')' : n;
+		}
+	    }
+	},
+	
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
 	},
