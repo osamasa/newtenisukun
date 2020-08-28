@@ -27,12 +27,12 @@
 	      :key="k"
 	      cols="6">
 	      <div v-if="k==1">
-		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p1']) }}</v-btn>
-		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p2']) }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</v-btn>
 	      </div>
 	      <div v-else-if="k==2">
-		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p3']) }}</v-btn>
-		<v-btn @click="isDialog=true;nowrec=n;">{{ getMyName(n['p4']) }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</v-btn>
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
@@ -66,11 +66,11 @@
 	  <v-card-text>
 	    <v-row>
 	      <v-col>
-		<v-radio-group v-model="nowrec.rs" row>
-		  <v-radio label="なし" value="radio-1"></v-radio>
-		  <v-radio :label="this.getRadioLabel(nowrec.p1,nowrec.p2)" value="1"></v-radio>
-		  <v-radio :label="this.getRadioLabel(nowrec.p3,nowrec.p4)" value="2"></v-radio>
-		  <v-radio label="引き分け" value="3"></v-radio>		     
+		<v-radio-group v-model="nowrec['rs']" >
+		  <v-radio label="なし" input-value="0"></v-radio>
+		  <v-radio :label="this.getRadioLabel(nowrec.p1,nowrec.p2)" input-value="1"></v-radio>
+		  <v-radio :label="this.getRadioLabel(nowrec.p3,nowrec.p4)" input-value="2"></v-radio>
+		  <v-radio label="引き分け" input-value="3"></v-radio>		     
 		</v-radio-group>
 	      </v-col>
 	    </v-row>
@@ -162,7 +162,7 @@ export default {
 	    nowTouch:0,
             isLogin: false,
 	    isDialog: false,
-	    nowrec: {},
+	    nowrec: {}
 	}},
     created() {
     	firebase.auth().onAuthStateChanged((user) => {
@@ -198,7 +198,7 @@ export default {
 		    return n;
 		} else {
 		    let s = d.find(m => parseInt(m.no) == parseInt(n));
-		    return s.displayName ? s.displayName + '(' + s.no + ')' : n;
+		    return s && s.displayName ? s.displayName + '(' + s.no + ')' : n;
 		}
 	    }
 	},
@@ -247,9 +247,18 @@ export default {
 	    this.$router.push('/gameresult/' + this.$store.getters.getCurgameid);
 	},
 	setResult: function() {
+	    if((this.nowrec.r1 > 0) || (this.nowrec.r2 > 0)) {
+		if(this.nowrec.r1 > this.nowrec.r2) {
+		    this.nowrec.rs = 1;
+		} else if(this.nowrec.r2 > this.nowrec.r1) {
+		    this.nowrec.rs = 2;
+		} else if(this.nowrec.r1 === this.nowrec.r2) {
+		    this.nowrec.rs = 3;
+		}
+	    }
 	    this.$store.dispatch('updateShiaiRecAction',this.nowrec);
 	    this.isDialog = false;
-	},		
+	},
 	addRecord: function() {
 	    this.$store.dispatch('setShiaiRecAction',{isRenewal:false});
 	}
