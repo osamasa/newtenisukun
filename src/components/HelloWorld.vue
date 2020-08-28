@@ -75,7 +75,7 @@
 	      </v-col>
 	    </v-row>
 	    <v-row><v-col>
-		{{nowrec.p1}},{{nowrec.p2}}の点数:
+		<p>{{getMyNameLong(nowrec.p1)}},{{getMyNameLong(nowrec.p2)}}の点数:</p>
 		<v-select v-model="nowrec.r1"
 			  outlined
 			  label="点数を選択してください2"
@@ -84,7 +84,7 @@
 		</v-select>
 	    </v-col></v-row>				
 	    <v-row><v-col>
-		{{nowrec.p3}},{{nowrec.p4}}の点数:
+		<p>{{getMyNameLong(nowrec.p3)}},{{getMyNameLong(nowrec.p4)}}の点数:</p>
 		<v-select v-model="nowrec.r2"
 			  outlined
 			  label="点数を選択してください2"
@@ -202,6 +202,17 @@ export default {
 		}
 	    }
 	},
+	getMyNameLong: function() {
+	    return function(n) {
+		let d = this.$store.getters.getGameUsers;
+		if(!d) {
+		    return n;
+		} else {
+		    let s = d.find(m => parseInt(m.no) == parseInt(n));
+		    return s && s.displayName ? s.displayName + '(' + s.no + ')' : n;
+		}
+	    }
+	},	
 	
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
@@ -215,8 +226,18 @@ export default {
 	    this.$store.getters.getUser.isAnonymous;
 	},
         getRadioLabel: function() {
+	    let self = this;
 	    return function (p1,p2) {
-		return p1 + ','  + p2 + 'の勝ち'
+		function getMyNameLong(n) {
+		    let d = self.$store.getters.getGameUsers;
+		    if(!d) {
+			return n;
+		    } else {
+			let s = d.find(m => parseInt(m.no) == parseInt(n));
+			return s && s.displayName ? s.displayName + '(' + s.no + ')' : n;
+		    }
+		}		
+		return getMyNameLong(p1) + ',' + getMyNameLong(p2) + 'の勝ち';
 	    }
         },
         thisTitle: function() {
