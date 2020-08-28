@@ -198,7 +198,7 @@ export default {
 		    return n;
 		} else {
 		    let s = d.find(m => parseInt(m.no) == parseInt(n));
-		    return s && s.displayName ? s.displayName + '(' + s.no + ')' : n;
+		    return s && s.displayName ? (s.displayName.length > 2 ? s.displayName.substr(0,2) + '..' : s.displayName) + '(' + s.no + ')' : n;
 		}
 	    }
 	},
