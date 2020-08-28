@@ -20,19 +20,18 @@
 	</v-card-title>	
 	<v-card-text>	
 	  <v-row
-	    class='mb-1'
 	    no-gutters>
 	    <v-col
 	      v-for="k in 4"
 	      :key="k"
 	      cols="6">
 	      <div v-if="k==1">
-		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</v-btn>
-		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</br>{{ n['p1'] }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</br>{{ n['p2'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==2">
-		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</v-btn>
-		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</br>{{ n['p3'] }}</v-btn>
+		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</br>{{ n['p4'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
@@ -198,7 +197,7 @@ export default {
 		    return n;
 		} else {
 		    let s = d.find(m => parseInt(m.no) == parseInt(n));
-		    return s && s.displayName ? (s.displayName.length > 2 ? s.displayName.substr(0,2) + '..' : s.displayName) + '(' + s.no + ')' : n;
+		    return s && s.displayName ? (s.displayName.length > 2 ? s.displayName.substr(0,2) + '..' : s.displayName) : '';
 		}
 	    }
 	},
