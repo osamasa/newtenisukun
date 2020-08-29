@@ -111,7 +111,20 @@
 	  </v-card-actions>
 	</v-card>
       </v-dialog>
-    </base-material-card>  
+    </base-material-card>
+  <v-btn
+    bottom
+    x-large
+    color="pink"
+    dark
+    fab
+    fixed
+    right
+    @click="addRecord"
+    >
+    <v-icon>mdi-plus</v-icon>
+  </v-btn>
+  
     <v-footer
       padless
       fixed
@@ -124,11 +137,6 @@
     <v-bottom-navigation
       dark
     >
-      <v-btn value="試合追加" @click='addRecord'>
-        <span>試合追加</span>
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-  
       <v-btn value="メンバー割" @click="assignmember">
         <span>メンバー割</span>
         <v-icon>mdi-account-multiple</v-icon>
