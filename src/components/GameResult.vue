@@ -28,13 +28,15 @@
 	      <div>人数: {{this.getGame('peoples')}}人</div>	      	      
             </v-col>
 	  </v-row>
-      	  <v-row  justify="end">
-    <v-col cols=3>
-	<a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>    
-        </v-col>
-	</v-row>
         </v-container>
-      </v-card-text>
+
+	<div align="right">
+	  <a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>
+	</div>
+	<div align="right">	
+	  <v-btn @click="showqrcodepage" dark x-small  color="deep-orange"><v-icon>mdi-qrcode</v-icon>QRコードで知らせる</v-btn>
+	</div>	  
+      </v-card-text>	
     </base-material-card>
 
     <div class="py-3" />    
@@ -206,6 +208,9 @@ export default {
 		return '☓'
 	    }
 	},
+	showqrcodepage: function() {
+	    this.$router.push('/qrvcode/gameresult/' + this.$store.getters.getCurgameid);
+	},		
 	getGame : function(n) {
 	    return this.$store.getters.getGame[n];
 	},
@@ -252,7 +257,7 @@ export default {
 	]),	
         getMyMemos: function() {
 	    return this.$store.getters.getMyMemos;
-	},
+	},	
 	getMyURL : function() {
   	    return encodeURI("https://line.me/R/msg/text/?今日はお疲れ様でした。\r\n" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームの結果は下記をクリック\r\n\r\nhttps://rshkn3.web.app/" + this.$route.path + "\r\n\r\n" + "--\r\nテニス乱数表君V3\r\nhttps://rshkn3.web.app/\r\n");
 	}

@@ -12,6 +12,9 @@
       <div align="right">
 	<a target="_blank" :href="getMyURL"><img src="@/assets/line.png"/></a>
       </div>
+      <div align="right">      
+	<v-btn @click="showqrcodepage" dark x-small  color="deep-orange"><v-icon>mdi-qrcode</v-icon>QRコードで知らせる</v-btn>
+      </div>	
       <v-card v-for="(n,index) in getResult" :key="index" @click="nowTouch = index"
 	      v-bind:class="{ active: isActive(index) }"
 	      >
@@ -26,12 +29,12 @@
 	      :key="k"
 	      cols="6">
 	      <div v-if="k==1">
-		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</br>{{ n['p1'] }}</v-btn>
-		<v-btn @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</br>{{ n['p2'] }}</v-btn>
+		<v-btn height="60" @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</br>{{ n['p1'] }}</v-btn>
+		<v-btn height="60" @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</br>{{ n['p2'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==2">
-		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</br>{{ n['p3'] }}</v-btn>
-		<v-btn @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</br>{{ n['p4'] }}</v-btn>
+		<v-btn height="60" @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</br>{{ n['p3']}}</v-btn>
+		<v-btn height="60" @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</br>{{ n['p4'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
@@ -197,7 +200,7 @@ export default {
 		    return n;
 		} else {
 		    let s = d.find(m => parseInt(m.no) == parseInt(n));
-		    return s && s.displayName ? (s.displayName.length > 2 ? s.displayName.substr(0,2) + '..' : s.displayName) : '';
+		    return s && s.displayName && s.displayName !== '名無し' ? (s.displayName.length > 2 ? s.displayName.substr(0,2) + '..' : s.displayName) : '';
 		}
 	    }
 	},
@@ -208,7 +211,7 @@ export default {
 		    return n;
 		} else {
 		    let s = d.find(m => parseInt(m.no) == parseInt(n));
-		    return s && s.displayName ? s.displayName + '(' + s.no + ')' : n;
+		    return s && s.displayName && s.displayName !== '名無し' ? s.displayName + '(' + s.no + ')' : n;
 		}
 	    }
 	},	
@@ -233,7 +236,7 @@ export default {
 			return n;
 		    } else {
 			let s = d.find(m => parseInt(m.no) == parseInt(n));
-			return s && s.displayName ? s.displayName + '(' + s.no + ')' : n;
+			return s && s.displayName && s.displayName !== '名無し' ? s.displayName + '(' + s.no + ')' : n;
 		    }
 		}		
 		return getMyNameLong(p1) + ',' + getMyNameLong(p2) + 'の勝ち';
@@ -260,6 +263,9 @@ export default {
 	assignmember: function() {
 	    this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
 	},
+	showqrcodepage: function() {
+	    this.$router.push('/qrvcode/game/' + this.$store.getters.getCurgameid);
+	},	
 	showmodpage: function() {
 	    this.$router.push('/modpage/' + this.$store.getters.getCurgameid);
 	},

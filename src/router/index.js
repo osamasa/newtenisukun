@@ -10,6 +10,7 @@ import ModPage from '../components/ModPage.vue'
 import Index from '../components/index'
 import firebase from 'firebase'
 import ChangeAuth from '../components/ChangeAuth.vue'
+import qrvcode from '../components/ViewQRCode.vue'
 
 Vue.use(Router)
 
@@ -31,12 +32,16 @@ let router = new Router({
 	    name: 'modpage',
 	    component: ModPage
 	},	
-	
 	{
 	    path: '/gameresult/:curgameid',
 	    name: 'GameResult',
 	    component: GameResult
-	},	
+	},
+	{
+	    path: '/qrvcode/:ope/:curgameid',
+	    name: 'qrvcode',
+	    component: qrvcode
+	},		
 	{
 	    path: '/game/:curgameid',
 	    name: 'game',
