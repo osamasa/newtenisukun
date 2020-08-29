@@ -362,32 +362,32 @@ export default new Vuex.Store({
 	    })
 	},
 	async loadUserInfoDbAction(context,payload) {
-	    context.commit('setUser',payload)
-	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
+	    context.commit('setUser',payload);
+	    let _games = [];
+	    
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
 		if(snapshot.val()) {
-		    const _payload = {
-			displayName : snapshot.val().displayName ,
-			photoURL : snapshot.val().photoURL,
-			games : snapshot.val().games,
-			isAnonymous : snapshot.val().isAnonymous
-		    };
+		    _games=snapshot.val();
+		}
+	    });
+	    if(!_games[context.getters.getCurgameid]) {
+		let _gameid = context.getters.getCurgameid;
+		_games[_gameid]=true;
+	    }
+	    const _payload = {
+		displayName : context.getters.getUser.displayName || context.getters.getUser.email,
+		photoURL : context.getters.getUser.photoURL || '',
+		isAnonymous : context.getters.getUser.isAnonymous || false,
+		games : _games
+	    };
+	    
+	    context.commit('setUserinfo',_payload);
 
-		    context.commit('setUserinfo',_payload);
-		} else {
-		    const _payload = {
-			displayName : context.getters.getUser.displayName || context.getters.getUser.email,
-			photoURL : context.getters.getUser.photoURL || '',
-			isAnonymous : context.getters.getUser.isAnonymous || false,
-			games : {}
-		    };
-		    context.commit('setUserinfo',_payload);
-		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
-			if(error) {
-			    context.commit('setErrorno',-8);
-			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
-			    console.log('[ERR]' + error);
-			}
-		    })
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
+		if(error) {
+		    context.commit('setErrorno',-8);
+		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
+		    console.log('[ERR]' + error);
 		}
 	    })
 	},

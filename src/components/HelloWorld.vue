@@ -114,7 +114,7 @@
     </base-material-card>
   <v-btn
     bottom
-    x-large
+    large
     color="pink"
     dark
     fab
