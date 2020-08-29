@@ -212,10 +212,10 @@ export default new Vuex.Store({
 	}
     },
     actions: {
-	async getUserAction(context) {
-	    context.commit('getUser');
+	setUserAction(context) {
+	    context.commit('setUser');
 	},
-	async createGameidAction (context) {
+	createGameidAction (context) {
 	    const newKey = firebase.database().ref().child('games').push().key;
 	    const payload = { curgameid : newKey };
 	    context.commit('setCurgamid',payload);
@@ -230,9 +230,9 @@ export default new Vuex.Store({
 		    };
 		    context.commit('setShiaiRec',payload);
 		} else {
-		    context.commit('setErrorno',-1);
-		    context.commit('setErrormsg','試合情報取得失敗。もう一度ホーム画面から作り直してください');
-		    console.log('[ERR] Not Found /shiairec/' + context.getCurgameid);
+//		    context.commit('setErrorno',-1);
+//		    context.commit('setErrormsg','試合情報取得失敗。もう一度ホーム画面から作り直してください');
+//		    console.log('[ERR] Not Found /shiairec/' + context.getters.getCurgameid);
 		}
  	        context.commit('setIsLoading',false);		
 	    });
@@ -251,7 +251,7 @@ export default new Vuex.Store({
 		    };
 		    context.commit('setMyMemos',payload);
 		} else {
-//		    context.commit('setErrorno',-1);
+//		    context.commit('setErrorno',-2);
 //		    context.commit('setErrormsg','メモ情報取得失敗。もう一度ホーム画面から作り直してください');		    
 //		    console.log('[ERR] Not Found /mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid);
 		}		    
@@ -292,28 +292,29 @@ export default new Vuex.Store({
 		localStorage.clear;
 	    }
 	},
-	async setParamsAction (context, payload) {
+	setParamsAction (context, payload) {
 	    context.commit('setParams',payload);
 	},
-	async setNextPathAction (context, payload) {
+	setNextPathAction (context, payload) {
 	    context.commit('setNextPath',payload);	    
 	},
-	async setCurgamidAction(context,payload) {
+	setCurgamidAction(context,payload) {
 	    if(!payload.curgameid) {
 		context.commit('setErrorno',-4);
-		context.commit('setErrormsg','試合番号取得失敗。もう一度ホーム画面からやり直してください');		
-		console.log('[ERR] gameid is null');		
+		context.commit('setErrormsg','試合番号取得失敗。もう一度やり直してください');		
+		console.log('[ERR] gameid is null');
+		exit();
 	    } else {
 		context.commit('setCurgamid',payload);
 	    }
 	},
-	async setPeoplesAction(context,payload) {
+	setPeoplesAction(context,payload) {
 	    context.commit('setPeoples',payload);
 	},
-	async setGamedateAction(context,payload) {
+	setGamedateAction(context,payload) {
 	    context.commit('setGamedate',payload);
 	},
-	async setGameplaceAction(context,payload) {
+	setGameplaceAction(context,payload) {
 	    context.commit('setGameplace',payload);
 	},	    	
 	async updateShiaiRecAction(context,payload) {
@@ -375,7 +376,7 @@ export default new Vuex.Store({
 		_games[_gameid]=true;
 	    }
 	    const _payload = {
-		displayName : context.getters.getUser.displayName || context.getters.getUser.email,
+		displayName : context.getters.getUser.displayName || context.getters.getUser.email || 'お試しさん',
 		photoURL : context.getters.getUser.photoURL || '',
 		isAnonymous : context.getters.getUser.isAnonymous || false,
 		games : _games

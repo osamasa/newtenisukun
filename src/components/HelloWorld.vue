@@ -51,10 +51,10 @@
 	<v-row>
 	  <v-col cols=1>
 	    <v-card-actions v-if="n['rs'] > 0">
-	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正&メモ入力</v-btn>
+	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正</v-btn>
 	    </v-card-actions>
 	    <v-card-actions v-else>
-	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力&メモ入力</v-btn>
+	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力</v-btn>
 	    </v-card-actions>	
 	  </v-col>
 	</v-row>      
@@ -169,13 +169,11 @@ export default {
     	firebase.auth().onAuthStateChanged((user) => {
 	    if ( user ) {
     		this.isLogin = true;
+		this.$store.commit('setCurgamid',{'curgameid': this.$route.params.curgameid});		
 		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
-
-		this.$store.dispatch('setCurgamidAction',{'curgameid': this.$route.params.curgameid});
 		this.$store.dispatch('storeGamesUsersDbAction');
 		this.$store.dispatch('setUserInfoDbGameAction');		
 		this.$store.dispatch('loadGameDbAction');
-  		this.$store.dispatch('loadMyMemosDatabaseAction');		
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');
     	        }
