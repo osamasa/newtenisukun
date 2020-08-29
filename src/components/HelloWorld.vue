@@ -225,7 +225,7 @@ export default {
 	},	
 	
         getMyMemos: function() {
-	    return this.$store.getters.getMyMemos;
+	    return this.$store.getters.getMyMemos || '';
 	},
         isActive: function() {
             return function(i) {
