@@ -94,16 +94,7 @@
 			  >
 		</v-select>
     </v-col></v-row>
-    	  <v-row v-show="!isAnonymous">
-	    <v-col>
-	      <v-text-field
-		label="メモを入力（他の人には見られません）"
-		dense
-		@change="chgMemos(nowrec.id-1)"
-		v-model="getMyMemos[nowrec.id-1]"
-		></v-text-field>
-	    </v-col>
-	  </v-row>
+
 	  </v-card-text>
 	  <v-card-actions>
 	    <v-spacer></v-spacer>
@@ -225,7 +216,12 @@ export default {
 	},	
 	
         getMyMemos: function() {
-	    return this.$store.getters.getMyMemos || '';
+	    if(this.$store.getters.getMyMemos === null) {
+		this.$store.commit('setMyMemos',{'isRenewal' : true,
+						   'mymemos' : []
+						  })
+	    }
+	    return this.$store.getters.getMyMemos;
 	},
         isActive: function() {
             return function(i) {

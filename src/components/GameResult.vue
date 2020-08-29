@@ -110,31 +110,6 @@
       </v-simple-table>
     </base-material-card>
 
-
-    <div class="py-3" />
-
-    <base-material-card
-      color="blue"
-      icon="mdi-note-text"
-      title="メモ"
-      class="px-5 py-3"
-    >
-      <v-simple-table>
-        <thead>
-          <tr>
-            <th>試合番号</th>
-            <th>メモ内容</th>
-          </tr>
-        </thead>
-
-	<tbody v-for="(n,index) in this.getMyMemos" :key="index">
-          <tr v-if="n">
-            <td>{{ index+1 }}</td>
-            <td>{{ n }}</td>
-          </tr>
-        </tbody>
-      </v-simple-table>
-    </base-material-card>
 </v-container>
 <v-footer
      padless
