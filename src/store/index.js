@@ -21,7 +21,7 @@ export default new Vuex.Store({
    	    isAnonymous: false,
 	    displayName: "",
 	    photoURL: "",
-	    games: {},
+	    games: []
 	},
 	game:
 	    {
@@ -212,9 +212,6 @@ export default new Vuex.Store({
 	}
     },
     actions: {
-	setUserAction(context) {
-	    context.commit('setUser');
-	},
 	createGameidAction (context) {
 	    const newKey = firebase.database().ref().child('games').push().key;
 	    const payload = { curgameid : newKey };
@@ -353,42 +350,71 @@ export default new Vuex.Store({
 	    });
 	    
 	},
-	async setUserInfoDbGameAction(context,payload) {
-	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
+	async _setUserInfoDbGameAction(context,payload) {
+	    if(!context.getters.getUser.uid) {
+		context.commit('setErrorno',-15);
+		context.commit('setErrormsg','getUser失敗');		  
+	    } else {
+		firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
 		if(error) {
 		    context.commit('setErrorno',-7);
 		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		    
 		    console.log('[ERR]' + error);
 		}
-	    })
-	},
-	async loadUserInfoDbAction(context,payload) {
-	    context.commit('setUser',payload);
-	    let _games = [];
-	    
-	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
-		if(snapshot.val()) {
-		    _games=snapshot.val();
-		}
-	    });
-	    if(!_games[context.getters.getCurgameid]) {
-		let _gameid = context.getters.getCurgameid;
-		_games[_gameid]=true;
+		})
 	    }
-	    const _payload = {
-		displayName : context.getters.getUser.displayName || context.getters.getUser.email || 'お試しさん',
-		photoURL : context.getters.getUser.photoURL || '',
-		isAnonymous : context.getters.getUser.isAnonymous || false,
-		games : _games
-	    };
-	    
-	    context.commit('setUserinfo',_payload);
-
-	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
-		if(error) {
-		    context.commit('setErrorno',-8);
-		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
-		    console.log('[ERR]' + error);
+	},
+	async updateUserInfoDbAction(context,payload) {
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).once('value',function(snapshot) {
+		console.log(snapshot,(!snapshot.exits));
+		if((!snapshot.val()) || (!snapshot.val().displayName)){
+		    let _gameid = context.getters.getCurgameid;
+		    const _payload = {
+			displayName : context.getters.getUser.displayName || context.getters.getUser.email || 'お試しさん',
+			photoURL : context.getters.getUser.photoURL || '',
+			games : { _gameid : true },
+			isAnonymous : context.getters.getUser.isAnonymous || false,
+		    };
+		    console.log(_payload);		 
+		    context.commit('setUserinfo',_payload);
+		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
+			if(error) {
+			    context.commit('setErrorno',-8);
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
+			    console.log('[ERR]' + error);
+			}
+		    })		    
+		} else {
+		    context.commit('setUserinfo',snapshot.val());
+		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
+			if(error) {
+			    context.commit('setErrorno',-7);
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		    
+			    console.log('[ERR]' + error);
+			}		    
+		    })
+		}
+	    })
+	},									     
+	async loadUserInfoDbAction(context) {
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).once('value',function(snapshot) {
+		if(!snapshot.exists) {
+		    const _payload = {
+			displayName : context.getters.getUser.displayName || context.getters.getUser.email || 'お試しさん',
+			photoURL : context.getters.getUser.photoURL || '',
+			isAnonymous : context.getters.getUser.isAnonymous || false,
+			games : [],
+		    };
+		    context.commit('setUserinfo',_payload);
+		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
+			if(error) {
+			    context.commit('setErrorno',-8);
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
+			    console.log('[ERR]' + error);
+			}
+		    })		    
+		} else {
+		    context.commit('setUserinfo',snapshot.val());
 		}
 	    })
 	},
@@ -514,6 +540,7 @@ export default new Vuex.Store({
 	},
 	
 	async loadMyGamesAction(context) {
+
 	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).limitToLast(128).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const mygames = [];

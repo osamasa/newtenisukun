@@ -66,16 +66,6 @@
 	    <span class="headline">勝敗入力</span>
 	  </v-card-title>
 	  <v-card-text>
-	    <v-row>
-	      <v-col>
-		<v-radio-group v-model="nowrec['rs']" >
-		  <v-radio label="なし" input-value="0"></v-radio>
-		  <v-radio :label="this.getRadioLabel(nowrec.p1,nowrec.p2)" input-value="1"></v-radio>
-		  <v-radio :label="this.getRadioLabel(nowrec.p3,nowrec.p4)" input-value="2"></v-radio>
-		  <v-radio label="引き分け" input-value="3"></v-radio>		     
-		</v-radio-group>
-	      </v-col>
-	    </v-row>
 	    <v-row><v-col>
 		<p>{{getMyNameLong(nowrec.p1)}},{{getMyNameLong(nowrec.p2)}}の点数:</p>
 		<v-select v-model="nowrec.r1"
@@ -169,10 +159,10 @@ export default {
     	firebase.auth().onAuthStateChanged((user) => {
 	    if ( user ) {
     		this.isLogin = true;
-		this.$store.commit('setCurgamid',{'curgameid': this.$route.params.curgameid});		
-		this.$store.dispatch('loadUserInfoDbAction',{'user': user});
+		this.$store.commit('setCurgamid',{'curgameid': this.$route.params.curgameid});
+		this.$store.commit('setUser',{'user':user});
+		this.$store.dispatch('updateUserInfoDbAction');
 		this.$store.dispatch('storeGamesUsersDbAction');
-		this.$store.dispatch('setUserInfoDbGameAction');		
 		this.$store.dispatch('loadGameDbAction');
 		if(!this.$store.getters.getShiairecNum) {
   		    this.$store.dispatch('loadGameDatabaseAction');

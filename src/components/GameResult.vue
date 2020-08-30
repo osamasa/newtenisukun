@@ -158,7 +158,6 @@ export default {
 	this.$store.dispatch('loadGameDbAction');
 	this.$store.dispatch('loadGameDatabaseAction');
 	this.$store.dispatch('loadGameMemberDatabaseAction');
-	this.$store.dispatch('loadMyMemosDatabaseAction');
 	this.isLogin = false;
     },
     methods: {

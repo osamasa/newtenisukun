@@ -47,7 +47,7 @@ export default {
 	    firebase.auth().currentUser.linkWithCredential(credential).then(function(usercred) {
 		const user = usercred.user;
 		this.isAnonymous = false;
-		this.$store.dispatch('loadUserInfoDbAction',{'user':user});
+		this.$store.dispatch('updateUserInfoDbAction',{'user':user});
 		this.$route.push('/');
 	    }, function(error) {
 		console.log("Error upgrading anonymous account", error);
