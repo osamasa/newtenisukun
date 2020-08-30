@@ -227,9 +227,9 @@ export default new Vuex.Store({
 		    };
 		    context.commit('setShiaiRec',payload);
 		} else {
-//		    context.commit('setErrorno',-1);
-//		    context.commit('setErrormsg','試合情報取得失敗。もう一度ホーム画面から作り直してください');
-//		    console.log('[ERR] Not Found /shiairec/' + context.getters.getCurgameid);
+		    context.commit('setErrorno',-1);
+		    context.commit('setErrormsg','試合情報取得失敗。もう一度ホーム画面から作り直してください');
+		    console.log('[ERR] Not Found /shiairec/' + context.getters.getCurgameid);
 		}
  	        context.commit('setIsLoading',false);		
 	    });
