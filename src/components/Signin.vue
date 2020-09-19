@@ -10,6 +10,11 @@
             </v-list-item-content>
 	  </v-list-item>
 	  <v-list-item>
+            <v-list-item-content>
+	      <v-btn color="blue lighten-5" @click="authFacebook">Facebook</v-btn>
+            </v-list-item-content>
+	  </v-list-item>	  
+	  <v-list-item>
             <v-list-item-content>	  
 	      <v-btn color="error" @click="authAnonymouse">お試し（匿名）</v-btn>
             </v-list-item-content>
@@ -66,7 +71,7 @@ export default {
 	    const provider = new firebase.auth.FacebookAuthProvider();
 	    firebase.auth().signInWithRedirect(provider).catch(function(error) {
 		console.log('[ERR] ' + error.code + ' ' + error.message);
-	    });		       
+	    });		       	    
 	},
 	authMicrosoft() {
 	    const provider = new firebase.auth.OAuthProvider('microsoft.com');
