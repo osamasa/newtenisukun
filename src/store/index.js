@@ -272,6 +272,7 @@ export default new Vuex.Store({
 		    context.commit('setErrormsg','メンバー情報取得失敗。もう一度ホーム画面から作り直してください');
 		    console.log('[ERR] Not Found /gameusers/' + state.curgameid);
 		}
+		context.commit('setIsLoading',false);
 	    });
 	    if(gameusera) {
 		context.commit('setGameUsera',{'gameusera':gameusera});
