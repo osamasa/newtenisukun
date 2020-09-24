@@ -497,7 +497,6 @@ export default new Vuex.Store({
 								       )
 	},
 
-
 	async storeMyMemosDb (context,payload)  {
 	    if(!context.getters.getUser.isAnonymous) {
 		firebase.database().ref('/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid).set(context.getters.getMyMemos,function(error) {
@@ -605,8 +604,9 @@ export default new Vuex.Store({
 		})
 		.catch(error => {
 		    context.commit('setErrorno',-14);
-		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);		    		    
-		    console.log(error);})
+		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
+		    exit(-14);
+		})
 	    if(payload.isRenewal) {
 		context.commit('initGameState');
 		context.commit('setShiaiRec',payload);
@@ -618,15 +618,15 @@ export default new Vuex.Store({
 		context.dispatch('storeGameDb');
 		context.dispatch('storeGameUsersDb');
 		context.dispatch('storeShiairecDb');
-		context.dispatch('storeMyMemosDb');		
+//		context.dispatch('storeMyMemosDb');
 	    } else {
 		context.dispatch('addShiairecDb',payload);
-		payload.mymemos=[];
-		payload.shiairec.forEach(function(v) {
-		    payload.mymemos.push("");
-		});
-		context.commit('setMyMemos',payload);
-		context.dispatch('addMyMemosDb',payload);		
+//		payload.mymemos=[];
+//		payload.shiairec.forEach(function(v) {
+//		    payload.mymemos.push("");
+//		});
+//		context.commit('setMyMemos',payload);
+//		context.dispatch('addMyMemosDb',payload);		
 	    }
 	}
     }
