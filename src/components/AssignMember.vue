@@ -84,7 +84,9 @@ export default {
 	   let retval = {};
 	    if (user) {
     		this.isLogin = true;
-		this.$store.dispatch('loadUserInfoDbAction',{'user': user});		
+		this.$store.commit('setUser',{'user':user});
+		this.$store.dispatch('updateUserInfoDbAction');		
+//		this.$store.dispatch('loadUserInfoDbAction',{'user': user});		
 		this.$store.dispatch('setCurgamidAction',{ curgameid: this.$route.params.curgameid });
 		
 		this.$store.dispatch('loadGameMemberDatabaseAction');
@@ -93,7 +95,7 @@ export default {
    },
    mounted() {
        const retval = {};
-       firebase.database().ref('/userinfo').orderByChild('games/' + this.$route.params.curgameid).startAt(true).endAt(true).once('value', function(snapshot) {
+       firebase.database().ref('/userinfo').orderByChild('games/' + this.$route.params.curgameid).startAt(true).endAt(true).on('value', function(snapshot) {
 	   if(snapshot.val()) {
 	       snapshot.forEach(function(childSnapshot) {
 		   let childKey = childSnapshot.key;

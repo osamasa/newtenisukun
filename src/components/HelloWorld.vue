@@ -241,9 +241,6 @@ export default {
 	    'setErrorno',
 	    'setErrormsg'
 	]),	
-        chgMemos: function(index) {
-	    this.$store.dispatch('updateMyMemoAction',{'id': index});
-	},
 	assignmember: function() {
 	    this.$router.push('/assignmember/' + this.$store.getters.getCurgameid);
 	},

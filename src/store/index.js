@@ -33,7 +33,6 @@ export default new Vuex.Store({
 	    },
 	gameusers: [],
 	shiairec: [],
-	mymemos: []
     },
     getters: {
 	getErrorno: (state) => {
@@ -42,9 +41,7 @@ export default new Vuex.Store({
 	getErrormsg: (state) => {
 	    return state.errormsg;
 	},	
-	getMyMemos: (state) => {
-	    return state.mymemos;
-	},
+
 	getIsLoading: (state) => {
 	    return state.isLoading;
 	},
@@ -176,18 +173,7 @@ export default new Vuex.Store({
 	setCurgamid(state, payload) {
 	    state.curgameid = payload.curgameid;
 	},
-	setMyMemos(state,payload) {
-	    if(payload.mymemos) {
-		if( payload.isRenewal ) {
-		    state.mymemos=[];
-		}
-		payload.mymemos.forEach( v => {
-		    state.mymemos.push(v);
-		});		
-	    } else {
-		state.mymemos = payload.mymemos;
-	    }
-	},
+
 	setShiaiRec(state,payload) {
 	    if(payload.shiairec) {
 		if( payload.isRenewal ) {
@@ -238,22 +224,6 @@ export default new Vuex.Store({
 	    }
 	},
 
-	async loadMyMemosDatabaseAction (context) {
-	    const shiaidbc = firebase.database().ref('/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid);
-	    shiaidbc.once('value',function(snapshot) {
-		if(snapshot.exists) {
-		    const payload = {
-			mymemos : snapshot.val(),
-			isRenewal : true
-		    };
-		    context.commit('setMyMemos',payload);
-		} else {
-//		    context.commit('setErrorno',-2);
-//		    context.commit('setErrormsg','メモ情報取得失敗。もう一度ホーム画面から作り直してください');		    
-//		    console.log('[ERR] Not Found /mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid);
-		}		    
-	    });
-	},
 
 	async updateGameData(context,payload) {
 	    const updates = {};
@@ -272,6 +242,7 @@ export default new Vuex.Store({
 		    context.commit('setErrormsg','メンバー情報取得失敗。もう一度ホーム画面から作り直してください');
 		    console.log('[ERR] Not Found /gameusers/' + state.curgameid);
 		}
+		context.commit('setIsLoading',false);
 	    });
 	    if(gameusera) {
 		context.commit('setGameUsera',{'gameusera':gameusera});
@@ -319,11 +290,7 @@ export default new Vuex.Store({
 	    updates['/shiairec/' + context.getters.getCurgameid + '/' + (payload.id-1)]  = payload;
 	    firebase.database().ref().update(updates);
 	},
-	async updateMyMemoAction(context,payload) {
-	    const updates= {};
-	    updates['/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid + '/' + payload.id]  = context.getters.getMyMemos[payload.id];
-	    firebase.database().ref().update(updates);
-	},
+
 	async setGameUsersOneAction(context,payload) {
 	    const index = context.getters.getGameUsers.findIndex((v) => v.no === payload.nowrec.no);
 	    payload['index'] = index;
@@ -439,15 +406,13 @@ export default new Vuex.Store({
 		    users: {}
 		},
 		gameusers : [],
-		shiairec : [],
-		mymemos: []
+		shiairec : []
 
 	    };
 	    context.commit('setCurgamid',payload);
 	    context.commit('setGame',payload);
 	    context.commit('setGameUsers',payload)
 	    context.commit('setShiaiRec',payload);
-	    context.commit('setMyMemos',payload);
 	},
 	async loadGameDbAction (context,payload)  {
 	    firebase.database().ref('/games/' + context.getters.getCurgameid).on('value',function(snapshot) {
@@ -501,18 +466,6 @@ export default new Vuex.Store({
 	},
 
 
-	async storeMyMemosDb (context,payload)  {
-	    if(!context.getters.getUser.isAnonymous) {
-		firebase.database().ref('/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid).set(context.getters.getMyMemos,function(error) {
-		if(error) {
-		    console.log('[ERR] ' + '/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid );
-		    console.log('[ERR]' + error);
-		    console.log('[ERR] ' + context.getters.getMyMemos);
-
-		}}
-															       )
-	    }
-	},
 	
 	async addShiairecDb (context,payload)  {
 	    payload.shiairec.forEach( v => {
@@ -527,21 +480,6 @@ export default new Vuex.Store({
 														   )
 	    })
 	},			    
-
-	async addMyMemosDb (context,payload)  {
-	    if(!context.getters.getUser.isAnonymous) {
-		payload.shiairec.forEach( v => {
-		    firebase.database().ref('/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid + '/' + (v.id-1) ).set("").then(function(error) {
-			if(error) {			    
-			    console.log('[ERR]' + '/mymemos/' + context.getters.getCurgameid + '/' + context.getters.getUser.uid + '/' + (v.id-1));
-			    console.log('[ERR]' + error);
-			    console.log('[ERR] ' + context.getters.getMyMemos);
-			}}
-														      )
-		})
-		
-	    }
-	},
 	
 	async loadMyGamesAction(context) {
 
@@ -577,7 +515,6 @@ export default new Vuex.Store({
 	    updates['/games/' + payload.curgameid] =null;
 	    updates['/shiairec/' + payload.curgameid] =null;
 	    updates['/gameusers/' + payload.curgameid] =null;
-	    updates['/mymemos/' + payload.curgameid]=null;	    
 	    firebase.database().ref().update(updates);
 	    context.dispatch('loadMyGamesAction');
 	},
@@ -608,24 +545,17 @@ export default new Vuex.Store({
 		})
 		.catch(error => {
 		    context.commit('setErrorno',-14);
-		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);		    		    
-		    console.log(error);})
+		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
+		    exit(-14);
+		})
 	    if(payload.isRenewal) {
 		context.commit('initGameState');
 		context.commit('setShiaiRec',payload);
-		payload.mymemos = new Array(context.getters['getShiairecNum']);
-		for (let l=0;l< context.getters['getShiairecNum'];l++) {
-		    payload.mymemos[l]="";
-		}
 		context.dispatch('storeGameDb');
 		context.dispatch('storeGameUsersDb');
 		context.dispatch('storeShiairecDb');
 	    } else {
 		context.dispatch('addShiairecDb',payload);
-		payload.mymemos=[];
-		payload.shiairec.forEach(function(v) {
-		    payload.mymemos.push("");
-		});
 	    }
 	}
     }
