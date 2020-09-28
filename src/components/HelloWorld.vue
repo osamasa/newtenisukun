@@ -203,14 +203,6 @@ export default {
 	    }
 	},	
 	
-        getMyMemos: function() {
-	    if(this.$store.getters.getMyMemos === null) {
-		this.$store.commit('setMyMemos',{'isRenewal' : true,
-						   'mymemos' : []
-						  })
-	    }
-	    return this.$store.getters.getMyMemos;
-	},
         isActive: function() {
             return function(i) {
 		return (i === this.nowTouch);

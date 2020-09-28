@@ -339,7 +339,7 @@ export default new Vuex.Store({
 	    }
 													 );
 	},
-	async storeGamesUsersDbAction(context,payload) {
+	storeGamesUsersDbAction(context,payload) {
 	    firebase.database().ref('/games/' + context.getters.getCurgameid + '/users/' + context.getters.getUser.uid).set(true, function(error) {
 		if(error) {
 		    context.commit('setErrorno',-6);
@@ -364,9 +364,8 @@ export default new Vuex.Store({
 		})
 	    }
 	},
-	async updateUserInfoDbAction(context,payload) {
+	updateUserInfoDbAction(context,payload) {
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).once('value',function(snapshot) {
-		console.log(snapshot,(!snapshot.exits));
 		if((!snapshot.val()) || (!snapshot.val().displayName)){
 		    let _gameid = context.getters.getCurgameid;
 		    const _payload = {
@@ -462,14 +461,19 @@ export default new Vuex.Store({
 	    })
 	},	    
 	async storeGameDb (context,payload)  {
-	    firebase.database().ref('/games/' + context.getters.getCurgameid).set(context.getters.getGame,function(error) {
-		if (error) {
-		    context.commit('setErrorno',-10);
-		    context.commit('setErrormsg','ゲーム情報更新失敗、しばらくしてからやり直してください ' + error);		    
-		    console.log('[ERR] ' + '/games/' + context.getters.getCurgameid);
-		    console.log('[ERR]' + error);
-		}}
-								    );
+	    if(context.getters.getCurgameid) {
+		firebase.database().ref('/games/' + context.getters.getCurgameid).set(context.getters.getGame,function(error) {
+		    if (error) {
+			context.commit('setErrorno',-10);
+			context.commit('setErrormsg','ゲーム情報更新失敗、しばらくしてからやり直してください ' + error);		    
+			console.log('[ERR] ' + '/games/' + context.getters.getCurgameid);
+			console.log('[ERR]' + error);
+		    }}
+										     );
+	    } else {
+		context.commit('setErrorno',-19);
+		context.commit('setErrormsg','ゲーム情報更新エラー ' + error);		    
+	    }
 	},
 
 	async storeGameUsersDb(context,payload) {
@@ -613,19 +617,15 @@ export default new Vuex.Store({
 		for (let l=0;l< context.getters['getShiairecNum'];l++) {
 		    payload.mymemos[l]="";
 		}
-		context.commit('setMyMemos',payload);		
 		context.dispatch('storeGameDb');
 		context.dispatch('storeGameUsersDb');
 		context.dispatch('storeShiairecDb');
-		context.dispatch('storeMyMemosDb');		
 	    } else {
 		context.dispatch('addShiairecDb',payload);
 		payload.mymemos=[];
 		payload.shiairec.forEach(function(v) {
 		    payload.mymemos.push("");
 		});
-		context.commit('setMyMemos',payload);
-		context.dispatch('addMyMemosDb',payload);		
 	    }
 	}
     }
