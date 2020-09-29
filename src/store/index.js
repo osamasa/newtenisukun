@@ -384,7 +384,7 @@ export default new Vuex.Store({
 		}
 	    })
 	},
-	async resetGames(context,payload) {
+	resetGames(context,payload) {
 	    if(context.getters.getGameUsera) {
 		let a = context.getters.getGameUsera;
 		a.off();
@@ -518,9 +518,9 @@ export default new Vuex.Store({
 	    firebase.database().ref().update(updates);
 	    context.dispatch('loadMyGamesAction');
 	},
-	async setShiaiRecAction(context,payload) {
+	setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
-	    await axios.get('/' + context.getters['getPeoples'] +'.csv')
+	    axios.get('/' + context.getters['getPeoples'] +'.csv')
 		.then((res) => {
 		    let i=0;
 		    let n=0;
@@ -542,21 +542,21 @@ export default new Vuex.Store({
 			    i++;
 			});
 		    });
+		    if(payload.isRenewal) {
+			context.commit('initGameState');
+			context.commit('setShiaiRec',payload);
+			context.dispatch('storeGameDb');
+			context.dispatch('storeGameUsersDb');
+			context.dispatch('storeShiairecDb');
+		    } else {
+			context.dispatch('addShiairecDb',payload);
+		    }
 		})
 		.catch(error => {
 		    context.commit('setErrorno',-14);
 		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
 		    exit(-14);
 		})
-	    if(payload.isRenewal) {
-		context.commit('initGameState');
-		context.commit('setShiaiRec',payload);
-		context.dispatch('storeGameDb');
-		context.dispatch('storeGameUsersDb');
-		context.dispatch('storeShiairecDb');
-	    } else {
-		context.dispatch('addShiairecDb',payload);
-	    }
 	}
     }
 })
