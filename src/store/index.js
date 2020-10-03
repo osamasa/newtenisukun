@@ -383,7 +383,7 @@ export default new Vuex.Store({
 		}
 	    })
 	},
-	async resetGames(context,payload) {
+	resetGames(context,payload) {
 	    if(context.getters.getGameUsera) {
 		let a = context.getters.getGameUsera;
 		a.off();
@@ -518,8 +518,7 @@ export default new Vuex.Store({
 	setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
 	    axios.get('/' + context.getters['getPeoples'] +'.csv')
-		.then((res) => {		    
-		    console.log('/' + context.getters['getPeoples'] +'.csv',res);
+		.then((res) => {
 		    let i=0;
 		    let n=0;
 		    let m=0;
