@@ -341,7 +341,6 @@ export default new Vuex.Store({
 			games : { _gameid : true },
 			isAnonymous : context.getters.getUser.isAnonymous || false,
 		    };
-		    console.log(_payload);		 
 		    context.commit('setUserinfo',_payload);
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
@@ -464,8 +463,6 @@ export default new Vuex.Store({
 		}}
 								       )
 	},
-
-
 	
 	async addShiairecDb (context,payload)  {
 	    payload.shiairec.forEach( v => {
@@ -518,10 +515,11 @@ export default new Vuex.Store({
 	    firebase.database().ref().update(updates);
 	    context.dispatch('loadMyGamesAction');
 	},
-	async setShiaiRecAction(context,payload) {
+	setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
-	    await axios.get('/' + context.getters['getPeoples'] +'.csv')
-		.then((res) => {
+	    axios.get('/' + context.getters['getPeoples'] +'.csv')
+		.then((res) => {		    
+		    console.log('/' + context.getters['getPeoples'] +'.csv',res);
 		    let i=0;
 		    let n=0;
 		    let m=0;
@@ -542,21 +540,21 @@ export default new Vuex.Store({
 			    i++;
 			});
 		    });
+		    if(payload.isRenewal) {
+			context.commit('initGameState');
+			context.commit('setShiaiRec',payload);
+			context.dispatch('storeGameDb');
+			context.dispatch('storeGameUsersDb');
+			context.dispatch('storeShiairecDb');
+		    } else {
+			context.dispatch('addShiairecDb',payload);
+		    }
 		})
 		.catch(error => {
 		    context.commit('setErrorno',-14);
 		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
 		    exit(-14);
 		})
-	    if(payload.isRenewal) {
-		context.commit('initGameState');
-		context.commit('setShiaiRec',payload);
-		context.dispatch('storeGameDb');
-		context.dispatch('storeGameUsersDb');
-		context.dispatch('storeShiairecDb');
-	    } else {
-		context.dispatch('addShiairecDb',payload);
-	    }
 	}
     }
 })
