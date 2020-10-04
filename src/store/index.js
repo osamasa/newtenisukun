@@ -173,7 +173,6 @@ export default new Vuex.Store({
 	setCurgamid(state, payload) {
 	    state.curgameid = payload.curgameid;
 	},
-
 	setShiaiRec(state,payload) {
 	    if(payload.shiairec) {
 		if( payload.isRenewal ) {
@@ -185,7 +184,6 @@ export default new Vuex.Store({
 	    } else {
 		state.shiairec = payload.shiairec;
 	    }
-
 	},
 	setPeoples(state,payload) {
 	    state.game.peoples = payload.peoples;
@@ -212,13 +210,13 @@ export default new Vuex.Store({
 			isRenewal : true
 		    };
 		    context.commit('setShiaiRec',payload);
-		} else {
-		    context.commit('setErrorno',-1);
-		    context.commit('setErrormsg','試合情報取得失敗。もう一度ホーム画面から作り直してください');
-		    console.log('[ERR] Not Found /shiairec/' + context.getters.getCurgameid);
+ 	            context.commit('setIsLoading',false);
 		}
- 	        context.commit('setIsLoading',false);		
-	    });
+	    }), function (errorObject) {
+		context.commit('setErrorno',errorObject.code);
+		context.commit('errorObject','試合情報読み込み失敗');				
+		console.log("The read failed: " + errorObject.code);
+	    }
 	    if(shiaidba) {
 		context.commit('setShiaiDba',{'shiaidba' : shiaidba});
 	    }
@@ -237,13 +235,13 @@ export default new Vuex.Store({
 	    gameusera.on('value', function(snapshot) {
 		if(snapshot.exists) {
 		    context.commit('setGameUsers',snapshot.val())
-		} else {
-		    context.commit('setErrorno',-3);
-		    context.commit('setErrormsg','メンバー情報取得失敗。もう一度ホーム画面から作り直してください');
-		    console.log('[ERR] Not Found /gameusers/' + state.curgameid);
-		}
-		context.commit('setIsLoading',false);
-	    });
+		    context.commit('setIsLoading',false);		    
+		} 
+	    }), function (errorObject) {
+		context.commit('setErrorno',errorObject.code);
+		context.commit('errorObject','GAME USER読み込み失敗');				
+		console.log("The read failed: " + errorObject.code);
+	    }
 	    if(gameusera) {
 		context.commit('setGameUsera',{'gameusera':gameusera});
 	    }
@@ -348,7 +346,7 @@ export default new Vuex.Store({
 			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
 			    console.log('[ERR]' + error);
 			}
-		    })		    
+		    })
 		} else {
 		    context.commit('setUserinfo',snapshot.val());
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
@@ -417,14 +415,14 @@ export default new Vuex.Store({
 	    firebase.database().ref('/games/' + context.getters.getCurgameid).on('value',function(snapshot) {
 		if(snapshot.exists) {
 		    context.commit('setGame',{game : snapshot.val()});
-		} else {
-		    context.commit('setErrorno',-9);
-		    context.commit('setErrormsg','ゲーム情報読み込み失敗、しばらくしてからやり直してください ' + error);
-		    console.log('[ERR] Not Found /games/' + context.getters.getCurgameid);
 		}
-	    })
+	    }), function (errorObject) {
+		context.commit('setErrorno',errorObject.code);
+		context.commit('errorObject','GAME情報読み込み失敗');				
+		console.log("The read failed: " + errorObject.code);
+	    }
 	},	    
-	async storeGameDb (context,payload)  {
+	storeGameDb (context,payload)  {
 	    if(context.getters.getCurgameid) {
 		firebase.database().ref('/games/' + context.getters.getCurgameid).set(context.getters.getGame,function(error) {
 		    if (error) {
@@ -540,10 +538,7 @@ export default new Vuex.Store({
 			});
 		    });
 		    if(payload.isRenewal) {
-			context.commit('initGameState');
 			context.commit('setShiaiRec',payload);
-			context.dispatch('storeGameDb');
-			context.dispatch('storeGameUsersDb');
 			context.dispatch('storeShiairecDb');
 		    } else {
 			context.dispatch('addShiairecDb',payload);

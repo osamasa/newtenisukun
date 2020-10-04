@@ -158,6 +158,11 @@ export default {
 		this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
 		this.$store.dispatch('setGamedateAction',{'gamedate': this.date + ' ' + this.time});
     		this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
+		this.$store.dispatch('storeGameDb');
+		
+		this.$store.commit('initGameState');
+		this.$store.dispatch('storeGameUsersDb');		
+		
 		this.$store.dispatch('setShiaiRecAction',{isRenewal:true});
 		let routeData = this.$router.resolve('/game/'+this.$store.getters.getCurgameid );
 		    window.open(routeData.href, '_blank');
