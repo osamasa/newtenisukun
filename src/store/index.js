@@ -24,13 +24,15 @@ export default new Vuex.Store({
 	    games: []
 	},
 	game:
-	    {
-		gamedate: '',
-		gameplace: '',
-		ownuserid: {},
-		peoples: 5,
-		users: []
-	    },
+	{
+	    isSingle: false,
+	    coatNum: 1,
+	    gamedate: '',
+	    gameplace: '',
+	    ownuserid: {},
+	    peoples: 5,
+	    users: []
+	},
 	gameusers: [],
 	shiairec: [],
     },
@@ -101,8 +103,19 @@ export default new Vuex.Store({
 	},
 	getUserinfo: (state) => {
 	    return state.userinfo;
+	},
+	getIsSingle: (state) => {
+	    if(typeof state.isSingle !== 'undefined') {
+		state.isSingle = false;
+	    }
+	    return state.isSingle;
+	},
+	getCoatNum: (state) => {
+	    if(typeof state.coatNum !== 'undefined') {
+		state.game.coatNum = 1;
+	    }
+	    return state.game.coatNum;
 	}
-	
     },
     mutations: {
 	setErrorno: (state,payload) => {
@@ -193,7 +206,13 @@ export default new Vuex.Store({
 	},
 	setGameplace(state,payload) {
 	    state.game.gameplace = payload.gameplace;
-	}
+	},
+	setIsSingle(state,payload) {
+	    state.game.isSingle = payload.isSingle;
+	},
+	setCoatNum(state,payload) {
+	    state.game.coatNum = payload.coatNum;
+	}	
     },
     actions: {
 	createGameidAction (context) {
@@ -520,21 +539,33 @@ export default new Vuex.Store({
 		    let i=0;
 		    let n=0;
 		    let m=0;
-		    const num = payload.isRenewal ? 0 : context.getters['getShiairecNum'];
+		    let num = payload.isRenewal ? 0 : context.getters['getShiairecNum'];
 		    let p1,p2,p3,p4
 		    res.data.split('\r\n').forEach(vv => {
-			vv.split(',').forEach(v => {
-			    if((i % 4) == 0) {
-				p1=v;
-			    } else if((i % 4) == 1) {
-				p2=v;
-			    } else if((i % 4) == 2) {
-				p3=v;
+			vv.split(',').forEach(v => {		    
+			    if(context.getters['getIsSingle']) {
 			    } else {
-				p4=v;
-				payload.shiairec.push({"id":num+(++n), "p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
+				if((i % 4) == 0) {
+				    p1=v;
+				} else if((i % 4) == 1) {
+				    p2=v;
+				} else if((i % 4) == 2) {
+				    p3=v;
+				} else {
+				    p4=v;				    
+				    if((n % context.getters['getCoatNum'])==0) {
+					m=1;
+				    } else {
+					m=0;
+				    }
+				    num += m;
+				    let c = n % context.getters['getCoatNum']+1;
+				    console.log({"id":num, "coatno": c ,"p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
+				    payload.shiairec.push({"id":num, "coatno": c ,"p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
+				    n++;
+				}
+				i++;
 			    }
-			    i++;
 			});
 		    });
 		    if(payload.isRenewal) {
@@ -547,7 +578,7 @@ export default new Vuex.Store({
 		.catch(error => {
 		    context.commit('setErrorno',-14);
 		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
-		    exit(-14);
+		    console.log('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
 		})
 	}
     }

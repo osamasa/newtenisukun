@@ -19,7 +19,7 @@
 	      v-bind:class="{ active: isActive(index) }"
 	      >
 	<v-card-title>
-	<v-icon v-show="index==nowTouch">mdi-checkbox-marked-circle</v-icon>第{{ n['id'] }}試合
+	<v-icon v-show="index==nowTouch">mdi-checkbox-marked-circle</v-icon>第{{ n['id'] }}試合<div v-if="n['coatno']">(第{{n.coatno}}コート)</div>
 	</v-card-title>	
 	<v-card-text>	
 	  <v-row

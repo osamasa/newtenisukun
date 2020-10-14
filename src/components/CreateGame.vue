@@ -13,12 +13,23 @@
           label="場所"
           required
 	  ></v-text-field>
+	<v-switch
+          v-model="isSingle"
+          inset
+          :label="getSingleLabel"
+	  ></v-switch>	
 	<v-select
           v-model="peoples"
           :items="items"
           :chips="true"
 	  label="人数">
 	</v-select>
+	<v-select
+          v-model="coatNum"
+          :items="citems"
+          :chips="true"
+	  label="コート数">
+	</v-select>	
     <v-menu
           ref="menu"
           v-model="menu"
@@ -106,7 +117,10 @@ export default {
     data: () => ({
 	valid : true,
         isLogin: false,
+	isSingle : false,
+	citems : [1,2,3,4,5,6,7,8,9,10],
 	peoples:5,
+	coatNum:1,
 	items:[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
 	valid: false,
 	name: '某所',
@@ -144,6 +158,13 @@ export default {
     },    
     components: {
     },
+    computed: {
+	getSingleLabel : function() {
+	    return this.isSingle ? 'シングルス' : 'ダブルス';
+	}
+
+
+    },
     methods: {
         reset: function() {
 	    this.$refs.form.reset();
@@ -155,9 +176,12 @@ export default {
 		this.$store.dispatch('resetGames');	    
 		this.$store.dispatch('createGameidAction');
 
-		this.$store.dispatch('setPeoplesAction',{'peoples': this.peoples});
-		this.$store.dispatch('setGamedateAction',{'gamedate': this.date + ' ' + this.time});
-    		this.$store.dispatch('setGameplaceAction',{'gameplace': this.name});
+		this.$store.commit('setPeoples',{'peoples': this.peoples});
+		this.$store.commit('setGamedate',{'gamedate': this.date + ' ' + this.time});
+    		this.$store.commit('setGameplace',{'gameplace': this.name});
+    		this.$store.commit('setCoatNum',{'coatNum': this.coatNum});
+    		this.$store.commit('setIsSingle',{'isSingle': this.isSingle});
+		
 		this.$store.dispatch('storeGameDb');
 		
 		this.$store.commit('initGameState');
