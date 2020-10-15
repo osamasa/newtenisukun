@@ -175,12 +175,13 @@ export default {
 	]),
 	getMyName: function() {
 	    return function(n) {
+		let _length = this.$store.getters.getIsSingle ? 6 : 2;
 		let d = this.$store.getters.getGameUsers;
 		if(!d) {
 		    return n;
 		} else {
 		    let s = d.find(m => parseInt(m.no) == parseInt(n));
-		    return s && s.displayName && s.displayName !== '名無し' ? (s.displayName.length > 2 ? s.displayName.substr(0,2) + '..' : s.displayName) : '';
+		    return s && s.displayName && s.displayName !== '名無し' ? (s.displayName.length > _length ? s.displayName.substr(0,_length) + '..' : s.displayName) : '';
 		}
 	    }
 	},
