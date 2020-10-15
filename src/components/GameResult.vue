@@ -56,6 +56,8 @@
             <th class="primary--text">
               名前
             </th>
+            <th class="primary--text">
+              試合数
             </th>
             <th class="primary--text">
               勝ち
@@ -72,6 +74,7 @@
           <tr>
             <td>{{ n['no'] }} </td>
             <td>{{ n['displayName']}}</td>
+	    <td>{{ getShiaiNum(n['no'])}}</td>	    
 	    <td>{{ getWinNum(n['no'])}}</td>
 	    <td>{{ getLoseNum(n['no'])}}</td>
 	    <td>{{ getDrawNum(n['no'])}}</td>
@@ -101,9 +104,11 @@
 	<tbody v-for="(n,index) in this.getShiairec()" :key="index">
           <tr v-if="n['rs']">
             <td>{{ n['id'] }}</td>
-            <td>{{getShiaiResult(n['r1'],n['r2'])}} {{ n['p1'] }},{{ n['p2'] }}</td>
+            <td v-if="getIsSingle">{{getShiaiResult(n['r1'],n['r2'])}} {{ n['p1'] }}</td>
+            <td v-if="getIsSingle!=true">{{getShiaiResult(n['r1'],n['r2'])}} {{ n['p1'] }},{{ n['p2'] }}</td>	    
             <td>{{ n['r1'] }} VS {{ n['r2'] }}</td>
-            <td>{{getShiaiResult(n['r2'],n['r1'])}} {{ n['p3'] }},{{ n['p4'] }}</td>
+            <td v-if="getIsSingle">{{getShiaiResult(n['r2'],n['r1'])}} {{ n['p3'] }}</td>
+            <td v-if="getIsSingle!=true">{{getShiaiResult(n['r2'],n['r1'])}} {{ n['p3'] }},{{ n['p4'] }}</td>	    
             <td></td>
           </tr>
         </tbody>
@@ -194,6 +199,13 @@ export default {
 	getShiairec : function() {
 	    return this.$store.getters.getShiairec
 	},
+	getShiaiNum: function(no) {
+	    return this.$store.getters.getShiairec.filter(function(item, index){
+		if (((item.p1 == no) || (item.p2 == no) || (item.p3 == no) || (item.p4 == no)) && (item.rs !=0)) {
+		    return true;		    
+		}
+	    }).length;
+	},
     	getWinNum: function(no) {
 	    return this.$store.getters.getShiairec.filter(function(item, index){
 		if (((item.p1 == no) || (item.p2 == no)) && (item.rs ==1)) {
@@ -227,7 +239,8 @@ export default {
     computed: {
 	...mapGetters([
 	    'getErrorno',
-	    'getErrormsg'
+	    'getErrormsg',
+	    'getIsSingle'	    
 	]),	
 	getMyURL : function() {
   	    return encodeURI("https://line.me/R/msg/text/?今日はお疲れ様でした。\r\n" + this.$store.getters.getGameplace + ' (' + this.$store.getters.getGamedate + ') ' + "のゲームの結果は下記をクリック\r\n\r\nhttps://rshkn3.web.app/" + this.$route.path + "\r\n\r\n" + "--\r\nテニス乱数表君V3\r\nhttps://rshkn3.web.app/\r\n");

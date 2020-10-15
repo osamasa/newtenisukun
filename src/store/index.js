@@ -105,10 +105,10 @@ export default new Vuex.Store({
 	    return state.userinfo;
 	},
 	getIsSingle: (state) => {
-	    if(typeof state.isSingle !== 'undefined') {
-		state.isSingle = false;
+	    if(typeof state.game.isSingle === 'undefined') {
+		state.game.isSingle = false;
 	    }
-	    return state.isSingle;
+	    return state.game.isSingle;
 	},
 	getCoatNum: (state) => {
 	    if(typeof state.coatNum !== 'undefined') {
@@ -544,6 +544,16 @@ export default new Vuex.Store({
 		    res.data.split('\r\n').forEach(vv => {
 			vv.split(',').forEach(v => {		    
 			    if(context.getters['getIsSingle']) {
+				if((i % 2) == 0) {
+				    p1=v;
+				} else {
+				    p3=v;				    
+				    num += 1;
+				    let c = n % context.getters['getCoatNum']+1;
+				    console.log({"id":num, "coatno": c ,"p1": p1,"p2": 0, "p3": p3, "p4": 0, "r1": 0, "r2": 0, "rs": 0 });
+				    payload.shiairec.push({"id":num, "coatno": c ,"p1": p1,"p2": 0, "p3": p3, "p4": 0, "r1": 0, "r2": 0, "rs": 0 });
+				    n++;
+				}
 			    } else {
 				if((i % 4) == 0) {
 				    p1=v;
@@ -553,19 +563,14 @@ export default new Vuex.Store({
 				    p3=v;
 				} else {
 				    p4=v;				    
-				    if((n % context.getters['getCoatNum'])==0) {
-					m=1;
-				    } else {
-					m=0;
-				    }
-				    num += m;
+				    num += 1;
 				    let c = n % context.getters['getCoatNum']+1;
 				    console.log({"id":num, "coatno": c ,"p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
 				    payload.shiairec.push({"id":num, "coatno": c ,"p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
 				    n++;
 				}
-				i++;
 			    }
+			    i++;
 			});
 		    });
 		    if(payload.isRenewal) {

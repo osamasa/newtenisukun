@@ -29,12 +29,12 @@
 	      :key="k"
 	      cols="6">
 	      <div v-if="k==1">
-		<v-btn height="60" @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</br>{{ n['p1'] }}</v-btn>
-		<v-btn height="60" @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</br>{{ n['p2'] }}</v-btn>
+		<v-btn height="60" :width="getIsSingle ? 140 : 60" @click="nowrec=n;isDialog=true">{{ getMyName(n['p1']) }}</br>{{ n['p1'] }}</v-btn>
+		<v-btn v-if="getIsSingle!=true" height="60" @click="nowrec=n;isDialog=true">{{ getMyName(n['p2']) }}</br>{{ n['p2'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==2">
-		<v-btn height="60" @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</br>{{ n['p3']}}</v-btn>
-		<v-btn height="60" @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</br>{{ n['p4'] }}</v-btn>
+		<v-btn height="60" :width="getIsSingle ? 140 : 60" @click="nowrec=n;isDialog=true;">{{ getMyName(n['p3']) }}</br>{{ n['p3']}}</v-btn>
+		<v-btn v-if="getIsSingle!=true" height="60" @click="nowrec=n;isDialog=true;">{{ getMyName(n['p4']) }}</br>{{ n['p4'] }}</v-btn>
 	      </div>
 	      <div v-else-if="k==3">
 		<div v-if="n['rs'] > 0">
@@ -48,16 +48,6 @@
 	    </v-col>
 	  </v-row>
 	</v-card-text>
-	<v-row>
-	  <v-col cols=1>
-	    <v-card-actions v-if="n['rs'] > 0">
-	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果修正</v-btn>
-	    </v-card-actions>
-	    <v-card-actions v-else>
-	      <v-btn color="primary" @click="isDialog=true;nowrec=n;">結果入力</v-btn>
-	    </v-card-actions>	
-	  </v-col>
-	</v-row>      
       </v-card>
 
       <v-dialog v-model="isDialog" persistent max-width="640px" v-if="isDialog">
@@ -67,7 +57,8 @@
 	  </v-card-title>
 	  <v-card-text>
 	    <v-row><v-col>
-		<p>{{getMyNameLong(nowrec.p1)}},{{getMyNameLong(nowrec.p2)}}の点数:</p>
+		<p v-if="getIsSingle">{{getMyNameLong(nowrec.p1)}}の点数:</p>
+		<p v-else>{{getMyNameLong(nowrec.p1)}},{{getMyNameLong(nowrec.p2)}}の点数:</p>
 		<v-select v-model="nowrec.r1"
 			  outlined
 			  label="点数を選択してください2"
@@ -76,7 +67,8 @@
 		</v-select>
 	    </v-col></v-row>				
 	    <v-row><v-col>
-		<p>{{getMyNameLong(nowrec.p3)}},{{getMyNameLong(nowrec.p4)}}の点数:</p>
+		<p v-if="getIsSingle">{{getMyNameLong(nowrec.p3)}}の点数:</p>		
+		<p v-else>{{getMyNameLong(nowrec.p3)}},{{getMyNameLong(nowrec.p4)}}の点数:</p>
 		<v-select v-model="nowrec.r2"
 			  outlined
 			  label="点数を選択してください2"
@@ -178,7 +170,8 @@ export default {
     computed:{
 	...mapGetters([
 	    'getErrorno',
-	    'getErrormsg'
+	    'getErrormsg',
+	    'getIsSingle'
 	]),
 	getMyName: function() {
 	    return function(n) {
