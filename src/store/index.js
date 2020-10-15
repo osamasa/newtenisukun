@@ -111,7 +111,7 @@ export default new Vuex.Store({
 	    return state.game.isSingle;
 	},
 	getCoatNum: (state) => {
-	    if(typeof state.coatNum !== 'undefined') {
+	    if(typeof state.game.coatNum === 'undefined') {
 		state.game.coatNum = 1;
 	    }
 	    return state.game.coatNum;
