@@ -16,6 +16,12 @@
           label="場所"
           required
 	  ></v-text-field>
+	<v-select
+          v-model="peoples"
+          :items="items"
+          :chips="true"
+	  label="人数">
+	</v-select>	
     <v-menu
           ref="menu"
           v-model="menu"
@@ -114,16 +120,19 @@ export default {
         date: null,
         time: null,	
 	menu : false,
+	peoples : 0,
 	modal2 : false
     }),
     created() {
 	[this.date,this.time] = this.$store.getters.getGamedate.split(' ');
 	this.name = this.$store.getters.getGameplace;
+	this.peoples = this.$store.getters.getPeoples;
     },    
     methods: {
         reset: function() {
 	    [this.date,this.time] = this.$store.getters.getGamedate.split(' ');
 	    this.name = this.$store.getters.getGameplace;
+	    this.peoples = this.$store.getters.getPeoples;
 	},	
 	goback: function() {
 	    this.$router.go(-1);
@@ -132,6 +141,22 @@ export default {
 	    const payload = {};
 	    payload['gamedate'] = this.date + ' ' + this.time;
 	    payload['gameplace'] = this.name;
+	    if(this.peoples != this.$store.getters.getPeoples) {
+		let tmp = [];
+	    	for(let i=0;i<this.peoples;i++) {
+		    tmp.push({
+		    no:(i+1),
+			userid: this.$store.getters.getGameUsers[i] && this.$store.getters.getGameUsers[i].userid || '',
+			displayName: this.$store.getters.getGameUsers[i] && this.$store.getters.getGameUsers[i].displayName || '名無し',
+			photoURL: this.$store.getters.getGameUsers[i] && this.$store.getters.getGameUsers[i].photoURL || ''
+		    });
+		}
+		payload['peoples'] = this.peoples;
+		payload['gameusers'] = tmp;
+		this.$store.dispatch('storeGameUsersDb',payload);
+//		this.$store.dispatch('removeShiairec',payload);
+		this.$store.dispatch('setShiaiRecAction',payload);
+	    }
 	    this.$store.dispatch('updateGameData',payload);
 	    this.$router.go(-1);
 	}

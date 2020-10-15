@@ -244,8 +244,15 @@ export default new Vuex.Store({
 
 	async updateGameData(context,payload) {
 	    const updates = {};
-	    updates[ '/games/' + context.getters.getCurgameid + '/gamedate' ] = payload.gamedate;
-	    updates[ '/games/' + context.getters.getCurgameid + '/gameplace' ] = payload.gameplace;
+	    if(payload.gamedate) {
+		updates[ '/games/' + context.getters.getCurgameid + '/gamedate' ] = payload.gamedate;
+	    }
+	    if(payload.gameplace) {
+		updates[ '/games/' + context.getters.getCurgameid + '/gameplace' ] = payload.gameplace;
+	    }
+	    if(payload.peoples) {
+		updates[ '/games/' + context.getters.getCurgameid + '/peoples' ] = payload.peoples;
+	    }
 	    firebase.database().ref().update(updates);
 	},
 	
@@ -458,7 +465,7 @@ export default new Vuex.Store({
 	},
 
 	async storeGameUsersDb(context,payload) {
-	    firebase.database().ref('/gameusers/' + context.getters.getCurgameid).set(context.getters.getGameUsers,function(error) {
+	    firebase.database().ref('/gameusers/' + context.getters.getCurgameid).set(payload && payload.gameusers ? payload.gameusers : context.getters.getGameUsers,function(error) {
 		if(error) {
 		    context.commit('setErrorno',-11);
 		    context.commit('setErrormsg','ゲームユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
@@ -532,9 +539,21 @@ export default new Vuex.Store({
 	    firebase.database().ref().update(updates);
 	    context.dispatch('loadMyGamesAction');
 	},
+	removeShiairec(context,payload) {
+	    let ref = firebase.database().ref('/shiairec/' + context.getters.getCurgameid);
+	    ref.orderByKey()
+		.once('value',function(snapshot) {
+		    let tmp=[];
+		    snapshot.forEach(function(childSnapshot) {
+			let key = childSnapshot.key;
+			let childData = childSnapshot.val()['rs'];
+			tmp.push({'key':key, 'val': childData});
+		    });
+	    });
+	},
 	setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
-	    axios.get('/' + context.getters['getPeoples'] +'.csv')
+	    axios.get('/' + (payload.peoples ? payload.peoples : context.getters['getPeoples']) +'.csv')
 		.then((res) => {
 		    let i=0;
 		    let n=0;
@@ -550,7 +569,6 @@ export default new Vuex.Store({
 				    p3=v;				    
 				    num += 1;
 				    let c = n % context.getters['getCoatNum']+1;
-				    console.log({"id":num, "coatno": c ,"p1": p1,"p2": 0, "p3": p3, "p4": 0, "r1": 0, "r2": 0, "rs": 0 });
 				    payload.shiairec.push({"id":num, "coatno": c ,"p1": p1,"p2": 0, "p3": p3, "p4": 0, "r1": 0, "r2": 0, "rs": 0 });
 				    n++;
 				}
@@ -565,7 +583,6 @@ export default new Vuex.Store({
 				    p4=v;				    
 				    num += 1;
 				    let c = n % context.getters['getCoatNum']+1;
-				    console.log({"id":num, "coatno": c ,"p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
 				    payload.shiairec.push({"id":num, "coatno": c ,"p1": p1,"p2": p2, "p3": p3, "p4": p4, "r1": 0, "r2": 0, "rs": 0 });
 				    n++;
 				}
