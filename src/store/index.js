@@ -233,7 +233,8 @@ export default new Vuex.Store({
 		}
 	    }), function (errorObject) {
 		context.commit('setErrorno',errorObject.code);
-		context.commit('errorObject','試合情報読み込み失敗');				
+		context.commit('errorObject','試合情報読み込み失敗');
+		context.dispatch('recrdErrorLog');
 		console.log("The read failed: " + errorObject.code);
 	    }
 	    if(shiaidba) {
@@ -265,7 +266,7 @@ export default new Vuex.Store({
 		} 
 	    }), function (errorObject) {
 		context.commit('setErrorno',errorObject.code);
-		context.commit('errorObject','GAME USER読み込み失敗');				
+		context.commit('errorObject','GAME USER読み込み失敗');				context.dispatch('recrdErrorLog');
 		console.log("The read failed: " + errorObject.code);
 	    }
 	    if(gameusera) {
@@ -293,7 +294,8 @@ export default new Vuex.Store({
 	setCurgamidAction(context,payload) {
 	    if(!payload.curgameid) {
 		context.commit('setErrorno',-4);
-		context.commit('setErrormsg','試合番号取得失敗。もう一度やり直してください');		
+		context.commit('setErrormsg','試合番号取得失敗。もう一度やり直してください');
+		context.dispatch('recrdErrorLog');
 		console.log('[ERR] gameid is null');
 		exit();
 	    } else {
@@ -323,7 +325,8 @@ export default new Vuex.Store({
 	    firebase.database().ref('/gameusers/' + context.getters.getCurgameid + '/' + index + '/').set(context.getters.getGameUsers[index],function(error) {
 		if(error) {
 		    context.commit('setErrorno',-5);
-		    context.commit('setErrormsg','ユーザー情報更新失敗、しばらくしてからやり直してください ' + error);				    
+		    context.commit('setErrormsg','ユーザー情報更新失敗、しばらくしてからやり直してください ' + error);
+		    context.dispatch('recrdErrorLog');		    
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] gameuser one record updae error');
 		}
@@ -335,6 +338,7 @@ export default new Vuex.Store({
 		if(error) {
 		    context.commit('setErrorno',-6);
 		    context.commit('setErrormsg','ゲームメンバー情報更新失敗、しばらくしてからやり直してください ' + error);
+		    context.dispatch('recrdErrorLog');
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] games user login');
 		}
@@ -344,12 +348,14 @@ export default new Vuex.Store({
 	async _setUserInfoDbGameAction(context,payload) {
 	    if(!context.getters.getUser.uid) {
 		context.commit('setErrorno',-15);
-		context.commit('setErrormsg','getUser失敗');		  
+		context.commit('setErrormsg','getUser失敗');
+		context.dispatch('recrdErrorLog');
 	    } else {
 		firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
 		if(error) {
 		    context.commit('setErrorno',-7);
-		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		    
+		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
+		    context.dispatch('recrdErrorLog');
 		    console.log('[ERR]' + error);
 		}
 		})
@@ -369,7 +375,8 @@ export default new Vuex.Store({
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
 			    context.commit('setErrorno',-8);
-			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
+		   	    context.dispatch('recrdErrorLog');
 			    console.log('[ERR]' + error);
 			}
 		    })
@@ -378,7 +385,8 @@ export default new Vuex.Store({
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
 			if(error) {
 			    context.commit('setErrorno',-7);
-			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		    
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
+			    context.dispatch('recrdErrorLog');
 			    console.log('[ERR]' + error);
 			}		    
 		    })
@@ -398,7 +406,8 @@ export default new Vuex.Store({
 		    firebase.database().ref('/userinfo/' + context.getters.getUser.uid ).set(context.getters.getUserinfo,function(error) {
 			if(error) {
 			    context.commit('setErrorno',-8);
-			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);		   			    
+			    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
+		   	    context.dispatch('recrdErrorLog');
 			    console.log('[ERR]' + error);
 			}
 		    })		    
@@ -444,7 +453,7 @@ export default new Vuex.Store({
 		}
 	    }), function (errorObject) {
 		context.commit('setErrorno',errorObject.code);
-		context.commit('errorObject','GAME情報読み込み失敗');				
+		context.commit('errorObject','GAME情報読み込み失敗');				context.dispatch('recrdErrorLog');
 		console.log("The read failed: " + errorObject.code);
 	    }
 	},	    
@@ -453,14 +462,16 @@ export default new Vuex.Store({
 		firebase.database().ref('/games/' + context.getters.getCurgameid).set(context.getters.getGame,function(error) {
 		    if (error) {
 			context.commit('setErrorno',-10);
-			context.commit('setErrormsg','ゲーム情報更新失敗、しばらくしてからやり直してください ' + error);		    
+			context.commit('setErrormsg','ゲーム情報更新失敗、しばらくしてからやり直してください ' + error);
+			context.dispatch('recrdErrorLog');
 			console.log('[ERR] ' + '/games/' + context.getters.getCurgameid);
 			console.log('[ERR]' + error);
 		    }}
 										     );
 	    } else {
 		context.commit('setErrorno',-19);
-		context.commit('setErrormsg','ゲーム情報更新エラー ' + error);		    
+		context.commit('setErrormsg','ゲーム情報更新エラー ' + error);
+		context.dispatch('recrdErrorLog');
 	    }
 	},
 
@@ -469,6 +480,7 @@ export default new Vuex.Store({
 		if(error) {
 		    context.commit('setErrorno',-11);
 		    context.commit('setErrormsg','ゲームユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
+		    context.dispatch('recrdErrorLog');
 		    console.log('[ERR] ' + '/gameusers/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getGameUsers);
@@ -480,7 +492,8 @@ export default new Vuex.Store({
 	    firebase.database().ref('/shiairec/' + context.getters.getCurgameid).set(context.getters.getShiairec,function(error) {
 		if(error) {
 		    context.commit('setErrorno',-12);
-		    context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);		    
+		    context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);
+		    context.dispatch('recrdErrorLog');
 		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getShiairec);
@@ -493,14 +506,24 @@ export default new Vuex.Store({
 		firebase.database().ref('/shiairec/' + context.getters.getCurgameid + '/' + (v.id-1) ).set(v).then(function(error) {
 		    if(error) {
 		    context.commit('setErrorno',-13);
-		    context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);		    			
+			context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);
+ 			context.dispatch('recrdErrorLog');
 		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getShiairec);
 		}}
 														   )
 	    })
-	},			    
+	},
+
+	async recrdErrorLog(context) {
+	    let dref = firebase.database().ref('/logs/' + context.getters.getCurgameid + '/');
+	    let today = Date();
+	    dref.push({'date': today,
+		       'code' : context.getters.getErrorno,
+		       'msg' : context.getters.getErrormsg
+		      });
+	},
 	
 	async loadMyGamesAction(context) {
 
@@ -533,11 +556,9 @@ export default new Vuex.Store({
 
 	removeGamedata(context,payload) {
 	    const updates= {};
-	    updates['/games/' + payload.curgameid] =null;
-	    updates['/shiairec/' + payload.curgameid] =null;
-	    updates['/gameusers/' + payload.curgameid] =null;
+	    updates['/games/' + payload.curgameid + '/users/' + context.getters.getUser.uid] =null;
+	    updates['/userinfo/' + context.getters.getUser.uid + '/games/' + payload.curgameid] = null;
 	    firebase.database().ref().update(updates);
-	    context.dispatch('loadMyGamesAction');
 	},
 	removeShiairec(context,payload) {
 	    let ref = firebase.database().ref('/shiairec/' + context.getters.getCurgameid);
@@ -600,6 +621,7 @@ export default new Vuex.Store({
 		.catch(error => {
 		    context.commit('setErrorno',-14);
 		    context.commit('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
+		    context.dispatch('recrdErrorLog');
 		    console.log('setErrormsg','乱数情報読み込みエラー、ホーム画面に戻ってもう一度作り直してください ' + error);
 		})
 	}

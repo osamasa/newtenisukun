@@ -112,6 +112,7 @@ export default {
 	},
 	deletegame : function(_id) {
             this.$store.dispatch('removeGamedata', {'curgameid': _id})
+	    this.$store.dispatch('loadMyGamesAction');	    
 	},
 	doLogin : function() {
 	    this.$store.dispatch('setIsLoadingAction',true);
