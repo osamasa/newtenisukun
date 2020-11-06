@@ -50,17 +50,29 @@
     <ListResults></ListResults>
      </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+	<StatisticsPair></StatisticsPair>
+      </v-col>
+      <v-col>
+	<StatisticsWin></StatisticsWin>
+      </v-col>	      
+    </v-row>
   </v-container>
 </template>
 
 <script>
-    import ListResults from './ListResults.vue'
-    import CreateGame from './CreateGame.vue'  
-    export default {
+import ListResults from './ListResults.vue'
+import CreateGame from './CreateGame.vue'
+import StatisticsPair from './StatisticsPair.vue'
+import StatisticsWin from './StatisticsWin.vue'  
+export default {
     name: 'DashboardDashboard',
     components: {
 	ListResults,
-	CreateGame
+	CreateGame,
+	StatisticsPair,
+	StatisticsWin,	
     },
     data: () => ({
 
