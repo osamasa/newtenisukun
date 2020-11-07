@@ -524,9 +524,7 @@ export default new Vuex.Store({
 		       'msg' : context.getters.getErrormsg
 		      });
 	},
-	
-	async loadMyGamesAction(context) {
-
+	loadMyGamesActionForOne(context) {
 	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).startAt(true).endAt(true).limitToLast(128).once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    const mygames = [];
@@ -549,7 +547,18 @@ export default new Vuex.Store({
 		context.commit('setIsLoading',false);
 	    })
 	},
-
+	async loadMyGamesActionForOne(context) {
+	    context.dispatch('loadMyGamesActionForOne');	    
+	},	
+	async loadMyGamesWinResultsAction(context) {
+	    context.dispatch('loadMyGamesActionForOne');
+	    context.getters.getMyGames.forEach(v => {
+		firebase.database().ref('/gamesusers/' + v.id).once('value').then(function(snapshot) {
+		    // 自分のIDで番号を探す
+		    // 探した番号で shiairec を検索して ペアと勝ち ペアと負け 相手勝ち 相手負け　のデータを集計
+		}
+	    })
+	},
 	setIsLoadingAction(context,payload) {
 	    context.commit('setIsLoading',payload);
 	},
