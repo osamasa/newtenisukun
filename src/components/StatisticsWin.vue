@@ -2,28 +2,22 @@
       <base-material-card
 	color="success"
 	icon="mdi-chart-bar"
-	title="対戦相手の勝率"
+	title="自分の勝率"
 	class="px-5 py-3"
 	>
 	<div v-if="isLogin">
 	<v-simple-table>
           <thead>
 	    <tr>
-              <th>番号</th>
-              <th>名前</th>
-              <th>勝率</th>
+              <th>試合数</th>
+              <th>勝ち数</th>
+              <th>勝率</th>	      
             </tr>
           </thead>
 	  <tbody>
               <tr>
-		<td>1</td><td>オサダ</td><td>.586</td>
+		<td>{{ getMyshiaiCount}}</td><td>{{ getMywinCount }}</td><td>{{ Math.floor(getMywinCount / getMyshiaiCount * 1000) }}</td>
               </tr>
-	      <tr>			      
-	      <td>1</td><td>今井</td><td>.386</td>
-              </tr>
-	      <tr>			      	      
-		<td>1</td><td>津田</td><td>.386</td>		
-	      </tr>
 	  </tbody>
 	</v-simple-table>
 	</div>	
@@ -39,6 +33,7 @@
 </template>
 <script>
 import firebase from 'firebase';
+import { mapGetters } from 'vuex'
 export default {
     name : 'StatisticsWin',
     data: () => {
@@ -51,7 +46,7 @@ export default {
 	    if (user) {
     		this.isLogin = true;
 		this.$store.commit('setUser',{'user' : user});
-		this.$store.dispatch('loadMyGamesAction');
+		this.$store.dispatch('loadMyGamesWinResultsAction');
 	    } else {
 		this.isLogin = false;
 	    }
@@ -60,6 +55,10 @@ export default {
     mounted() {
     },
     computed: {
+	...mapGetters([
+	    "getMyshiaiCount",
+	    "getMywinCount"
+	])
     },
     methods: {
 	doLogin : function() {

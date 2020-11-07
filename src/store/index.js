@@ -7,6 +7,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+	myshiaicount:0,
+	mywincount:0,
 	errorno:0,
 	errormsg:'',
 	isLoading: true,
@@ -37,6 +39,12 @@ export default new Vuex.Store({
 	shiairec: [],
     },
     getters: {
+	getMyshiaiCount: (state) => {
+	    return state.myshiaicount;
+	},
+	getMywinCount:(state) => {
+	    return state.mywincount;
+	},
 	getErrorno: (state) => {
 	    return state.errorno;
 	},
@@ -118,6 +126,12 @@ export default new Vuex.Store({
 	}
     },
     mutations: {
+	setMyshiaiCount: (state,payload) => {
+	    state.myshiaicount = payload;
+	},
+	setMywinCount:(state,payload) => {
+	    state.mywincount=payload;
+	},	
 	setErrorno: (state,payload) => {
 	    state.errorno = payload;
 	},
@@ -547,18 +561,45 @@ export default new Vuex.Store({
 		context.commit('setIsLoading',false);
 	    })
 	},
-	async loadMyGamesActionForOne(context) {
+	async loadMyGamesAction(context) {
 	    context.dispatch('loadMyGamesActionForOne');	    
-	},	
+	},
+
 	async loadMyGamesWinResultsAction(context) {
-	    context.dispatch('loadMyGamesActionForOne');
-	    context.getters.getMyGames.forEach(v => {
-		firebase.database().ref('/gamesusers/' + v.id).once('value').then(function(snapshot) {
-		    // 自分のIDで番号を探す
-		    // 探した番号で shiairec を検索して ペアと勝ち ペアと負け 相手勝ち 相手負け　のデータを集計
+	    context.commit('setMywinCount',0);
+	    context.commit('setMyshiaiCount',0);
+	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
+		if(snapshot.val()) {
+		    const mygames = [];
+		    snapshot.forEach(function(data) {
+			if((data.key) && (data.val().gameplace)) {
+			    firebase.database().ref('/gameusers/' + data.key).orderByChild('userid').equalTo(context.getters.getUser.uid).once('value').then(function(gsnapshot) {
+
+				if(gsnapshot.val()) {
+				    let myCurId = parseInt(gsnapshot.val()[2].no);
+				    
+				    firebase.database().ref('/shiairec/' + data.key).once('value').then(function(ssnapshot) {
+					ssnapshot.forEach(function(s) {
+					    if((parseInt(s.val().p1) == myCurId) || (parseInt(s.val().p2)  == myCurId) || (parseInt(s.val().p3) == myCurId) || (parseInt(s.val().p4) == myCurId)) {
+						if(s.val().rs!=0) {
+						    context.commit('setMyshiaiCount', context.getters.getMyshiaiCount+1);
+						}
+						if((s.val().rs==1) && ((parseInt(s.val().p1)==myCurId) || (parseInt(s.val().p2)==myCurId))) {
+						    context.commit('setMywinCount', context.getters.getMywinCount+1);
+						} else if((s.val().rs==2) && ((parseInt(s.val().p3)==myCurId) || (parseInt(s.val().p4)==myCurId))) {
+						    context.commit('setMywinCount', context.getters.getMywinCount+1);
+						}
+					    }
+					})
+				    })
+				};		    
+			    });
+			}
+		    })
 		}
 	    })
 	},
+	
 	setIsLoadingAction(context,payload) {
 	    context.commit('setIsLoading',payload);
 	},
