@@ -7,6 +7,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+	mypairshiaicount:{},
+	Mypairwincount:{},
 	myshiaicount:0,
 	mywincount:0,
 	errorno:0,
@@ -39,6 +41,19 @@ export default new Vuex.Store({
 	shiairec: [],
     },
     getters: {
+	getMyPairshiaiCount: (state,payload) => {
+	    return state.mypairshiaicount[payload];
+	},
+	getMyPairswinCount: (state,payload) => {
+	    return state.mypairwincount[payload];
+	},
+	getMyPairshiaiCountAll: (state) => {
+	    return state.mypairshiaicount;
+	},
+	getMyPairswinCountAll: (state) => {
+	    return state.mypairwincount;
+	},	
+	
 	getMyshiaiCount: (state) => {
 	    return state.myshiaicount;
 	},
@@ -126,6 +141,18 @@ export default new Vuex.Store({
 	}
     },
     mutations: {
+	setMyPairshiaiCount: (state,payload) => {
+	    state.mypairshiaicount[payload.userid] = payload.count;
+	},
+	setMyPairswinCount: (state,payload) => {
+	    state.mypairwincount[payload.userid] = payload.count;
+	},
+	clearMyPairshiaiCount: (state) => {
+	    state.mypairshiaicount={};
+	},
+	clearMyPairwinCount: (state) => {
+	    state.mypairwincount={};
+	},	
 	setMyshiaiCount: (state,payload) => {
 	    state.myshiaicount = payload;
 	},
@@ -599,7 +626,7 @@ export default new Vuex.Store({
 		}
 	    })
 	},
-	
+
 	setIsLoadingAction(context,payload) {
 	    context.commit('setIsLoading',payload);
 	},

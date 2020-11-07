@@ -47,15 +47,12 @@
        lg="6"
        >
        <v-spacer></v-spacer>
-    <ListResults></ListResults>
+	<StatisticsWin></StatisticsWin>       
      </v-col>
     </v-row>
     <v-row>
       <v-col>
-	<StatisticsPair></StatisticsPair>
-      </v-col>
-      <v-col>
-	<StatisticsWin></StatisticsWin>
+    <ListResults></ListResults>
       </v-col>	      
     </v-row>
   </v-container>

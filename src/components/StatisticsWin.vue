@@ -16,7 +16,7 @@
           </thead>
 	  <tbody>
               <tr>
-		<td>{{ getMyshiaiCount}}</td><td>{{ getMywinCount }}</td><td>{{ Math.floor(getMywinCount / getMyshiaiCount * 1000) }}</td>
+		<td>{{ getMyshiaiCount}}</td><td>{{ getMywinCount }}</td><td>.{{ Math.floor(getMywinCount / getMyshiaiCount * 1000) }}</td>
               </tr>
 	  </tbody>
 	</v-simple-table>
