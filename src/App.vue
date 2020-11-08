@@ -41,7 +41,13 @@
 
     <v-footer>
       <v-spacer></v-spacer>
-      <div>&copy; {{ new Date().getFullYear() }}&nbsp;OSAMASA&nbsp;Inc.</div>
+      <div>&copy; {{ new Date().getFullYear() }}&nbsp;OSAMASA&nbsp;Inc.
+	<a href="mailto:osamasa@gmail.com">
+	<v-icon
+          large
+      >
+        mdi-email
+      </v-icon></a></div>
     </v-footer>
 
   </v-app>
