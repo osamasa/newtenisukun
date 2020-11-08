@@ -604,41 +604,7 @@ export default new Vuex.Store({
 	async loadMyGamesAction(context) {
 	    context.dispatch('loadMyGamesActionForOne');	    
 	},
-
-	async loadMyGamesWinResultsAction(context) {
-	    context.commit('setMywinCount',0);
-	    context.commit('setMyshiaiCount',0);
-	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {	    
-		if(snapshot.val()) {
-		    snapshot.forEach(function(data) {
-			if(data.key) {
-			    firebase.database().ref('/gameusers/' + data.key).orderByChild('userid').equalTo(context.getters.getUser.uid).once('value').then(function(gsnapshot) {
-
-				if((gsnapshot.val()) && (gsnapshot.val()[2])){
-				    let myCurId = parseInt(gsnapshot.val()[2].no);
-				    
-				    firebase.database().ref('/shiairec/' + data.key).once('value').then(function(ssnapshot) {
-					ssnapshot.forEach(function(s) {
-					    if((parseInt(s.val().p1) == myCurId) || (parseInt(s.val().p2)  == myCurId) || (parseInt(s.val().p3) == myCurId) || (parseInt(s.val().p4) == myCurId)) {
-						if(s.val().rs!=0) {
-						    context.commit('setMyshiaiCount', context.getters.getMyshiaiCount+1);
-						}
-						if((s.val().rs==1) && ((parseInt(s.val().p1)==myCurId) || (parseInt(s.val().p2)==myCurId))) {
-						    context.commit('setMywinCount', context.getters.getMywinCount+1);
-						} else if((s.val().rs==2) && ((parseInt(s.val().p3)==myCurId) || (parseInt(s.val().p4)==myCurId))) {
-						    context.commit('setMywinCount', context.getters.getMywinCount+1);
-						}
-					    }
-					})
-				    })
-				};		    
-			    });
-			}
-		    })
-		}
-	    })
-	},
-
+	
 	async loadMyGamesWinResultsPairAction(context) {
 	    let mypairreslut={};
 	    let mypairwinresult={};	    
