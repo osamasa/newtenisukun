@@ -7,8 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-	mypairshiaicount:{},
-	Mypairwincount:{},
+	mypairshiaicount:[],
 	myshiaicount:0,
 	mywincount:0,
 	errorno:0,
@@ -41,18 +40,9 @@ export default new Vuex.Store({
 	shiairec: [],
     },
     getters: {
-	getMyPairshiaiCount: (state,payload) => {
-	    return state.mypairshiaicount[payload];
-	},
-	getMyPairswinCount: (state,payload) => {
-	    return state.mypairwincount[payload];
-	},
 	getMyPairshiaiCountAll: (state) => {
 	    return state.mypairshiaicount;
 	},
-	getMyPairswinCountAll: (state) => {
-	    return state.mypairwincount;
-	},	
 	
 	getMyshiaiCount: (state) => {
 	    return state.myshiaicount;
@@ -141,18 +131,41 @@ export default new Vuex.Store({
 	}
     },
     mutations: {
-	setMyPairshiaiCount: (state,payload) => {
-	    state.mypairshiaicount[payload.userid] = payload.count;
+	addMyPairshiaiCount: (state,payload) => {
+	    let i = state.mypairshiaicount.findIndex(f => f.name === payload);
+	    if(i<0) {
+		state.mypairshiaicount.push({'name':payload, 'shiaicount':1 , 'wincount' : 0, 'drawcount' : 0});
+	    } else {
+		let l = state.mypairshiaicount[i].shiaicount;
+		state.mypairshiaicount[i].shiaicount=l+1;
+	    }
 	},
-	setMyPairswinCount: (state,payload) => {
-	    state.mypairwincount[payload.userid] = payload.count;
+	addMyPairswinCount: (state,payload) => {
+	    let i = state.mypairshiaicount.findIndex(f => f.name === payload);
+	    if(i<0) {
+		state.mypairshiaicount.push({'name':payload, 'shiaicount':1 , 'wincount' : 1,  'drawcount' : 0});
+	    } else {
+		let l = state.mypairshiaicount[i].shiaicount;
+		let m = state.mypairshiaicount[i].wincount;		
+		state.mypairshiaicount[i].shiaicount=l+1;
+		state.mypairshiaicount[i].wincount=m+1;
+	    }	    
 	},
-	clearMyPairshiaiCount: (state) => {
-	    state.mypairshiaicount={};
-	},
-	clearMyPairwinCount: (state) => {
-	    state.mypairwincount={};
+
+	addMyPairsdrawCount: (state,payload) => {
+	    let i = state.mypairshiaicount.findIndex(f => f.name === payload);
+	    if(i<0) {
+		state.mypairshiaicount.push({'name':payload, 'shiaicount':1 , 'wincount' : 0 , 'drawcount' : 1});
+	    } else {
+		let l = state.mypairshiaicount[i].shiaicount;
+		let m = state.mypairshiaicount[i].drawcount;
+		state.mypairshiaicount[i].shiaicount=l+1;
+		state.mypairshiaicount[i].drawcount=m+1;
+	    }	    
 	},	
+	clearMyPairshiaiCount: (state) => {
+	    state.mypairshiaicount=[];
+	},
 	setMyshiaiCount: (state,payload) => {
 	    state.myshiaicount = payload;
 	},
@@ -212,7 +225,7 @@ export default new Vuex.Store({
 	    const tmp = [];
 	    
 	    for(let i=0;i<state.game.peoples;i++) {
-		    tmp.push({
+		tmp.push({
 		    no:(i+1),
 		    userid:'',
 		    displayName:'名無し',
@@ -393,12 +406,12 @@ export default new Vuex.Store({
 		context.dispatch('recrdErrorLog');
 	    } else {
 		firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games/' + context.getters.getCurgameid).set(true,function(error) {
-		if(error) {
-		    context.commit('setErrorno',-7);
-		    context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
-		    context.dispatch('recrdErrorLog');
-		    console.log('[ERR]' + error);
-		}
+		    if(error) {
+			context.commit('setErrorno',-7);
+			context.commit('setErrormsg','ユーザ情報更新失敗、しばらくしてからやり直してください ' + error);
+			context.dispatch('recrdErrorLog');
+			console.log('[ERR]' + error);
+		    }
 		})
 	    }
 	},
@@ -526,7 +539,7 @@ export default new Vuex.Store({
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getGameUsers);
 		}}
-								       )
+										     )
 	},
 	
 	async storeShiairecDb (context,payload)  {
@@ -539,21 +552,21 @@ export default new Vuex.Store({
 		    console.log('[ERR]' + error);
 		    console.log('[ERR] ' + context.getters.getShiairec);
 		}}
-								       )
+										    )
 	},
 	
 	async addShiairecDb (context,payload)  {
 	    payload.shiairec.forEach( v => {
 		firebase.database().ref('/shiairec/' + context.getters.getCurgameid + '/' + (v.id-1) ).set(v).then(function(error) {
 		    if(error) {
-		    context.commit('setErrorno',-13);
+			context.commit('setErrorno',-13);
 			context.commit('setErrormsg','試合情報更新失敗、しばらくしてからやり直してください ' + error);
  			context.dispatch('recrdErrorLog');
-		    console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
-		    console.log('[ERR]' + error);
-		    console.log('[ERR] ' + context.getters.getShiairec);
-		}}
-														   )
+			console.log('[ERR] ' + '/shiairec/' + context.getters.getCurgameid);
+			console.log('[ERR]' + error);
+			console.log('[ERR] ' + context.getters.getShiairec);
+		    }}
+														  )
 	    })
 	},
 
@@ -595,14 +608,13 @@ export default new Vuex.Store({
 	async loadMyGamesWinResultsAction(context) {
 	    context.commit('setMywinCount',0);
 	    context.commit('setMyshiaiCount',0);
-	    firebase.database().ref('/games').orderByChild('users/' + context.getters.getUser.uid).once('value').then(function(snapshot) {
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {	    
 		if(snapshot.val()) {
-		    const mygames = [];
 		    snapshot.forEach(function(data) {
-			if((data.key) && (data.val().gameplace)) {
+			if(data.key) {
 			    firebase.database().ref('/gameusers/' + data.key).orderByChild('userid').equalTo(context.getters.getUser.uid).once('value').then(function(gsnapshot) {
 
-				if(gsnapshot.val()) {
+				if((gsnapshot.val()) && (gsnapshot.val()[2])){
 				    let myCurId = parseInt(gsnapshot.val()[2].no);
 				    
 				    firebase.database().ref('/shiairec/' + data.key).once('value').then(function(ssnapshot) {
@@ -627,6 +639,64 @@ export default new Vuex.Store({
 	    })
 	},
 
+	async loadMyGamesWinResultsPairAction(context) {
+	    let mypairreslut={};
+	    let mypairwinresult={};	    
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
+		if(snapshot.val()) {
+		    snapshot.forEach(function(data) {
+			if(data.key) {
+
+			    firebase.database().ref('/gameusers/' + data.key).once('value').then(function(gsnapshot) {
+				let members=[];
+				let myno=-1;
+				let mypairid='';				
+
+				let i=0;
+				if(gsnapshot.val()) {
+				    gsnapshot.val().forEach(function(udata) {
+
+					members[i++]=udata;
+					if(udata.userid === context.getters.getUser.uid) {
+					    myno = i;
+					}					
+				    });
+				};
+				
+				if((members.length>0) && (myno>-1)) {
+				    let _searchcolumn=['p1','p2','p3','p4'];
+				    let _searchpair=['p2','p1','p4','p3'];
+				    let _whichwin=[1,1,2,2];
+				    
+				    firebase.database().ref('/shiairec/' + data.key).orderByKey().once('value').then(function(ssnapshot){
+					if(ssnapshot.val()) {
+					    ssnapshot.val().forEach(function(sdata) {
+						_searchcolumn.forEach((p,ind)=> {
+						    if((parseInt(sdata[p])==myno) &&(parseInt(sdata.rs)!=0)){
+							let y=_searchpair[ind];
+							mypairid=members[(parseInt(sdata[y])-1)].displayName;
+							if(mypairid) {
+							    if(parseInt(sdata.rs)==_whichwin[ind]) {
+								context.commit('addMyPairswinCount', mypairid);
+							    } else if(sdata.rs==3){
+								context.commit('addMyPairsdrawCount', mypairid);
+							    } else {
+								context.commit('addMyPairshiaiCount', mypairid);							    
+							    }
+							}
+						    }
+						})
+					    })
+					}
+				    })
+				}
+			    })
+			}
+		    })
+		}
+	    })
+	},	
+
 	setIsLoadingAction(context,payload) {
 	    context.commit('setIsLoading',payload);
 	},
@@ -647,7 +717,7 @@ export default new Vuex.Store({
 			let childData = childSnapshot.val()['rs'];
 			tmp.push({'key':key, 'val': childData});
 		    });
-	    });
+		});
 	},
 	setShiaiRecAction(context,payload) {
 	    payload.shiairec=[];
