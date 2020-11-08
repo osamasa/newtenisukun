@@ -61,14 +61,12 @@
 <script>
 import ListResults from './ListResults.vue'
 import CreateGame from './CreateGame.vue'
-import StatisticsPair from './StatisticsPair.vue'
 import StatisticsWin from './StatisticsWin.vue'  
 export default {
     name: 'DashboardDashboard',
     components: {
 	ListResults,
 	CreateGame,
-	StatisticsPair,
 	StatisticsWin,	
     },
     data: () => ({

@@ -604,10 +604,38 @@ export default new Vuex.Store({
 	async loadMyGamesAction(context) {
 	    context.dispatch('loadMyGamesActionForOne');	    
 	},
+
+	async updateGameUsersDb(context,payload) {
+	    let _updates = {};
+	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
+		if(snapshot.val()) {
+
+		    snapshot.forEach(function(data) {
+			if(data.key) {
+			    let _ref=firebase.database().ref('/gameusers/' + data.key + '/').orderByChild('displayName');
+			    _ref.once('value').then(function(gsnapshot) {
+				if(gsnapshot.val()) {
+				    let i=0;				    
+				    gsnapshot.val().forEach( function(gdata) {
+					if(gdata.displayName === payload.from) {
+					    _updates['/gameusers/' + data.key + '/' + i + '/displayName'] = payload.to;
+					    console.log(_updates, gdata.displayName);
+
+					    
+					}
+					i++;
+				    })
+				}
+			    })
+			}
+		    })
+		}		    
+							   
+	    })
+	},
 	
 	async loadMyGamesWinResultsPairAction(context) {
-	    let mypairreslut={};
-	    let mypairwinresult={};	    
+
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 		    snapshot.forEach(function(data) {
