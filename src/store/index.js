@@ -151,7 +151,6 @@ export default new Vuex.Store({
 		state.mypairshiaicount[i].wincount=m+1;
 	    }	    
 	},
-
 	addMyPairsdrawCount: (state,payload) => {
 	    let i = state.mypairshiaicount.findIndex(f => f.name === payload);
 	    if(i<0) {
@@ -162,7 +161,17 @@ export default new Vuex.Store({
 		state.mypairshiaicount[i].shiaicount=l+1;
 		state.mypairshiaicount[i].drawcount=m+1;
 	    }	    
-	},	
+	},
+	chgMypairshiaiCountName: (state,payload) => {
+	    let _find = state.mypairshiaicount.findIndex(rec => rec.name === payload.from);
+	    let _tind = state.mypairshiaicount.findIndex(rec => rec.name === payload.to);
+	    state.mypairshiaicount[_tind].shiaicount = state.mypairshiaicount[_tind].shiaicount + state.mypairshiaicount[_find].shiaicount
+	    state.mypairshiaicount[_tind].wincount = state.mypairshiaicount[_tind].wincount + state.mypairshiaicount[_find].wincount
+	    state.mypairshiaicount[_tind].drawcount= state.mypairshiaicount[_tind].drawcount + state.mypairshiaicount[_find].drawcount
+
+	    state.mypairshiaicount.splice(_find,1);
+	    
+	},
 	clearMyPairshiaiCount: (state) => {
 	    state.mypairshiaicount=[];
 	},
@@ -382,7 +391,7 @@ export default new Vuex.Store({
 		    context.commit('setErrormsg','ユーザー情報更新失敗、しばらくしてからやり直してください ' + error);
 		    context.dispatch('recrdErrorLog');		    
 		    console.log('[ERR]' + error);
-		    console.log('[ERR] gameuser one record updae error');
+		    console.log('[ERR] gameuser one record update error');
 		}
 	    }
 													 );
@@ -606,7 +615,6 @@ export default new Vuex.Store({
 	},
 
 	async updateGameUsersDb(context,payload) {
-	    let _updates = {};
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
 		if(snapshot.val()) {
 
@@ -618,10 +626,17 @@ export default new Vuex.Store({
 				    let i=0;				    
 				    gsnapshot.val().forEach( function(gdata) {
 					if(gdata.displayName === payload.from) {
-					    _updates['/gameusers/' + data.key + '/' + i + '/displayName'] = payload.to;
-					    console.log(_updates, gdata.displayName);
-
+					    const _update = {};
+					    _update[ data.key + '/' + i + '/displayName' ] = payload.to;
 					    
+					    firebase.database().ref().child('gameusers').update(_update, function(error) {
+						if (error) {
+						    context.commit('setErrorno',-15);
+						    context.commit('setErrormsg','乱数情報読み込み更新エラー、リロードしてください ' + error);
+						    context.dispatch('recrdErrorLog');						    
+						    console.log("Data could not be saved." + error);
+						}
+					    });
 					}
 					i++;
 				    })
@@ -629,11 +644,10 @@ export default new Vuex.Store({
 			    })
 			}
 		    })
-		}		    
-							   
+		}
 	    })
+	    context.commit('chgMypairshiaiCountName',payload);
 	},
-	
 	async loadMyGamesWinResultsPairAction(context) {
 
 	    firebase.database().ref('/userinfo/' + context.getters.getUser.uid + '/games').once('value').then(function(snapshot) {
